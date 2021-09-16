@@ -1,0 +1,88 @@
+<#assign ctx=ctx.contextPath/>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sprout | 登录</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="${ctx}/res/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/res/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="${ctx}/res/lib/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="${ctx}/res/adminLTE/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="${ctx}/res/adminLTE/plugins/iCheck/square/blue.css">
+    <script type="text/javascript">
+        <!-- 解决登录页面嵌套问题 -->
+        if (window !== top){
+            top.location.href = location.href;
+        }
+    </script>
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <a href="#"><b>Sprout</b> 管理平台</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">输入登录信息</p>
+        <form action="${ctx}/login" method="post" onsubmit="return validator()">
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" placeholder="请输入账号" id="username" name="username"/>
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" placeholder="请输入密码" id="password" name="password"/>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="checkbox icheck">
+                        <label>
+                            <input type="checkbox"> 记住我
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+                </div>
+            </div>
+            <div class="row">
+                <span style="color: red;font-size: 14px;padding-left:20px" data-bind="text: errorMessage"></span>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="${ctx}/res/lib/jquery/dist/jquery.min.js"></script>
+<script src="${ctx}/res/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="${ctx}/res/adminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="${ctx}/res/lib/knockout/knockout-3.5.0.js"></script>
+<script>
+    let errorViewModel;
+    $(function() {
+        errorViewModel = {
+            errorMessage: ko.observable('${error!}')
+        };
+        ko.applyBindings(errorViewModel);
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%'
+        });
+        /*$(window).resize(function() {
+            var $content = $('.dl');
+            $content.height($(this).height());
+        }).resize();*/
+    });
+    function validator() {
+        const username = $("#username").val();
+        const password = $("#password").val();
+        if (username === '' || password === '') {
+            errorViewModel.errorMessage("用户名或密码不能为空!");
+            return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "alarm.config.destination",
+      "type": "java.lang.String",
+      "description": "Description for alarm.config.destination."
+  }
+] }
