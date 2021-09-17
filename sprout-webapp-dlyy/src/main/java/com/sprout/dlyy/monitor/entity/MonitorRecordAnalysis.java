@@ -1,4 +1,4 @@
-package com.sprout.dlyy.monitor.util;
+package com.sprout.dlyy.monitor.entity;
 
 /**
  * 考勤汇总统计

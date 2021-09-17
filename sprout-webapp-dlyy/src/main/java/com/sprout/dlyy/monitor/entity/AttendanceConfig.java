@@ -7,6 +7,9 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.io.Serializable;
 
+/**
+ * 打卡规则配置实体类
+ */
 @Document(collection = "attendance_config")
 public class AttendanceConfig implements Serializable {
 

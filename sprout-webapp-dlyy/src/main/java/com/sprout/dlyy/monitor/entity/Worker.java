@@ -1,9 +1,12 @@
-package com.sprout.dlyy.monitor.util;
+package com.sprout.dlyy.monitor.entity;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
+/**
+ * 员工信息实体类
+ */
 public class Worker implements Serializable {
 
     private String id;

@@ -1,9 +1,12 @@
-package com.sprout.dlyy.monitor.util;
+package com.sprout.dlyy.monitor.entity;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
+/**
+ * 打卡记录封装类
+ */
 public class MonitorRecord implements Serializable {
 
 
