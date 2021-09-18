@@ -28,6 +28,7 @@
 <script src="${ctx}/res/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="${ctx}/res/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
 <script src="${ctx}/res/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="${ctx}/res/lib/bootstrap-datepicker/js/locales/bootstrap-datepicker.zh-CN.js"></script>
 <script src="${ctx}/res/lib/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${ctx}/res/adminLTE/dist/js/adminlte.min.js"></script>
 

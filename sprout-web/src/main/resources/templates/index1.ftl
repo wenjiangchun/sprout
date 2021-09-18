@@ -152,7 +152,7 @@
             <li class="active"><a class="menuBtn" url="${ctx}/dashboard"><i class="fa fa-circle-o"></i> 面板</a></li>
           </ul>
         </li>-->
-        <#--<li class="treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-laptop"></i>
             <span>系统管理</span>
@@ -169,7 +169,7 @@
             <li><a href="#" class="menuBtn" url="${ctx}/system/config/view"><i class="fa fa-circle-o"></i> 配置管理</a></li>
 
           </ul>
-        </li>-->
+        </li>
         <#--<li class="treeview">
           <a href="#">
             <i class="fa fa-anchor"></i>
@@ -183,6 +183,20 @@
             <li><a href="#" class="menuBtn" url="${ctx}/data/dataSourceNavigate/view"><i class="fa fa-circle-o"></i> 数据浏览</a></li>
           </ul>
         </li>-->
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-reorder"></i>
+            <span>工作管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="menuBtn" url="${ctx}/work/workDairy/view"><i class="fa fa-pencil-square-o"></i> 工作日志填写</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/work/dairySendConfig/view"><i class="fa fa-empire"></i> 日志发送配置</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/work/dairySendLog/view"><i class="fa fa-envelope-o"></i> 日志发送记录</a></li>
+          </ul>
+        </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-calendar"></i>

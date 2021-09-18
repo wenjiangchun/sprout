@@ -52,14 +52,14 @@
 							<table id="contentTable" class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
-									<th sName="id" bSortable="true">编号</th>
-									<th sName="loginName" bSortable="true">登录名</th>
-									<th sName="name" bSortable="true">用户名</th>
-									<th sName="mobile" >手机号</th>
-									<th sName="group.name">所在机构</th>
-									<th sName="sex" columnRender="formatSex">性别</th>
-									<th sName="status" columnRender="formatStatus">状态</th>
-									<th sName="operator" columnRender="formatOperator">操作</th>
+									<th>编号</th>
+									<th>登录名</th>
+									<th>用户名</th>
+									<th>手机号</th>
+									<th>所在机构</th>
+									<th>性别</th>
+									<th>状态</th>
+									<th>操作</th>
 								</tr>
 								</thead>
 							</table>
@@ -70,6 +70,8 @@
 			</div>
 		</section>
 </body>
+<script src="${ctx}/res/lib/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${ctx}/res/lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script type="text/javascript">
 	let viewModel;
 	let tree;
@@ -77,6 +79,54 @@
 		viewModel = {
 			groupName: ko.observable(''),
 			groupId: ko.observable('${groupId!}'),
+			initTable: function() {
+				const options = {
+					divId : "contentTable",
+					url : "${ctx}/system/user/search",
+					columns:[{
+						'data':'id',
+						'orderable': false
+					},{
+						'data':'loginName',
+						'orderable': false
+					},{
+						'data':'name'
+					},{
+						'data':'mobile',
+						'orderable': false
+					},{
+						'data':'group.name',
+						'orderable': false
+					},{
+						'data':function(row, type, val, meta) {
+							if (row.sex === "F") {
+								return "<i class='fa fa-female fa-lg green'></i>";
+							} else if (row.sex === "M") {
+								return "<i class='fa fa-male fa-lg red'></i>";
+							}
+							return "保密";
+						},
+						'orderable': false
+					},{
+						'data':function(row, type, val, meta) {
+							if (row.status === "D") {
+								return "<span class='label label-danger'>禁用</span>";
+							}
+							return "<span class='label label-success'>启用</span>";
+						}
+					},{
+						'data':function(row, type, val, meta) {
+							var html = "";
+							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
+							html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
+							/*	html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
+							return html;
+						},
+						'orderable': false
+					}]
+				};
+				createTable(options);
+			},
 			add: function() {
 				let url = "${ctx}/system/user/add";
 				if (this.groupId() != null && this.groupId() !== "") {
@@ -120,7 +170,7 @@
 		};
 		ko.applyBindings(viewModel);
 		initGroupTree();
-		initDataTable();
+		viewModel.initTable();
 	});
 
 	function initGroupTree() {
@@ -180,97 +230,10 @@
 		}
 	}
 
-	/**
-	 * 初始化用户分页列表
-	 */
-	function initDataTable() {
-		var options = {
-			divId : "contentTable",
-			url : "${ctx}/system/user/search"
-			//columns : columns
-		};
-		createTable(options);
-	}
-
-	function editUser(userId) {
-		if (userId == null || userId == "") {
-			alert("用户ID不能为空");
-		} else {
-			//showMyModal("${ctx}/system/user/edit/"+userId, "编辑用户", callBackAction);
-			window.location.href="${ctx}/system/user/edit/"+userId;
-		}
-	}
-
-	function deleteUser(userId) {
-		if (userId == null || userId == "") {
-			alert("用户ID不能为空");
-		} else {
-			if (window.confirm("确认删除数据?")) {
-				var userIds = [userId];
-				$.ajax({
-					method:'post',
-					url:'${ctx}/system/user/delete/'+userIds,
-					success:function(data) {
-						callBackAction(data);
-					}
-				});
-			}
-		}
-	}
-
-	function addRole(userId) {
-		if (userId == null || userId == "") {
-			alert("用户ID不能为空");
-		} else {
-			//showMyModal("${ctx}/system/user/addRoles/"+userId, "用户授权", callBackAction);
-			window.location.href="${ctx}/system/user/addRoles/"+userId;
-		}
-	}
-
 	function callBackAction(data) {
 		refreshTable();
 		initGroupTree();
 	}
-	function formatId(data) {
-		return data[0];
-	}
-	function formatSex(data) {
-		if (data.sex == "F") {
-			return "<i class='fa fa-female fa-lg green'></i>";
-		} else if (data.sex == "M") {
-			return "<i class='fa fa-male fa-lg red'></i>";
-		}
-		return "保密";
-	}
 
-	function formatStatus(data) {
-		if (data.status == "D") {
-			return "<span class='label label-danger'>禁用</span>";
-		}
-		return "<span class='label label-success'>启用</span>";
-	}
-
-	function formatUserType(data) {
-		if (data.userType == "Z") {
-			return "<span class='label label-success'>正式</span>";
-		}
-		if (data.userType == "S") {
-			return "<span class='label label-danger'>试用</span>";
-		}
-		return "<span class='label label-danger'>无效</span>";
-	}
-
-	function formatOperator(data) {
-		var html = "";
-		html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + data.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-		html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + data.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
-	/*	html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
-		return html;
-	}
-
-	function say(name) {
-		name += '..'
-		console.log('hello' + name)
-	}
 </script>
 </html>

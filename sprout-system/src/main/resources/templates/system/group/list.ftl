@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
 <title>机构管理</title>
 	<#include "../../common/head.ftl"/>
@@ -64,37 +64,88 @@
 								</thead>
 							</table>
 						</div>
-						<!-- /.box-body -->
 					</div>
-					<!-- /.box -->
 					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加机构</a>
 				</div>
-				<!-- /.col -->
 			</div>
-			<!-- /.row -->
 		</section>
 </body>
 <script type="text/javascript">
-	let currentViewModel;
+	let viewModel;
 	let tree;
 	$(document).ready(function() {
-		currentViewModel = {
+		viewModel = {
 			groupName: ko.observable(''),
 			groupId: ko.observable('${parentId!}'),
+			initTable: function() {
+				const options = {
+					divId : "contentTable",
+					url : "${ctx}/system/group/search",
+					columns:[{
+						'data':'id'
+					},{
+						'data':'fullName'
+					},{
+						'data':'name'
+					},{
+						'data':'groupType.name',
+						'orderable': false
+					},{
+						'data':'code'
+					},{
+						'data':'tel',
+						'orderable': false
+					},{
+						'data':function(row, type, val, meta) {
+							var html = "";
+							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
+							html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
+							/*	html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
+							return html;
+						},
+						'orderable': false
+					}]
+				};
+				createTable(options);
+			},
 			add: function() {
 				let url = "${ctx}/system/group/add";
 				if (this.groupId() != null && this.groupId() !== "") {
 					url += "?parentId=" + this.groupId();
 				}
-				top.showMyModel(url,'添加机构', '800px', '60%', callBackAction);
-		    }
+				showMyModel(url,'添加机构', '800px', '60%', callBackAction);
+		    },
+			edit: function(id) {
+				let url = "${ctx}/system/group/edit/" + id;
+				showMyModel(url,'编辑机构', '800px', '60%', callBackAction);
+			},
+			delete: function(id) {
+				if (id == null || id === "") {
+					console.log("ID不能为空");
+				} else {
+					layer.confirm('确认删除?', {
+						btn: ['确认','取消'] //按钮
+					}, function(){
+						const ids = [id];
+						$.post({
+							url:'${ctx}/system/group/delete/'+ids,
+							success:function(data) {
+								if (data.messageType === 'SUCCESS') {
+									layer.alert('删除成功');
+									callBackAction(data);
+								} else {
+									layer.alert('删除失败:' + data.content);
+								}
+							}
+						});
+					}, function(){
+					});
+				}
+			}
 		};
-		ko.applyBindings(currentViewModel);
+		ko.applyBindings(viewModel);
+		viewModel.initTable();
 		initGroupTree();
-		initDataTable();
-		$("#clearBtn").click(function() { //清空按钮事件
-			$(".databatle_query").val("");
-		});
 	});
 
 	function initGroupTree() {
@@ -119,7 +170,7 @@
 				$.fn.zTree.init($("#groupTree"), setting, data);
 
 				tree = $.fn.zTree.getZTreeObj("groupTree");
-				var parentId = currentViewModel.groupId();
+				var parentId = viewModel.groupId();
 				if (parentId != null && parentId != "") {
 					var node = tree.getNodeByParam("id",parentId);
 					if(!node.isParent){
@@ -139,43 +190,9 @@
 		//currentViewModel.id = treeNode.id;
 		tree.expandNode(treeNode, true, false, true);
 		let fullName = treeNode.fullName!= null && treeNode.fullName !== '组织机构树' ? '(' + treeNode.fullName + ')': '';
-		currentViewModel.groupId(treeNode.id);
-		currentViewModel.groupName(fullName);
+		viewModel.groupId(treeNode.id);
+		viewModel.groupName(fullName);
 		refreshTable();
-	}
-
-	/**
-	 * 用户列表操作按钮对应事件
-	 * id 为用户ID
-	 * operator 操作类型 如"edit","delete"等
-	 */
-	function operatorUser(id, operator) {
-		if (id != null) {
-			window.location.href = "${ctx}/system/user/" + operator + "/" + id;
-		}
-	}
-
-	/**
-	 * 初始化用户分页列表
-	 */
-	function initDataTable() {
-		var options = {
-			divId : "contentTable",
-			url : "${ctx}/system/group/search"
-		};
-		createTable(options);
-	}
-
-	function deleteGroup(id){
-		$.post("${ctx}/system/group/delete/"+id, function(data){
-			if(data.messageType == "SUCCESS"){
-				//alert("操作成功!");
-			}else{
-				alert("操作失败:" + data.content);
-			}
-			refreshTable();
-			initGroupTree();
-		});
 	}
 
 	function removeTreeNodeByNodeId(id){
@@ -188,62 +205,10 @@
 		}
 	}
 
-	function addRole(userId) {
-		if (userId == null || userId == "") {
-			alert("用户ID不能为空");
-		} else {
-			//showMyModal("${ctx}/system/user/addRoles/"+userId, "用户授权", callBackAction);
-			window.location.href="${ctx}/system/user/addRoles/"+userId;
-		}
-	}
-
 	function callBackAction(data) {
-		/*if (data != undefined) {
-			$("#parent_ID").val(data);
-		}
-		window.location.href="${ctx}/system/group/view?parentId=" + $("#parent_ID").val();*/
 		refreshTable();
 		initGroupTree();
 	}
-	function formatId(data) {
-		return data[0];
-	}
-	function formatSex(data) {
-		if (data.sex == "F") {
-			return "<i class='fa fa-female fa-lg green'></i>";
-		} else if (data.sex == "M") {
-			return "<i class='fa fa-male fa-lg red'></i>";
-		}
-		return "保密";
-	}
 
-	function formatStatus(data) {
-		if (data.status == "D") {
-			return "<span class='label label-danger'>禁用</span>";
-		}
-		return "<span class='label label-success'>启用</span>";
-	}
-
-	function formatUserType(data) {
-		if (data.userType == "Z") {
-			return "<span class='label label-success'>正式</span>";
-		}
-		if (data.userType == "S") {
-			return "<span class='label label-danger'>试用</span>";
-		}
-		return "<span class='label label-danger'>无效</span>";
-	}
-
-	function editGroup(groupId) {
-		let url = "${ctx}/system/group/edit/ "+ groupId;
-		top.showMyModel(url,'修改机构', '800px', '60%', callBackAction);
-	}
-	function formatOperator(data) {
-		var html = "";
-		html += "<a href='javascript:void(0)' onclick='editGroup(\"" + data.id + "\")' title=''> <i class='fa fa-edit fa-lg'></i> </a> | ";
-		html += "<a href='javascript:void(0)' onclick='deleteGroup(\"" + data.id + "\")' title=''> <i class='fa fa-trash-o fa-lg'></i> </a>";
-		/*html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
-		return html;
-	}
 </script>
 </html>

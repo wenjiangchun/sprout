@@ -23,7 +23,7 @@ public class Group extends AbstractBaseEntity<Long> {
 
     /**
      * 机构类型对应字典表中跟字典代码名称，当需要给机构添加机构类型时，首先在字典表中添加字典代码为"{@code GROUP_TYPE}"的
-     * 跟字典对象，然后在该字典对象下添加需要的机构类型字典对象，当使用时则通过跟字典对象"{@code GROUP_TYPE}"去查找下面
+     * 根字典对象，然后在该字典对象下添加需要的机构类型字典对象，当使用时则通过跟字典对象"{@code GROUP_TYPE}"去查找下面
      * 所有机构类型子字典对象。
      */
     public static final String GROUP_TYPE = "GROUP_TYPE";

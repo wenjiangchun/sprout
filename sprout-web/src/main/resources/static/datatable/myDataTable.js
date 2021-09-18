@@ -5,7 +5,7 @@ function createTable(options) {
     var columns = options.columns;
 	//var columns = options.columns;
 	if (columns == null) {
-		alert("未定义表格列");
+		layer.alert("未定义表格列");
 		return;
 	}
 	var grid =  $('#'+tableId).DataTable({
@@ -31,7 +31,7 @@ function createTable(options) {
         "ajax": {
             "url": url,
             "data": function (d) {
-                addQueryParams(d);
+                return addQueryParams(d);
             }
         }
 	});
@@ -44,13 +44,19 @@ function createTable(options) {
  * @returns {String}
  */
 function addQueryParams(d) {
+    d['queryParams'] = {};
+    let queryParams = {};
 	$(".datatable_query").each(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if (value !== "" && value != null) {
-            d[name] = value;
+            queryParams[name] = value;
 		}
 	});
+	d.queryParams = queryParams;
+    console.log(d);
+	return d;
+
 }
 
 /**

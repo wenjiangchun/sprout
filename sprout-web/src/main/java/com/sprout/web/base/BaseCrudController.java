@@ -74,8 +74,8 @@ public class BaseCrudController<T extends BaseEntity<PK>, PK extends Serializabl
     @ResponseBody
     public DataTablePage search(DataTableParams dataTableParams, HttpServletRequest request) {
         PageRequest p = dataTableParams.getPageRequest();
-        setPageQueryVariables(dataTableParams.getQueryVairables(), request);
-        Page<T> list = this.service.findPage(p, dataTableParams.getQueryVairables());
+        setPageQueryVariables(dataTableParams.getQueryParams(), request);
+        Page<T> list = this.service.findPage(p, dataTableParams.getQueryParams());
         return DataTablePage.generateDataTablePage(list, dataTableParams);
     }
 

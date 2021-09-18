@@ -83,49 +83,6 @@
 		viewModel = {
 			dictName: ko.observable(''),
 			parentId: ko.observable('${parentId!}'),
-			initTable: function() {
-				const options = {
-					divId : "contentTable",
-					url : "${ctx}/system/dict/search",
-					columns:[{
-						'data':'id',
-						'orderable': false
-					},{
-						'data':'name',
-						'orderable': false
-					},{
-						'data':'code',
-						'orderable': false
-					},{
-						'data':function(row, type, val, meta) {
-							if (row.parent != null) {
-								return row.parent.name;
-							}
-							return "";
-						},
-						'orderable': false
-					},{
-						'data':function(row, type, val, meta) {
-							if (!row.enabled) {
-								return "<span class='label label-danger'>禁用</span>";
-							}
-							return "<span class='label label-success'>启用</span>";
-						}
-					},{
-						'data':'sn'
-					},{
-						'data':function(row, type, val, meta) {
-							var html = "";
-							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-							html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
-							/*	html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
-							return html;
-						},
-						'orderable': false
-					}]
-				};
-				createTable(options);
-			},
 			add: function() {
 				let url = "${ctx}/system/dict/add";
 				if (this.parentId() != null && this.parentId() !== "") {
@@ -169,7 +126,7 @@
 		};
 		ko.applyBindings(viewModel);
 		initGroupTree();
-		viewModel.initTable();
+		initDataTable();
 	});
 
 	function initGroupTree() {
@@ -216,6 +173,33 @@
 		viewModel.parentId(treeNode.id);
 		viewModel.dictName(dictName);
 		refreshTable();
+	}
+
+	function initDataTable() {
+		const options = {
+			divId : "contentTable",
+			url : "${ctx}/system/dict/search"
+		};
+		createTable(options);
+	}
+
+	function formatParentCode(data) {
+		if (data.parent != null) {
+			return data.parent.name;
+		}
+		return "";
+	}
+	function formatStatus(data) {
+		if (!data.enabled) {
+			return "<span class='label label-danger'>禁用</span>";
+		}
+		return "<span class='label label-success'>启用</span>";
+	}
+	function formatOperator(data) {
+		let html = "";
+		html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + data.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
+		html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + data.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";
+		return html;
 	}
 
 	function callBackAction(data) {

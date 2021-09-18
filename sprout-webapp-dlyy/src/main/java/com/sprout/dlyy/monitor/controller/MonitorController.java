@@ -49,18 +49,9 @@ public class MonitorController extends BaseController {
     @GetMapping("/getRecordList")
     @ResponseBody
     public Map<String, Object> getRecordList(@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-        Date start = SproutDateUtils.getFirstDayOfMonth();
-        Date end = new Date();
-        try {
-            if (startDate != null) {
-                start = SproutDateUtils.parseDate(startDate, "yyyy-MM-dd");
-            }
-            if (endDate != null) {
-                end = SproutDateUtils.parseDate(endDate, "yyyy-MM-dd");
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        List<Date> dateList = processDate(startDate, endDate);
+        Date start = dateList.get(0);
+        Date end = dateList.get(1);
         List<MonitorRecord> recordList = monitorRecordService.findRecordList(start, end);
         List<String> dayList = new ArrayList<>();
         //计算日期差

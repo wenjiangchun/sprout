@@ -19,14 +19,14 @@ public class DataTableParams {
     /// 分页时每页跨度数量
 	private int start ;
 
-	private Map<String, Object> queryVairables = new HashMap<>();
+	private Map<String, Object> queryParams = new HashMap<>();
 
-	public Map<String, Object> getQueryVairables() {
-		return queryVairables;
+	public Map<String, Object> getQueryParams() {
+		return queryParams;
 	}
 
-	public void setQueryVairables(Map<String, Object> queryVairables) {
-		this.queryVairables = queryVairables;
+	public void setQueryParams(Map<String, Object> queryParams) {
+		this.queryParams = queryParams;
 	}
 
 	public int getDraw() {

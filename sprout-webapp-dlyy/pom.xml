@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sprout</groupId>
-            <artifactId>sprout-system</artifactId>
+            <artifactId>sprout-shiro</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

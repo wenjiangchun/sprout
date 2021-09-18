@@ -66,8 +66,8 @@
                             </div>
                         </div>
                         <div class="box-footer">
-                            <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
-                            <button type="reset" class="btn btn-default">重置</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>
+                            <button type="reset" class="btn btn-danger">重置</button>
                         </div>
                     </form>
                 </div>
