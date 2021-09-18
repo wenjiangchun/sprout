@@ -1,5 +1,8 @@
 package com.sprout.work.web.controller;
 
+import com.sprout.core.spring.SpringContextUtils;
+import com.sprout.system.entity.User;
+import com.sprout.system.service.UserService;
 import com.sprout.work.entity.DairySendConfig;
 import com.sprout.work.service.DairySendConfigService;
 import com.sprout.web.base.BaseCrudController;
@@ -30,6 +33,8 @@ public class DairySendConfigController extends BaseCrudController<DairySendConfi
 	protected void setModel(Model model, HttpServletRequest request) {
 		super.setModel(model, request);
 		Long userId = 2L;
+		User worker = SpringContextUtils.getBean(UserService.class).findById(userId);
+		model.addAttribute("worker", worker);
 	}
 
 }

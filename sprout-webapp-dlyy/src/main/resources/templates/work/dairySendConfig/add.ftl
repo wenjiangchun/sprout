@@ -17,7 +17,7 @@
                             <div class="form-group">
                                 <label for="name" class="col-sm-2 control-label">人员姓名</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="name" name="name" class="form-control" maxlength="20" required/>
+                                    <input type="text" id="name" name="name" class="form-control" maxlength="20" value="${worker.name!}" required/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -81,6 +81,9 @@
     ko.applyBindings(viewModel);
     $('#inputForm').ajaxForm({
         dataType : 'json',
+        beforeSubmit:function(formData, jqForm, options){
+            //$("#dairyStartDay").val($("#dairyStartDay").val() + " 00:00:00")
+        },
         success : function(data) {
             if (data.messageType === "SUCCESS") {
                 layer.alert("操作成功", function() {

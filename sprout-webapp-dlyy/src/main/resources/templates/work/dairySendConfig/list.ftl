@@ -65,7 +65,7 @@
 						'data':'id',
 						'orderable': false
 					},{
-						'data':'user.userName'
+						'data':'user.name'
 					},{
 						'data':'source'
 					},{

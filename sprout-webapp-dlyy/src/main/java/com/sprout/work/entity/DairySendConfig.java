@@ -2,6 +2,7 @@ package com.sprout.work.entity;
 
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
 import com.sprout.system.entity.User;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -69,6 +70,7 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
     }
 
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     public Date getDairyStartDay() {
         return dairyStartDay;
     }
