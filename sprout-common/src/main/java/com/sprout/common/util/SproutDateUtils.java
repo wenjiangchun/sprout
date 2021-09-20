@@ -99,6 +99,31 @@ public class SproutDateUtils extends DateUtils {
         return newDays != 0 ? newDays : 1;
     }
 
+    /**
+     * 获取两个日期差天数.
+     * @param startTime 开始日期
+     * @param endTime 结束日期
+     * @return 相隔天数
+     */
+    public static int getDiffBetween(Date startTime, Date endTime) {
+        long diff = endTime.getTime() - startTime.getTime();
+        int hours = (int) (diff/(1000*60*60));
+        int days = 0;
+        if (hours % 24 != 0) {
+            days = hours/24 + 1;
+        } else {
+            days = hours/24;
+        }
+        int newDays = 0;
+        for (int i=0; i < days; i++) {
+            Date newDate = addDays(startTime, i);
+            //判断该天是周几
+            int weekDay = getDayInWeek(newDate);
+            newDays += 1;
+        }
+        return newDays != 0 ? newDays : 1;
+    }
+
     public static LocalDate toLocalDate(Date d) {
         if (d != null) {
             return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

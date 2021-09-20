@@ -4,6 +4,7 @@
 <title>工作日志</title>
 	<#include "../../common/head.ftl"/>
 	<#include "../../common/datatable.ftl"/>
+	<#include "../../common/upload.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
@@ -23,7 +24,7 @@
 								<#--<a href="#" id="refreshRepository" class="btn btn-default"><i class="fa fa-repeat"></i>  刷新</a>
 								<a href="#" id="add_btn" class="btn btn-info"><i class="fa fa-plus-circle"></i>  添加</a>-->
 							</div>
-								<form class="form-inline">
+								<#--<form class="form-inline">
 									<input type="hidden" class="datatable_query" name="parent.id" data-bind="value: parentId"/>
 									<div class="box-body">
 										<div class="form-group">
@@ -33,9 +34,9 @@
 										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
 											<i class="fa fa-search"></i> 查询
 										</button>
-										<button type="button" class="btn btn-sm btn-danger" data-bind='click: reset' style="margin-left:10px;">清空</button>
+										<button type="button" class="btn btn-sm btn-default" data-bind='click: reset' style="margin-left:10px;">清空</button>
 									</div>
-								</form>
+								</form>-->
 						</div>
 						<!-- /.box-header -->
 						<div class="box-body">
@@ -43,9 +44,8 @@
 								<thead>
 								<tr>
 								<tr>
-									<th>编号</th>
-									<th>姓名</th>
 									<th>日期</th>
+									<th>姓名</th>
 									<th>星期</th>
 									<th>周次</th>
 									<th>工作内容</th>
@@ -58,11 +58,18 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-pencil"></i>  填写日志</a>
+					<div class="row">
+						<div class="col-xs-1">
+							<input type="file" name="file" id="uploadExcel">
+						</div>
+						<div class="col-xs-4">
+							<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-pencil"></i>  填写工作日志</a>
+							<a href="#" class="btn btn-danger" data-bind='click: sendEmail'><i class="fa fa-envelope"></i>  发送周报</a>
+							<a href="#" class="btn btn-danger" data-bind='click: generateWorkDairy'><i class="fa fa-bars"></i>  生成日志</a>
+						</div>
+					</div>
 				</div>
-				<!-- /.col -->
 			</div>
-			<!-- /.row -->
 		</section>
 </body>
 <script src="${ctx}/res/lib/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -76,21 +83,38 @@
 			initTable: function() {
 				const options = {
 					divId : "contentTable",
-					url : "${ctx}/system/config/search",
+					url : "${ctx}/work/workDairy/search",
 					columns:[{
-						'data':'id'
-					},{
-						'data':'user.name'
-					},{
 						'data':'workDay'
 					},{
-						'data':'weekDay'
+						'data':'worker.name',
+						'orderable': false
 					},{
-						'data':'weekNum'
+						'data':'weekDay',
+						'orderable': false
 					},{
-						'data':'content'
+						'data':'weekNum',
+						'orderable': false
 					},{
-						'data':'remark'
+						'data':function(row, type, val, meta) {
+							let content = row.content;
+							if (content != null && content.length > 80) {
+								content = content.substring(0,80) + '...';
+							}
+							return content;
+						},
+						'width': '45%',
+						'orderable': false
+					},{
+						'data':function(row, type, val, meta) {
+							let remark = row.remark;
+							if (remark != null && remark.length > 20) {
+								remark = remark.substring(0,20) + '...';
+							}
+							return remark;
+						},
+						'width': '25%',
+						'orderable': false
 					},{
 						'data':function(row, type, val, meta) {
 							let html = "";
@@ -99,7 +123,8 @@
 								html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + row.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";
 							}
 							return html;
-						}
+						},
+						'orderable': false
 					}]
 				};
 				createTable(options);
@@ -117,6 +142,26 @@
 			edit: function(id) {
 				let url = "${ctx}/system/config/edit/" + id;
 				showMyModel(url,'编辑配置', '900px', '50%', callBackAction);
+			},
+			sendEmail: function() {
+				let url = "${ctx}/work/workDairy/sendEmail";
+				$.get(url, function(data) {
+					layer.alert(data.content);
+				});
+			},
+			generateWorkDairy: function() {
+				$.post('${ctx}/work/workDairy/generateWorkDairy', function(data) {
+					if(data.flag) {
+						if (data.result > 0) {
+							layer.alert('生成成功，共生成' + data.result + '条记录');
+							refreshTable();
+						} else {
+							layer.alert('当前数据不需要生成');
+						}
+					} else {
+						layer.alert(data.content);
+					}
+				});
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -144,6 +189,28 @@
 		};
 		ko.applyBindings(viewModel);
 		viewModel.initTable();
+		$("#uploadExcel").fileinput({
+			uploadUrl: '${ctx}/work/workDairy/uploadWorkDairy',
+			enableResumableUpload: true,
+			browseLabel: '周报上传',
+			browseIcon: '<i class="fa fa-upload"></i>',
+			showPreview:false,
+			showCaption: false,
+			showUploadStats: false,
+			showUploadedThumbs: false,
+			progressDelay:1000,
+			dropZoneEnabled: false,
+			uploadAsync:false,
+			showUpload : false,
+			showRemove : false,
+			language : 'zh'
+		}).on('fileuploaded', function(event, previewId, index, fileId) {
+			layer.alert('导入成功');
+			refreshTable();
+		}).on("filebatchselected", function(event, files) {
+			$("#uploadExcel").fileinput("upload");
+			$('.kv-hidden').hide();
+		});
 	});
 
 	function callBackAction(data) {

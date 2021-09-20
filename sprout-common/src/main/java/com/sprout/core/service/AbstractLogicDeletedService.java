@@ -171,4 +171,10 @@ public abstract class AbstractLogicDeletedService<T extends AbstractLoginDeleted
         filter.put("deleted_isFalse", true);
         return new HazeSpecification<>(filter);
     }
+
+    @Override
+    public T findOneByProperty(String propertyName, Object value) {
+        return this.dao.findOneByProperty(propertyName, value);
+    }
+
 }

@@ -32,11 +32,11 @@
 									<th sName="from">员工姓名</th>
 									<th sName="from">发送邮箱</th>
 									<th sName="smtp">邮件服务器</th>
-									<th sName="token">Token</th>
-									<th sName="to">接收邮箱</th>
-									<th sName="addTo">抄送邮箱</th>
-									<th sName="dairyStartDay">日志开始日期</th>
-									<th sName="sendTime">发送时间</th>
+									<th sName="smtp">协议</th>
+									<th sName="to">接收人</th>
+									<th sName="addTo">抄送人</th>
+									<th sName="dairyStartDay">开始日期</th>
+									<th sName="">开始周数</th>
 									<th sName="operate" columnRender="formatOperator">操作</th>
 								</tr>
 								</tr>
@@ -46,7 +46,7 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加配置</a>
+					<a href="#" class="btn btn-primary" data-bind='click:add,visible:enableAdd'><i class="fa fa-plus-circle"></i>  添加邮件配置</a>
 				</div>
 				<!-- /.col -->
 			</div>
@@ -57,6 +57,13 @@
 	let viewModel;
 	$(document).ready(function() {
 		viewModel = {
+			enableAdd: ko.observable(false),
+			checkConfig: function() {
+				let that = this;
+			    $.get('${ctx}/work/dairySendConfig/checkCurrentUserConfig', function(data){
+					that.enableAdd(data.flag);
+				})
+			},
 			initTable: function() {
 				const options = {
 					divId : "contentTable",
@@ -65,14 +72,14 @@
 						'data':'id',
 						'orderable': false
 					},{
-						'data':'user.name'
+						'data':'worker.name'
 					},{
 						'data':'source'
 					},{
 						'data':'smtp',
 						'orderable': false
 					},{
-						'data':'token',
+						'data':'protocol',
 						'orderable': false
 					},{
 						'data':'destination',
@@ -84,24 +91,25 @@
 						'data':'dairyStartDay',
 						'orderable': false
 					},{
-						'data':'sendTime',
+						'data':'weekStartNum',
 						'orderable': false
 					},{
 						'data':function(row, type, val, meta) {
 							var html = "";
 							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
 							html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> | ";
-							html += "<a href='javascript:void(0)' onclick='viewModel.addResource(" + row.id + ")' title='资源授权'> <i class='fa fa-database'></i> </a>";
+							html += "<a href='javascript:void(0)' onclick='viewModel.testSend(" + row.id + ")' title='发送测试'> <i class='fa fa-mail-forward'></i> </a>";
 							return html;
 						},
 						'orderable': false
 					}]
 				};
 				createTable(options);
+				this.checkConfig();
 			},
 			add: function() {
 				let url = "${ctx}/work/dairySendConfig/add";
-				showMyModel(url,'添加角色', '900px', '50%', callBackAction);
+				showMyModel(url,'添加日志发送配置', '70%', '70%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -135,6 +143,11 @@
 					}, function(){
 					});
 				}
+			},
+			testSend: function(id) {
+				$.get('${ctx}/work/dairySendConfig/testSendEmail/'+id, function(data) {
+					layer.alert(data.content);
+				});
 			}
 		};
 		ko.applyBindings(viewModel);
@@ -142,6 +155,7 @@
 	});
 
 	function callBackAction(data) {
+		viewModel.checkConfig();
 		refreshTable();
 	}
 </script>

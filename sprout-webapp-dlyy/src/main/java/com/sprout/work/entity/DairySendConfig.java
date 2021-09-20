@@ -23,11 +23,15 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
 
     private String copyDestinations;
 
-    private User user;
+    private User worker;
 
     private Date sendTime;
 
     private Date dairyStartDay;
+
+    private int weekStartNum = 1;
+
+    private String protocol;
 
     public String getSource() {
         return source;
@@ -81,12 +85,12 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "worker_id")
-    public User getUser() {
-        return user;
+    public User getWorker() {
+        return worker;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setWorker(User worker) {
+        this.worker = worker;
     }
 
     public Date getSendTime() {
@@ -95,6 +99,22 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
 
     public void setSendTime(Date sendTime) {
         this.sendTime = sendTime;
+    }
+
+    public int getWeekStartNum() {
+        return weekStartNum;
+    }
+
+    public void setWeekStartNum(int weekStartNum) {
+        this.weekStartNum = weekStartNum;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     @Override
@@ -106,9 +126,11 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
                 ", token='" + token + '\'' +
                 ", smtp='" + smtp + '\'' +
                 ", copyDestinations='" + copyDestinations + '\'' +
-                ", user=" + user +
+                ", worker=" + worker +
                 ", sendTime=" + sendTime +
                 ", dairyStartDay=" + dairyStartDay +
+                ", weekStartNum=" + weekStartNum +
+                ", protocol='" + protocol + '\'' +
                 '}';
     }
 }

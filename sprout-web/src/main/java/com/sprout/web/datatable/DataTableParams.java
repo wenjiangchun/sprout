@@ -61,6 +61,6 @@ public class DataTableParams {
 		/*Sort sort = Sort.by(Sort.Direction.fromString(sSortDir_0), sColumns[iSortCol_0]);
 		return PageRequest.of(iDisplayStart/iDisplayLength, iDisplayLength, sort);*/
 		Sort sort = Sort.by(Sort.Direction.fromString("asc"), "id");
-		return PageRequest.of(start, length, sort);
+		return PageRequest.of(start/length, length, sort);
 	}
 }

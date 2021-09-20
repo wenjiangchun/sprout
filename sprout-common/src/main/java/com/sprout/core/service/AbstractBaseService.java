@@ -165,4 +165,10 @@ public abstract class AbstractBaseService<T extends BaseEntity<PK>, PK extends S
     public List<T> findBySql(String sql, Map<String, Object> queryParams) {
         return this.dao.findBySql(sql, queryParams);
     }
+
+    @Override
+    public T findOneByProperty(String propertyName, Object value) {
+        return this.dao.findOneByProperty(propertyName, value);
+    }
+
 }

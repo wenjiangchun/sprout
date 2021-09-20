@@ -14,9 +14,8 @@ public final class WorkDayUtils {
      */
     public static int getWeekNum(Date initialDate, Date currentDate) {
         WeekDay startWeekDay = getWeekDayByDate(initialDate);
-        WeekDay currentWeekDay = getWeekDayByDate(currentDate);
         //获取两个日期之间的天数
-        int days = SproutDateUtils.getDiff(initialDate, currentDate);
+        int days = SproutDateUtils.getDiffBetween(initialDate, currentDate);
         //计算第一周差几天到达周日
         int nextWeekDay = 0;
         switch (startWeekDay) {
