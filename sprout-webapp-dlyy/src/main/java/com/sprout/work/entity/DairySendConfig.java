@@ -33,6 +33,8 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
 
     private String protocol;
 
+    private String personalSign;
+
     public String getSource() {
         return source;
     }
@@ -117,6 +119,14 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
         this.protocol = protocol;
     }
 
+    public String getPersonalSign() {
+        return personalSign;
+    }
+
+    public void setPersonalSign(String personalSign) {
+        this.personalSign = personalSign;
+    }
+
     @Override
     public String toString() {
         return "DairySendConfig{" +
@@ -131,6 +141,7 @@ public class DairySendConfig extends AbstractBaseEntity<Long> {
                 ", dairyStartDay=" + dairyStartDay +
                 ", weekStartNum=" + weekStartNum +
                 ", protocol='" + protocol + '\'' +
+                ", personalSign='" + personalSign + '\'' +
                 '}';
     }
 }

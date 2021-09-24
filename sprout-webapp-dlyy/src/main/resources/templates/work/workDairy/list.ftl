@@ -62,7 +62,7 @@
 						<div class="col-xs-1">
 							<input type="file" name="file" id="uploadExcel">
 						</div>
-						<div class="col-xs-4">
+						<div class="col-xs-3">
 							<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-pencil"></i>  填写工作日志</a>
 							<a href="#" class="btn btn-danger" data-bind='click: sendEmail'><i class="fa fa-envelope"></i>  发送周报</a>
 							<a href="#" class="btn btn-danger" data-bind='click: generateWorkDairy'><i class="fa fa-bars"></i>  生成日志</a>
@@ -119,9 +119,7 @@
 						'data':function(row, type, val, meta) {
 							let html = "";
 							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-							if (row.configType === 'B') {
-								html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + row.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";
-							}
+							html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + row.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";
 							return html;
 						},
 						'orderable': false
@@ -131,7 +129,7 @@
 			},
 			add: function() {
 				let url = "${ctx}/work/workDairy/add";
-				showMyModel(url,'填写日志', '70%', '70%', callBackAction);
+				showMyModel(url,'填写工作日志', '70%', '70%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -140,8 +138,8 @@
 				refreshTable();
 			},
 			edit: function(id) {
-				let url = "${ctx}/system/config/edit/" + id;
-				showMyModel(url,'编辑配置', '900px', '50%', callBackAction);
+				let url = "${ctx}/work/workDairy/edit/" + id;
+				showMyModel(url,'编辑工作日志', '70%', '70%', callBackAction);
 			},
 			sendEmail: function() {
 				let url = "${ctx}/work/workDairy/sendEmail";
@@ -172,7 +170,7 @@
 					}, function(){
 						const ids = [id];
 						$.post({
-							url:'${ctx}/system/config/delete/'+ids,
+							url:'${ctx}/work/workDairy/delete/'+ids,
 							success:function(data) {
 								if (data.messageType === 'SUCCESS') {
 									layer.alert('删除成功');

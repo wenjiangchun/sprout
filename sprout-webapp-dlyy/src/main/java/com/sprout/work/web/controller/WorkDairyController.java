@@ -9,18 +9,22 @@ import com.sprout.system.service.UserService;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import com.sprout.work.entity.DairySendConfig;
+import com.sprout.work.entity.DairySendLog;
 import com.sprout.work.entity.WorkDairy;
 import com.sprout.work.service.DairySendConfigService;
+import com.sprout.work.service.DairySendLogService;
 import com.sprout.work.service.WorkDairyService;
 import com.sprout.work.util.WorkDairyReadListener;
 import com.sprout.work.util.WorkDairyWrapper;
 import com.sprout.work.util.WorkDayUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -52,25 +56,48 @@ public class WorkDairyController extends BaseCrudController<WorkDairy, Long> {
     }
 
 
+    @Override
+    public String add(Model model, HttpServletRequest request) {
+        model.addAttribute("workDairy", getWorkDairyByWorkDay(new Date()));
+        return super.add(model, request);
+    }
+
+    @Override
+    public String edit(Long id, Model model, HttpServletRequest request) {
+        model.addAttribute("workDairy", getWorkDairyByWorkDay(new Date()));
+        return super.edit(id, model, request);
+    }
 
     @PostMapping("getWorkDairyByWorkDay")
     @ResponseBody
     public WorkDairy getWorkDairyByWorkDay(@RequestParam Date workDay) {
-        Long userId = 2L;
-        WorkDairy workDairy = this.workDairyService.findWorkDairy(userId, workDay);
-        User worker = new User();
-        worker.setId(userId);
-        // 查询员工日志配置信息
-        List<DairySendConfig> configList = this.dairySendConfigService.findByProperty("worker", worker);
-        if (Objects.isNull(workDairy)) {
-            //TODO 计算当前周
-            workDairy = new WorkDairy();
-            workDairy.setWorkDay(workDay);
-            workDairy.setWeekDay(WorkDayUtils.getWeekDayByDate(workDay).getWeekDayName());
-            if (configList.isEmpty()) {
-                workDairy.setWeekNum(1);
+        //查询当前登录人信息
+        ShiroUser shiroUser = ShiroUtils.getCurrentUser();
+        WorkDairy workDairy = new WorkDairy();
+        if (Objects.nonNull(shiroUser)) {
+            User worker = SpringContextUtils.getBean(UserService.class).findById(Long.valueOf(shiroUser.getUserId()));
+            //查询已经存在的数据
+            workDairy = this.workDairyService.findWorkDairy(worker.getId(), workDay);
+            //如果存在则直接查询赋值
+            if (Objects.nonNull(workDairy)) {
+                return workDairy;
             } else {
-                workDairy.setWeekNum(WorkDayUtils.getWeekNum(configList.get(0).getDairyStartDay(), workDay));
+                //重新生成数据
+                workDairy = new WorkDairy();
+                workDairy.setWorker(worker);
+                workDairy.setWorkDay(workDay);
+                workDairy.setWeekDay(WorkDayUtils.getWeekDayByDate(workDay).getWeekDayName());
+                //查找对应配置信息 如果不存在则根据数据库中第一条判断，如果第一条不存在则默认设为1
+                DairySendConfig dairySendConfig = this.dairySendConfigService.findOneByProperty("worker", worker);
+                if (Objects.nonNull(dairySendConfig)) {
+                    workDairy.setWeekNum(WorkDayUtils.getWeekNum(dairySendConfig.getDairyStartDay(), workDay) + dairySendConfig.getWeekStartNum() - 1);
+                } else {
+                    //查询数据库中该人员第一条记录
+                    WorkDairy firstWorkDairy = this.workDairyService.findOneByProperty("worker", worker, Sort.by(Sort.Direction.ASC, "weekDay"));
+                    if (Objects.nonNull(firstWorkDairy)) {
+                        workDairy.setWeekNum(WorkDayUtils.getWeekNum(firstWorkDairy.getWorkDay(), workDay) + firstWorkDairy.getWeekNum() - 1);
+                    }
+                }
             }
         }
         return workDairy;
@@ -100,18 +127,46 @@ public class WorkDairyController extends BaseCrudController<WorkDairy, Long> {
     @GetMapping("/sendEmail")
     @ResponseBody
     public RestResult sendEmail() {
+        DairySendLog dairySendLog = new DairySendLog();
+        DairySendConfig dairySendConfig = null;
+        User worker = new User();
         try {
             ShiroUser currentUser = ShiroUtils.getCurrentUser();
             if (Objects.nonNull(currentUser)) {
                 String userId = currentUser.getUserId();
-                User worker = new User();
+                worker = new User();
                 worker.setId(Long.valueOf(userId));
-                workDairyService.sendEmail(worker);
+                dairySendConfig = this.dairySendConfigService.findOneByProperty("worker", worker);
+                Message message = workDairyService.sendEmail(dairySendConfig);
+                dairySendLog.setSendFlag(true);
+                dairySendLog.setSubject(message.getSubject());
+                dairySendLog.setSendTime(message.getSentDate());
+                dairySendLog.setDestination(dairySendConfig.getDestination());
+                dairySendLog.setSource(dairySendConfig.getSource());
+                dairySendLog.setCopyDestinations(dairySendConfig.getCopyDestinations());
+                dairySendLog.setUser(worker);
+                dairySendLog.setSendResult("邮件发送成功");
+                SpringContextUtils.getBean(DairySendLogService.class).save(dairySendLog);
                 return RestResult.createSuccessResult("邮件发送成功!");
             } else {
                 return RestResult.createErrorResult("邮件发送失败: 当前用户不存在，请登录系统!");
             }
         } catch (Exception ex) {
+            dairySendLog.setSendFlag(false);
+            dairySendLog.setSubject("");
+            dairySendLog.setSendTime(new Date());
+            dairySendLog.setUser(worker);
+            if (dairySendConfig != null) {
+                dairySendLog.setDestination(dairySendConfig.getDestination());
+                dairySendLog.setSource(dairySendConfig.getSource());
+                dairySendLog.setCopyDestinations(dairySendConfig.getCopyDestinations());
+            }
+            dairySendLog.setSendResult("邮件发送失败:" + ex.getMessage());
+            try {
+                SpringContextUtils.getBean(DairySendLogService.class).save(dairySendLog);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return RestResult.createErrorResult("邮件发送失败:" + ex.getMessage());
         }
 

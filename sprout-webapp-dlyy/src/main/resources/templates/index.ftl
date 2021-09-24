@@ -195,6 +195,7 @@
             <li><a href="#" class="menuBtn" url="${ctx}/work/workDairy/view"><i class="fa fa-pencil-square-o"></i> 工作日志填写</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/work/dairySendConfig/view"><i class="fa fa-empire"></i> 日志发送配置</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/work/dairySendLog/view"><i class="fa fa-envelope-o"></i> 日志发送记录</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/work/holiday/setHoliday"><i class="fa fa-dashcube"></i> 节假日管理</a></li>
           </ul>
         </li>
         <li class="treeview">

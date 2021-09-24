@@ -16,4 +16,15 @@ public class PlatformConfig {
     public void setImpalaUrl(String impalaUrl) {
         this.impalaUrl = impalaUrl;
     }
+
+
+    private String workFilePath;
+
+    public String getWorkFilePath() {
+        return workFilePath;
+    }
+
+    public void setWorkFilePath(String workFilePath) {
+        this.workFilePath = workFilePath;
+    }
 }

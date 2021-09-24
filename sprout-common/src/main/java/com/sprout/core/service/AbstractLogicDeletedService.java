@@ -177,4 +177,8 @@ public abstract class AbstractLogicDeletedService<T extends AbstractLoginDeleted
         return this.dao.findOneByProperty(propertyName, value);
     }
 
+    @Override
+    public T findOneByProperty(String propertyName, Object value, Sort... sorts) {
+        return this.dao.findOneByProperty(propertyName, value, sorts);
+    }
 }

@@ -72,6 +72,12 @@
                                     <input type="number" id="weekStartNum" name="weekStartNum" class="form-control" maxlength="50" value="1" required min="1"/>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="personalSign" class="col-sm-2 control-label">邮箱签名</label>
+                                <div class="col-sm-10">
+                                    <textarea rows="3" id="personalSign" name="personalSign" class="form-control" maxlength="200" ></textarea>
+                                </div>
+                            </div>
                         </div>
                         <div class="box-footer">
                             <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>

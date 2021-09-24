@@ -4,10 +4,12 @@ import com.alibaba.excel.EasyExcel;
 import com.sprout.common.util.SproutDateUtils;
 import com.sprout.core.service.AbstractBaseService;
 import com.sprout.core.spring.SpringContextUtils;
+import com.sprout.dlyy.config.PlatformConfig;
 import com.sprout.system.entity.User;
 import com.sprout.work.dao.DairySendConfigDao;
 import com.sprout.work.dao.WorkDairyDao;
 import com.sprout.work.entity.DairySendConfig;
+import com.sprout.work.entity.DairySendLog;
 import com.sprout.work.entity.WorkDairy;
 import com.sprout.work.util.EmailSender;
 import com.sprout.work.util.WorkDairyWrapper;
@@ -16,11 +18,13 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Message;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class WorkDairyService extends AbstractBaseService<WorkDairy, Long> {
@@ -33,20 +37,35 @@ public class WorkDairyService extends AbstractBaseService<WorkDairy, Long> {
 	}
 
 	public WorkDairy findWorkDairy(Long userId, Date workDay) {
-		return null;
+		WorkDairy example = new WorkDairy();
+		User worker = new User();
+		worker.setId(userId);
+		example.setWorker(worker);
+		example.setWorkDay(workDay);
+		Optional<WorkDairy> result = this.workDairyDao.findOne(Example.of(example));
+		return result.orElse(null);
 	}
 
 
-	public boolean sendEmail(User worker) throws Exception {
+	public Message sendEmail(DairySendConfig dairySendConfig) throws Exception {
+		//发送邮件
+		if (Objects.isNull(dairySendConfig)) {
+			throw new Exception("请先配置邮件发送信息");
+		}
 		//查询该用户所有工作日志
 		WorkDairy workDairy = new WorkDairy();
-		workDairy.setWorker(worker);
+		workDairy.setWorker(dairySendConfig.getWorker());
 		Example<WorkDairy> example = Example.of(workDairy);
 		List<WorkDairy> workDairyList = this.workDairyDao.findAll(example, Sort.by(Sort.Direction.ASC, "workDay"));
 		//封装excel
-		File f = new File("d:\\" + System.currentTimeMillis() + ".xlsx");
+		Path directoryPath = Paths.get(SpringContextUtils.getBean(PlatformConfig.class).getWorkFilePath());
+		if (!Files.exists(directoryPath)) {
+			Files.createDirectories(directoryPath);
+		}
+		File f = new File(SpringContextUtils.getBean(PlatformConfig.class).getWorkFilePath() + FileSystems.getDefault().getSeparator() + System.currentTimeMillis() + ".xlsx");
 		List<WorkDairyWrapper> workDairyWrapperList = new ArrayList<>();
-		workDairyList.forEach(w -> {
+		int lastWeekNum = dairySendConfig.getWeekStartNum();
+		for (WorkDairy w : workDairyList) {
 			WorkDairyWrapper wrapper = new WorkDairyWrapper();
 			wrapper.setWorkDay(SproutDateUtils.format(w.getWorkDay(), "yyyy-MM-dd"));
 			wrapper.setWeekNum(w.getWeekNum());
@@ -54,12 +73,16 @@ public class WorkDairyService extends AbstractBaseService<WorkDairy, Long> {
 			wrapper.setContent(w.getContent());
 			wrapper.setRemark(w.getRemark());
 			workDairyWrapperList.add(wrapper);
-		});
+			if (w.getWeekNum() > lastWeekNum) {
+				lastWeekNum = w.getWeekNum();
+			}
+		}
 		EasyExcel.write(f, WorkDairyWrapper.class).sheet("sheet1").doWrite(workDairyWrapperList);
-		//发送邮件
-		DairySendConfig config = SpringContextUtils.getBean(DairySendConfigDao.class).findOneByProperty("worker", worker);
-		EmailSender.sendMimeMail(config, "工作周报", "", f);
-		return f.delete();
+		//生成标题
+		String subject = dairySendConfig.getWorker().getName() + "第" + lastWeekNum + "工作周报";
+		Message message = EmailSender.sendMimeMail(dairySendConfig, subject, dairySendConfig.getPersonalSign(), f);
+		f.deleteOnExit();
+		return message;
 	}
 
 	/**

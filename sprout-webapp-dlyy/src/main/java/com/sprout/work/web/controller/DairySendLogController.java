@@ -17,7 +17,7 @@ public class DairySendLogController extends BaseCrudController<DairySendLog, Lon
 	private DairySendLogService dairySendLogService;
 
 	public DairySendLogController(DairySendLogService dairySendLogService) {
-		super("work", "dairySendConfig", "发送记录", dairySendLogService);
+		super("work", "dairySendLog", "发送记录", dairySendLogService);
 		this.dairySendLogService = dairySendLogService;
 	}
 

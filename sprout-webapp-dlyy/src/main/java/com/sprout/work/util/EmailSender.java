@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -35,7 +36,7 @@ public class EmailSender {
         sender.send(message);
     }
 
-    public static void sendMimeMail(DairySendConfig dairySendConfig, String subject, String content, File addFile) throws MessagingException {
+    public static Message sendMimeMail(DairySendConfig dairySendConfig, String subject, String content, File addFile) throws MessagingException {
         JavaMailSender sender = getJavaMailSender(dairySendConfig);
         MimeMessage mimeMessage = sender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
@@ -48,8 +49,9 @@ public class EmailSender {
         }
         helper.setSentDate(new Date());
         helper.setText(content);
-        helper.addAttachment(dairySendConfig.getWorker().getName() + "第" + dairySendConfig.getWeekStartNum() + "周工作周报.xlsx", addFile);
+        helper.addAttachment(subject + ".xlsx", addFile);
         sender.send(mimeMessage);
+        return mimeMessage;
     }
 
     private static JavaMailSender getJavaMailSender(DairySendConfig dairySendConfig) {

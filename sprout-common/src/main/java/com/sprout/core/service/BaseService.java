@@ -40,4 +40,6 @@ public interface BaseService<T extends BaseEntity<PK>, PK extends Serializable> 
     List<T> findBySql(String sql, Map<String, Object> queryParams);
 
     T findOneByProperty(String propertyName, Object value);
+
+    T findOneByProperty(String propertyName, Object value, Sort... sorts);
 }
