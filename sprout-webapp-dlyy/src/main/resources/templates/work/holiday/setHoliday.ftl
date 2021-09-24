@@ -239,6 +239,7 @@
         y    = date.getFullYear()
     $('#calendar').fullCalendar({
       defaultView: 'month',
+      contentHeight: 600,
       locale: 'zh-cn',
       header    : {
         left  : 'prev,next today',
