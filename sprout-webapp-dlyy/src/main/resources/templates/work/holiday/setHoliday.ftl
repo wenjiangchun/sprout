@@ -28,7 +28,7 @@
                   <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-bars"></i></button>
                   <ul class="dropdown-menu pull-right" role="menu">
-                    <li><a href="#"> 保存数据</a></li>
+                    <li><a href="#" id="batchGenerateHoliday"> 生成当年数据</a></li>
                     <li class="divider"></li>
                     <li><a href="#">查看日历</a></li>
                   </ul>
@@ -115,15 +115,16 @@
   let viewModel = {
     getAll: function() {
       let events = [];
-      //TODO 清空节假日
+      $('#calendar').fullCalendar('removeEvents');
       $.get('${ctx}/work/holiday/findAll', function(data) {
         _.each(data, function(dt,idx) {
           let holidayEvent = {
+            id             : dt.id,
             title          : dt.holidayItem.name,
             start          : new Date(dt.year, dt.month - 1, dt.day),
             backgroundColor: dt.holidayItem.color, //red
             borderColor    : dt.holidayItem.color,
-            workDay        : dt.workDay//red
+            workDay        : dt.workDay//red,
           };
           events.push(holidayEvent);
           /*if (idx === 0) {
@@ -263,18 +264,25 @@
       ],*/
       editable  : true,
       droppable : true,
-      eventDrop: function(eventInfo) {
-        alert(eventInfo)
-        /*eventInfo.revert();*/
+      eventDragStop: function(event, jsEvent, ui, view) {
+          console.log(event);
+      },
+      eventClick: function(calEvent, jsEvent, view) {
+        layer.confirm('删除当前节假日？', {
+          btn: ['确定','取消'] //按钮
+        }, function(){
+          $.get('${ctx}/work/holiday/deleteHoliday?workDay=' + calEvent.workDay, function(data){
+            if (data.flag) {
+              layer.alert('删除成功');
+              $('#calendar').fullCalendar('removeEvents', calEvent.id);
+            }
+         }) ;
+        }, function(){
+
+        });
       },
       eventAllow: function(dropLocation, draggedEvent) {
         return false;
-        if (draggedEvent.id === '999') {
-          return dropLocation.start.isAfter('2016-01-01'); // a boolean
-        }
-        else {
-          return true;
-        }
       },
       drop      : function (date, allDay) {
         var originalEventObject = $(this).data('eventObject')
@@ -286,7 +294,9 @@
         $.get('${ctx}/work/holiday/checkWorkDay?workDay=' + date, function(checked){
           if(checked) {
             $.post('${ctx}/work/holiday/saveHoliday?itemName=' + originalEventObject.title + '&workDay=' + copiedEventObject.start, function(data) {
-              if (data.flag) {
+              if (data.id != null) {
+                copiedEventObject.id = data.id;
+                copiedEventObject.workDay = data.workDay;
                 $('#calendar').fullCalendar('renderEvent', copiedEventObject, true)
               }
             })
@@ -315,30 +325,28 @@
       }
       $.post('${ctx}/work/holiday/saveHolidayItem', {color: currColor, name: val}, function(data) {
         if (data.flag) {
-          /*var event = $('<div />')
-          event.css({
-            'background-color': currColor,
-            'border-color'    : currColor,
-            'color'           : '#fff'
-          }).addClass('external-event')
-          event.html(val)
-          $('#external-events').prepend(event)*/
-
-          //Add draggable funtionality
           viewModel.getHolidayItemList()
           //重新绘制
-
-          //Remove event from text input
+          viewModel.getAll();
           $('#new-event').val('')
         }
       });
     })
 
+    $('#batchGenerateHoliday').click(function() {
+      $.get('${ctx}/work/holiday/generateHoliday', function(data){
+        if (data.flag) {
+          layer.alert(data.content);
+          viewModel.getAll();
+        } else {
+          layer.alert(data.content);
+        }
+      });
+    });
     viewModel.getAll();
     viewModel.getHolidayItemList();
     viewModel.init_event($('#external-events div.external-event'))
   })
-
 
 </script>
 </body>

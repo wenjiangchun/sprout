@@ -17,6 +17,8 @@ public class RestResult {
         this.content = content;
     }
 
+
+
     public Object getResult() {
         return result;
     }
@@ -39,6 +41,10 @@ public class RestResult {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public static RestResult createSuccessResult() {
+        return new RestResult(true, null);
     }
 
     public static RestResult createSuccessResult(String content) {

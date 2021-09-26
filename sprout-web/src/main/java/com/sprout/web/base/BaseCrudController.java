@@ -70,7 +70,7 @@ public class BaseCrudController<T extends BaseEntity<PK>, PK extends Serializabl
      * @param request
      * @return 查询结果分页对象
      */
-    @GetMapping(value = "search")
+    @PostMapping(value = "search")
     @ResponseBody
     public DataTablePage search(DataTableParams dataTableParams, HttpServletRequest request) {
         PageRequest p = dataTableParams.getPageRequest();

@@ -58,7 +58,7 @@
                         <div class="box-footer">
                             <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
                             <button type="reset" class="btn btn-default">重置</button>
-                            <input type="hidden" name="id" class="form-control" maxlength="20" value="${workDairy.id!}"/>
+                            <input type="hidden" name="id" id="id" class="form-control" maxlength="20" value="${workDairy.id!}"/>
                         </div>
                     </form>
                 </div>
@@ -99,6 +99,7 @@
                 viewModel.weekNum(data.weekNum);
                 $("#content").val(data.content);
                 $("#remark").val(data.remark);
+                $("#id").val(data.id);
             });
         })
     });

@@ -13,7 +13,7 @@ public class Holiday extends AbstractBaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
-    private Date workDay;
+    private String workDay;
 
     private HolidayItem holidayItem;
 
@@ -23,13 +23,11 @@ public class Holiday extends AbstractBaseEntity<Long> {
 
     private int day;
 
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    public Date getWorkDay() {
+    public String getWorkDay() {
         return workDay;
     }
 
-    public void setWorkDay(Date workDay) {
+    public void setWorkDay(String workDay) {
         this.workDay = workDay;
     }
 

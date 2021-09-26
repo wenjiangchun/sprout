@@ -1,15 +1,18 @@
 package com.sprout.work.web.controller;
 
+import com.sprout.common.util.SproutDateUtils;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import com.sprout.work.entity.*;
 import com.sprout.work.service.HolidayService;
+import com.sprout.work.util.WorkDayUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,19 +52,18 @@ public class HolidayController extends BaseCrudController<Holiday, Long> {
 
     @PostMapping("/saveHoliday")
     @ResponseBody
-    public RestResult saveHoliday(String itemName, String workDay) {
+    public Holiday saveHoliday(String itemName, String workDay)  {
         try {
-            this.holidayService.saveHoliday(itemName, new Date(Long.parseLong(workDay)));
-            return RestResult.createSuccessResult("");
+            return this.holidayService.saveHoliday(itemName, SproutDateUtils.format(new Date(Long.parseLong(workDay)), "yyyy-MM-dd"));
         } catch (Exception e) {
-            return RestResult.createErrorResult(e.getMessage());
+            return new Holiday();
         }
     }
 
     @GetMapping("/checkWorkDay")
     @ResponseBody
     public boolean checkWorkDay(@RequestParam String workDay) {
-       List<Holiday> holidayList = this.holidayService.findByProperty("workDay", new Date(Long.parseLong(workDay)));
+       List<Holiday> holidayList = this.holidayService.findByProperty("workDay", SproutDateUtils.format(new Date(Long.parseLong(workDay)), "yyyy-MM-dd"));
        return holidayList.isEmpty();
     }
 
@@ -80,5 +82,46 @@ public class HolidayController extends BaseCrudController<Holiday, Long> {
     @ResponseBody
     public List<HolidayItem> getHolidayItemList() {
         return this.holidayService.getHolidayItemList();
+    }
+
+    @GetMapping("/moveHoliday")
+    @ResponseBody
+    public RestResult moveHoliday(@RequestParam String sourceDay, @RequestParam String targetDay) {
+
+        return null;
+    }
+
+    @GetMapping("/deleteHoliday")
+    @ResponseBody
+    public RestResult deleteHoliday(@RequestParam String workDay) {
+        try {
+            List<Holiday> targetList = this.holidayService.findByProperty("workDay", workDay);
+            for (Holiday holiday : targetList) {
+                this.holidayService.delete(holiday);
+            }
+            logger.debug("成功删除节假日【{}】", workDay);
+            return RestResult.createSuccessResult("删除成功");
+        } catch (Exception ex) {
+            return RestResult.createErrorResult("删除失败:" + ex.getMessage());
+        }
+    }
+
+    @GetMapping("generateHoliday")
+    @ResponseBody
+    public RestResult generateHoliday() {
+        try {
+            int holidayNum = this.holidayService.generateHoliday();
+            String content = "";
+            if (holidayNum > 0) {
+                content += "批量生成节日数据成功,生成"+holidayNum+"条数据";
+            } else {
+                content += "数据已更新";
+            }
+            return RestResult.createSuccessResult(content);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestResult.createErrorResult("批量生成节日数据失败:" + e.getMessage());
+        }
+
     }
 }

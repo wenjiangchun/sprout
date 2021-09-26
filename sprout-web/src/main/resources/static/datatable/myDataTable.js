@@ -30,7 +30,15 @@ function createTable(options) {
         },
         "ajax": {
             "url": url,
+            "type": "POST",
+            "dataType": "json",
             "data": function (d) {
+                //解析排序字段
+                let order = d.order[0];
+                let idxColumn = parseInt(order["column"]);
+                d.orderDirection = order["dir"];
+                let column = d.columns[idxColumn];
+                d.orderColumn = column["data"];
                 return addQueryParams(d);
             }
         }
