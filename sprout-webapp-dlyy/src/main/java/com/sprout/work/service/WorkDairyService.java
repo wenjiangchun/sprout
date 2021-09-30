@@ -6,10 +6,9 @@ import com.sprout.core.service.AbstractBaseService;
 import com.sprout.core.spring.SpringContextUtils;
 import com.sprout.dlyy.config.PlatformConfig;
 import com.sprout.system.entity.User;
-import com.sprout.work.dao.DairySendConfigDao;
 import com.sprout.work.dao.WorkDairyDao;
 import com.sprout.work.entity.DairySendConfig;
-import com.sprout.work.entity.DairySendLog;
+import com.sprout.work.entity.Holiday;
 import com.sprout.work.entity.WorkDairy;
 import com.sprout.work.util.EmailSender;
 import com.sprout.work.util.WorkDairyWrapper;
@@ -25,6 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static com.sprout.core.spring.SpringContextUtils.getBean;
 
 @Service
 public class WorkDairyService extends AbstractBaseService<WorkDairy, Long> {
@@ -58,11 +59,11 @@ public class WorkDairyService extends AbstractBaseService<WorkDairy, Long> {
 		Example<WorkDairy> example = Example.of(workDairy);
 		List<WorkDairy> workDairyList = this.workDairyDao.findAll(example, Sort.by(Sort.Direction.ASC, "workDay"));
 		//封装excel
-		Path directoryPath = Paths.get(SpringContextUtils.getBean(PlatformConfig.class).getWorkFilePath());
+		Path directoryPath = Paths.get(getBean(PlatformConfig.class).getWorkFilePath());
 		if (!Files.exists(directoryPath)) {
 			Files.createDirectories(directoryPath);
 		}
-		File f = new File(SpringContextUtils.getBean(PlatformConfig.class).getWorkFilePath() + FileSystems.getDefault().getSeparator() + System.currentTimeMillis() + ".xlsx");
+		File f = new File(getBean(PlatformConfig.class).getWorkFilePath() + FileSystems.getDefault().getSeparator() + System.currentTimeMillis() + ".xlsx");
 		List<WorkDairyWrapper> workDairyWrapperList = new ArrayList<>();
 		int lastWeekNum = dairySendConfig.getWeekStartNum();
 		for (WorkDairy w : workDairyList) {
@@ -129,8 +130,11 @@ public class WorkDairyService extends AbstractBaseService<WorkDairy, Long> {
 					WorkDayUtils.WeekDay weekDay = WorkDayUtils.getWeekDayByDate(d);
 					wd.setWeekDay(weekDay.getWeekDayName());
 					wd.setWeekNum(WorkDayUtils.getWeekNum(startDay, d) + weekNum -1);
-					if (weekDay.equals(WorkDayUtils.WeekDay.SAT) || weekDay.equals(WorkDayUtils.WeekDay.SUN)) {
-						wd.setContent("周末");
+					//从节假日里面获取数据
+					Map<String, Holiday> holidayCache = SpringContextUtils.getBean(HolidayService.class).getHolidayCache(false);
+					String day = SproutDateUtils.format(d, "yyyy-MM-dd");
+					if (holidayCache.containsKey(day)) {
+						wd.setContent(holidayCache.get(day).getHolidayItem().getName());
 					}
 					list.add(wd);
 				}

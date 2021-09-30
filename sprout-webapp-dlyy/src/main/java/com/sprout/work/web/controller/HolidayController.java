@@ -5,18 +5,12 @@ import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import com.sprout.work.entity.*;
 import com.sprout.work.service.HolidayService;
-import com.sprout.work.util.WorkDayUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/work/holiday")
@@ -46,8 +40,10 @@ public class HolidayController extends BaseCrudController<Holiday, Long> {
 
     @GetMapping("/findAll")
     @ResponseBody
-    public List<Holiday> findAll() {
-        return this.holidayService.findAll(Sort.by(Sort.Direction.ASC, "workDay"));
+    public Collection<Holiday> findAll() {
+        Map<String, Holiday> holidayCache = this.holidayService.getHolidayCache(false);
+        return holidayCache.values();
+        //return this.holidayService.findAll(Sort.by(Sort.Direction.ASC, "workDay"));
     }
 
     @PostMapping("/saveHoliday")
@@ -77,6 +73,18 @@ public class HolidayController extends BaseCrudController<Holiday, Long> {
             return RestResult.createErrorResult(ex.getMessage());
         }
     }
+
+    @PostMapping("/updateHolidayItem")
+    @ResponseBody
+    public RestResult updateHolidayItem(String preName, String name) {
+        try {
+            this.holidayService.updateHolidayItem(preName, name);
+            return RestResult.createSuccessResult("");
+        } catch (Exception ex) {
+            return RestResult.createErrorResult(ex.getMessage());
+        }
+    }
+
 
     @GetMapping("/getHolidayItemList")
     @ResponseBody

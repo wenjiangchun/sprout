@@ -114,6 +114,7 @@
 <script>
   let viewModel = {
     getAll: function() {
+      const startTime = new Date();
       let events = [];
       $('#calendar').fullCalendar('removeEvents');
       $.get('${ctx}/work/holiday/findAll', function(data) {
@@ -126,38 +127,11 @@
             borderColor    : dt.holidayItem.color,
             workDay        : dt.workDay//red,
           };
-          events.push(holidayEvent);
-          /*if (idx === 0) {
-            let holidayEvent = {
-              title          : dt.holidayItem.name,
-              start          : new Date(dt.year, dt.month, dt.day),
-              backgroundColor: dt.color, //red
-              borderColor    : dt.color,
-              workDay        : dt.workDay//red
-            };
-            events.push(holidayEvent);
-          } else {
-            //计算日期是否连续 连续的话将日期事件合并一个
-            let lastEvent = _.last(events);
-            if (lastEvent.title === dt.holidayItem.name && viewModel.isNextDay(lastEvent.workDay, dt.workDay)) {
-              lastEvent.workDay = dt.workDay;
-              lastEvent.end = dt.workDay;
-            } else {
-              let holidayEvent = {
-                title          : dt.holidayItem.name,
-                start          : dt.workDay,
-                backgroundColor: dt.holidayItem.color,
-                borderColor    : dt.holidayItem.color,
-                workDay        : dt.workDay
-              };
-              events.push(holidayEvent);
-            }
-          }*/
+          events.push(holidayEvent)
+          //$('#calendar').fullCalendar('renderEvent', holidayEvent, true)
         });
-        //处理events
-        _.each(events, function(eventObject,idx) {
-          $('#calendar').fullCalendar('renderEvent', eventObject, true)
-        });
+        $('#calendar').fullCalendar('renderEvents', events, true)
+        console.log('getAll=' + (new Date().getTime() - startTime.getTime()))
       });
     },
     isNextDay: function(firstDay, nextDay) {
@@ -165,7 +139,6 @@
       return false;
     },
     checkDay: function(day) {
-      alert(day)
       let checked = false;
       $.get('${ctx}/work/holiday/checkWorkDay', {'workDay': day}, function(data){
         checked = data;
@@ -179,7 +152,7 @@
         _.each(data, function(item, idx) {
           const currColor = item.color;
           const val = item.name;
-          var event = $('<div />')
+          let event = $('<div />')
           event.css({
             'background-color': currColor,
             'border-color'    : currColor,
@@ -187,8 +160,26 @@
           }).addClass('external-event')
           event.html(val)
           $('#external-events').prepend(event)
-          //Add draggable funtionality
           that.init_event(event)
+        });
+        viewModel.editHolidayItem();
+      });
+    },
+    editHolidayItem: function() {
+      $('#external-events').find('div').dblclick(function() {
+        const preName = $(this).html();
+        layer.prompt({title: '输入节假日名称', formType: 0,value: preName}, function(pass, index){
+          $.post('${ctx}/work/holiday/updateHolidayItem', {preName: preName, name: pass}, function(data) {
+            if (data.flag) {
+              layer.close(index);
+              viewModel.getHolidayItemList()
+              //重新绘制
+              viewModel.getAll();
+              $('#new-event').val('')
+            } else {
+              layer.alert(data.content);
+            }
+          });
         });
       });
     },
@@ -343,10 +334,12 @@
         }
       });
     });
-    viewModel.getAll();
+
     viewModel.getHolidayItemList();
+    viewModel.getAll();
     viewModel.init_event($('#external-events div.external-event'))
   })
+
 
 </script>
 </body>

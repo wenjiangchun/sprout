@@ -28,13 +28,12 @@
 								<thead>
 								<tr>
 								<tr>
-									<th sName="id">编号</th>
+									<th sName="dairyStartDay">发送时间</th>
 									<th sName="from">员工姓名</th>
 									<th sName="from">发送邮箱</th>
 									<th sName="smtp">接收人</th>
 									<th sName="smtp">抄送人</th>
 									<th sName="subject">发送主题</th>
-									<th sName="dairyStartDay">发送日期</th>
 									<th sName="">发送状态</th>
 									<th sName="">结果</th>
 								</tr>
@@ -60,7 +59,7 @@
 					divId : "contentTable",
 					url : "${ctx}/work/dairySendLog/search",
 					columns:[{
-						'data':'id',
+						'data':'sendTime',
 						'orderable': false
 					},{
 						'data':'user.name'
@@ -74,9 +73,6 @@
 						'orderable': false
 					},{
 						'data':'subject',
-						'orderable': false
-					},{
-						'data':'sendTime',
 						'orderable': false
 					},{
 						'data':function(row, type, val, meta) {

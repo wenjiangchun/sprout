@@ -88,14 +88,14 @@ public class WorkDairyController extends BaseCrudController<WorkDairy, Long> {
                 workDairy.setWorkDay(workDay);
                 workDairy.setWeekDay(WorkDayUtils.getWeekDayByDate(workDay).getWeekDayName());
                 //查找对应配置信息 如果不存在则根据数据库中第一条判断，如果第一条不存在则默认设为1
-                DairySendConfig dairySendConfig = this.dairySendConfigService.findOneByProperty("worker", worker);
-                if (Objects.nonNull(dairySendConfig)) {
-                    workDairy.setWeekNum(WorkDayUtils.getWeekNum(dairySendConfig.getDairyStartDay(), workDay) + dairySendConfig.getWeekStartNum() - 1);
+                List<DairySendConfig> dairySendConfigList = this.dairySendConfigService.findByProperty("worker", worker);
+                if (!dairySendConfigList.isEmpty()) {
+                    workDairy.setWeekNum(WorkDayUtils.getWeekNum(dairySendConfigList.get(0).getDairyStartDay(), workDay) + dairySendConfigList.get(0).getWeekStartNum() - 1);
                 } else {
                     //查询数据库中该人员第一条记录
-                    WorkDairy firstWorkDairy = this.workDairyService.findOneByProperty("worker", worker, Sort.by(Sort.Direction.ASC, "weekDay"));
-                    if (Objects.nonNull(firstWorkDairy)) {
-                        workDairy.setWeekNum(WorkDayUtils.getWeekNum(firstWorkDairy.getWorkDay(), workDay) + firstWorkDairy.getWeekNum() - 1);
+                    List<WorkDairy> firstWorkDairyList = this.workDairyService.findByProperty("worker", worker, Sort.by(Sort.Direction.ASC, "weekDay"));
+                    if (!firstWorkDairyList.isEmpty()) {
+                        workDairy.setWeekNum(WorkDayUtils.getWeekNum(firstWorkDairyList.get(0).getWorkDay(), workDay) + firstWorkDairyList.get(0).getWeekNum() - 1);
                     }
                 }
             }
