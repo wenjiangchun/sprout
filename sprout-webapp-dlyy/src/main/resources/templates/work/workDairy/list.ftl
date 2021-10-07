@@ -62,7 +62,7 @@
 						<div class="col-xs-1">
 							<input type="file" name="file" id="uploadExcel">
 						</div>
-						<div class="col-xs-3">
+						<div class="col-xs-4">
 							<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-pencil"></i>  填写工作日志</a>
 							<a href="#" class="btn btn-danger" data-bind='click: sendEmail'><i class="fa fa-envelope"></i>  发送周报</a>
 							<a href="#" class="btn btn-danger" data-bind='click: generateWorkDairy'><i class="fa fa-bars"></i>  生成日志</a>
@@ -189,7 +189,7 @@
 		viewModel.initTable();
 		$("#uploadExcel").fileinput({
 			uploadUrl: '${ctx}/work/workDairy/uploadWorkDairy',
-			enableResumableUpload: true,
+			enableResumableUpload: false,
 			browseLabel: '周报上传',
 			browseIcon: '<i class="fa fa-upload"></i>',
 			showPreview:false,
@@ -198,12 +198,13 @@
 			showUploadedThumbs: false,
 			progressDelay:1000,
 			dropZoneEnabled: false,
-			uploadAsync:false,
+			uploadAsync:true,
 			showUpload : false,
 			showRemove : false,
 			language : 'zh'
-		}).on('fileuploaded', function(event, previewId, index, fileId) {
-			layer.alert('导入成功');
+		}).on('fileuploaded', function(event, data, previewId, index, fileId) {
+
+			layer.alert(data.response.content);
 			refreshTable();
 		}).on("filebatchselected", function(event, files) {
 			$("#uploadExcel").fileinput("upload");

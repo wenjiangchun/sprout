@@ -10,7 +10,8 @@
 		<module>sprout-web</module>
 		<module>sprout-webapp-dlyy</module>
         <module>sprout-datasource</module>
-    </modules>
+		<module>sprout-flowable</module>
+	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

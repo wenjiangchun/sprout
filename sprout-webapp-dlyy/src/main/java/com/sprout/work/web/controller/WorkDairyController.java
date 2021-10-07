@@ -1,6 +1,7 @@
 package com.sprout.work.web.controller;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.read.builder.ExcelReaderSheetBuilder;
 import com.sprout.core.spring.SpringContextUtils;
 import com.sprout.shiro.ShiroUser;
 import com.sprout.shiro.util.ShiroUtils;
@@ -26,10 +27,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/work/workDairy")
@@ -110,12 +108,18 @@ public class WorkDairyController extends BaseCrudController<WorkDairy, Long> {
         if (Objects.nonNull(currentUser)) {
             User worker = new User();
             worker.setId(Long.valueOf(currentUser.userId));
-            List<MultipartFile> fileList = request.getFiles("fileBlob");
+            List<MultipartFile> fileList = request.getFiles("file");
+            List<WorkDairyWrapper> workDairyWrapperList = new ArrayList<>();
             try {
                 for (MultipartFile multipartFile : fileList) {
-                    EasyExcel.read(multipartFile.getInputStream(), WorkDairyWrapper.class, new WorkDairyReadListener(this.workDairyService, dairySendConfigService.findOneByProperty("worker", worker), worker)).sheet().doRead();
+                    ExcelReaderSheetBuilder sheetBuilder = EasyExcel.read(multipartFile.getInputStream(), WorkDairyWrapper.class, new WorkDairyReadListener(this.workDairyService, dairySendConfigService.findOneByProperty("worker", worker), worker)).sheet();
+                    workDairyWrapperList = sheetBuilder.doReadSync();
                 }
-                return RestResult.createSuccessResult("导入成功");
+                if (workDairyWrapperList.isEmpty()) {
+                    return RestResult.createErrorResult("未导入数据，请检查数据文件和格式");
+                } else {
+                    return RestResult.createSuccessResult("导入成功,共导入【" + workDairyWrapperList.size() + "】条数据");
+                }
             } catch (Exception ex) {
                 return RestResult.createErrorResult("导入失败:" + ex.getMessage());
             }

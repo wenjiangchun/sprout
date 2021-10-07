@@ -50,6 +50,7 @@
 
     function showMyModel(url, title, width, height, callBack) {
         myModel.id = layer.open({
+            skin: 'layui-layer-lan',
             type: 2,
             title: title,
             shadeClose: true,

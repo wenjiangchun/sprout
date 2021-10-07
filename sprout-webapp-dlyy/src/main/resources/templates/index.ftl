@@ -186,6 +186,20 @@
         <li class="treeview">
           <a href="#">
             <i class="fa fa-reorder"></i>
+            <span>流程管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="menuBtn" url="${ctx}/flowable/model/view"><i class="fa fa-pencil-square-o"></i> 流程模型管理</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/flowable/processDefinition/view"><i class="fa fa-anchor"></i> 流程定义管理</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/flowable/processInstance/view"><i class="fa fa-list"></i> 流程实例管理</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-reorder"></i>
             <span>工作管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -215,32 +229,32 @@
             <#--<li><a href="#" class="menuBtn" url="${ctx}/dlyy/k8s/view"><i class="fa fa-circle-o"></i> K8s监控</a></li>-->
           </ul>
         </li>
-        <#--<li class="treeview">
+        <li class="treeview">
           <a href="#">
-            <i class="fa fa-laptop"></i>
-            <span>项目管理</span>
+            <i class="fa fa-dashcube"></i>
+            <span>请假管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="menuBtn" url="${ctx}/river/map"><i class="fa fa-map-marker"></i> 项目浏览</a></li>
-            <li><a href="#" class="menuBtn" url="${ctx}/river/project/view"><i class="fa fa-clone"></i> 项目管理</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/applyLeave"><i class="fa fa-pencil"></i> 请假申请</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/getMyLeave"><i class="fa fa-pencil"></i> 我的请假</a></li>
           </ul>
-        </li>-->
+        </li>
       </ul>
     </section>
   </aside>
   <div class="content-wrapper">
-    <iframe src="${ctx}/dashboard" width="100%" height="900px"  id="content" name="myframe"></iframe>
+    <iframe src="${ctx}/dashboard" width="100%" height="700px"  id="content" name="myframe" frameborder="no" border="0"></iframe>
   </div>
-  <#--<footer class="main-footer">
+  <footer class="main-footer">
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
     </div>
-    <strong>Copyright &copy; 2015-2021 <a href="https://adminlte.io">Sprout</a>.</strong> All rights
+    <strong>Copyright &copy; 2020-2021 <a href="https://zdlonghu.com">东龙优易</a>.</strong> All rights
     reserved.
-  </footer>-->
+  </footer>
 
   <aside class="control-sidebar control-sidebar-dark" style="display: none;">
     <ul class="nav nav-tabs nav-justified control-sidebar-tabs">

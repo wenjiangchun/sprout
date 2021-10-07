@@ -39,7 +39,14 @@ public class ShiroUser implements Serializable {
 
 	private Group group;
 
-	public ShiroUser() {
+	private User user;
+
+	public ShiroUser(User user) {
+		this.user = user;
+		this.userId = user.getId().toString();
+		this.loginName = user.getLoginName();
+		this.name = user.getName();
+		this.group = user.getGroup();
 	}
 
 	public ShiroUser(String userId, String loginName, String name,
@@ -57,7 +64,15 @@ public class ShiroUser implements Serializable {
 		this.group = group;
 	}
 
-    public boolean isSuperAdmin() {
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public boolean isSuperAdmin() {
 		return User.ADMIN.equalsIgnoreCase(this.loginName);
 	}
 	public String getUserId() {

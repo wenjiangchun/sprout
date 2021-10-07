@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>com.sprout</groupId>
+            <artifactId>sprout-flowable</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sprout</groupId>
             <artifactId>sprout-shiro</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -66,7 +71,11 @@
             <artifactId>impala</artifactId>
             <version>2.6.23</version>
         </dependency>
-
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>3.9.1</version>
+        </dependency>
         <!--<dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>

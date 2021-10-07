@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "d_work_dairy")
+@Table(name = "w_work_dairy")
 public class WorkDairy extends AbstractBaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;

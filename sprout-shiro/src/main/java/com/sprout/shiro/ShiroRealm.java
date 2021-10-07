@@ -62,7 +62,7 @@ public class ShiroRealm extends AuthorizingRealm {
 			//加载子机构信息
 			user.getGroup().getChildList(Status.ENABLE);
 		}
-		return new SimpleAuthenticationInfo(new ShiroUser(user.getId().toString(), user.getLoginName(),user.getName(), user.getGroup()),user.getPassword(), ByteSource.Util.bytes(salt),
+		return new SimpleAuthenticationInfo(new ShiroUser(user),user.getPassword(), ByteSource.Util.bytes(salt),
 				getName());
 	}
 

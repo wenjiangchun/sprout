@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "d_dairy_send_log")
+@Table(name = "w_dairy_send_log")
 public class DairySendLog extends AbstractBaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
