@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipInputStream;
@@ -63,9 +65,12 @@ public class ProcessDefinitionService {
     public void deployProcessDefinition(MultipartFile file, String exportDir) throws Exception {
         String fileName = file.getOriginalFilename();
         try {
-            InputStream fileInputStream = file.getInputStream();
-            Deployment deployment = null;
             String extension = FilenameUtils.getExtension(fileName);
+            File destination = new File("/home/" + System.currentTimeMillis() + extension);
+            file.transferTo(destination);
+            InputStream fileInputStream = new FileInputStream(destination);
+            //InputStream fileInputStream = file.getInputStream();
+            Deployment deployment = null;
             if (extension.equals("zip") || extension.equals("bar")) {
                 ZipInputStream zip = new ZipInputStream(fileInputStream);
                 deployment = repositoryService.createDeployment().addZipInputStream(zip).deploy();

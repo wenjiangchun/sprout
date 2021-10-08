@@ -58,7 +58,7 @@
 								  </#list>
 								  <#if leaveList?size==0>
 								  	 <tr>
-										 <td>暂无相关数据</td>
+										 <td colspan="11" align="center">暂无相关数据</td>
 									 </tr>
 								  </#if>
 								</tbody>

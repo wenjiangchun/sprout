@@ -246,7 +246,7 @@
     </section>
   </aside>
   <div class="content-wrapper">
-    <iframe src="${ctx}/dashboard" width="100%" height="700px"  id="content" name="myframe" frameborder="no" border="0"></iframe>
+    <iframe src="${ctx}/dashboard" width="100%" height="800px"  id="content" name="myframe" frameborder="no" border="0"></iframe>
   </div>
   <footer class="main-footer">
     <div class="pull-right hidden-xs">

@@ -131,7 +131,7 @@
         ko.applyBindings(viewModel);
         $("#uploadExcel").fileinput({
             uploadUrl: '${ctx}/flowable/processDefinition/deployProcessDefinition',
-            enableResumableUpload: true,
+            enableResumableUpload: false,
             browseLabel: '流程部署',
             browseIcon: '<i class="fa fa-upload"></i>',
             showPreview: false,
@@ -144,8 +144,8 @@
             showUpload: false,
             showRemove: false,
             language: 'zh'
-        }).on('fileuploaded', function (event, previewId, index, fileId) {
-            layer.alert('部署成功');
+        }).on('fileuploaded', function(event, data, previewId, index, fileId) {
+            layer.alert(data.response.content);
             window.location.reload()
         }).on("filebatchselected", function (event, files) {
             $("#uploadExcel").fileinput("upload");

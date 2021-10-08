@@ -198,12 +198,11 @@
 			showUploadedThumbs: false,
 			progressDelay:1000,
 			dropZoneEnabled: false,
-			uploadAsync:true,
+			uploadAsync:false,
 			showUpload : false,
 			showRemove : false,
 			language : 'zh'
 		}).on('fileuploaded', function(event, data, previewId, index, fileId) {
-
 			layer.alert(data.response.content);
 			refreshTable();
 		}).on("filebatchselected", function(event, files) {
