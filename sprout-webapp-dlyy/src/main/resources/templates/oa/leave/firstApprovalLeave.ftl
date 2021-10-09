@@ -48,17 +48,17 @@
                                             <label for="approvalResult" class="col-sm-2 control-label">审核结果</label>
                                             <div class="col-sm-6">
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="flowVariable['approvalState']" id="inlineRadio1" value="1" checked> 通过
+                                                    <input type="radio" name="flowVariable['firstApprovalState']" id="inlineRadio1" value="1" checked> 通过
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="flowVariable['approvalState']" id="inlineRadio2" value="0"> 退回
+                                                    <input type="radio" name="flowVariable['firstApprovalState']" id="inlineRadio2" value="0"> 退回
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="approvalContent" class="col-sm-2 control-label">审核意见</label>
                                             <div class="col-sm-10">
-                                                <textarea rows="3" name="flowVariable['approvalContent']" class="form-control" maxlength="200" required></textarea>
+                                                <textarea rows="3" name="flowVariable.firstApprovalContent" class="form-control" maxlength="200" required></textarea>
                                             </div>
                                         </div>
                                     </div>

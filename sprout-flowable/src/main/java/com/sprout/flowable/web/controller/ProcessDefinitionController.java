@@ -84,7 +84,7 @@ public class ProcessDefinitionController {
 
     @PostMapping(value = "/deployProcessDefinition")
     @ResponseBody
-    public RestResult deployProcessDefinition(@Value("/home/") String exportDir, @RequestParam(value = "file", required = false) MultipartFile file) {
+    public RestResult deployProcessDefinition(@Value("/home/sofar") String exportDir, @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
             processDefinitionService.deployProcessDefinition(file, exportDir);
             return RestResult.createSuccessResult();

@@ -102,7 +102,8 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         //根据用户查询用户代办事项
         Leave taskLeave = this.leaveService.getLeaveByTaskId(taskId);
         model.addAttribute("taskLeave", taskLeave);
-        return "oa/leave/showTask";
+        String taskKey = taskLeave.getCurrentTask().getTaskDefinitionKey();
+        return "oa/leave/" + taskKey;
     }
 
     /**

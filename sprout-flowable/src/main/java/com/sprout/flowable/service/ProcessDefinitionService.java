@@ -66,10 +66,10 @@ public class ProcessDefinitionService {
         String fileName = file.getOriginalFilename();
         try {
             String extension = FilenameUtils.getExtension(fileName);
-            File destination = new File("e:\\" + System.currentTimeMillis() + extension);
-            file.transferTo(destination);
-            InputStream fileInputStream = new FileInputStream(destination);
-            //InputStream fileInputStream = file.getInputStream();
+            //File destination = new File("e:\\" + System.currentTimeMillis() + extension);
+            //file.transferTo(destination);
+            //InputStream fileInputStream = new FileInputStream(destination);
+            InputStream fileInputStream = file.getInputStream();
             Deployment deployment = null;
             if (extension.equals("zip") || extension.equals("bar")) {
                 ZipInputStream zip = new ZipInputStream(fileInputStream);
