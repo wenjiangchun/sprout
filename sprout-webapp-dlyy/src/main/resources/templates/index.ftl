@@ -240,6 +240,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/applyLeave"><i class="fa fa-pencil"></i> 请假申请</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/getMyLeave"><i class="fa fa-pencil"></i> 我的请假</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/todoView"><i class="fa fa-pencil"></i> 待办请假</a></li>
           </ul>
         </li>
       </ul>

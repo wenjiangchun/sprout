@@ -66,11 +66,11 @@ public class ProcessDefinitionController {
     }
 
     /**
-     *  * 根据部署Id和资源名称获取流程资源信息 其中资源名称可以是流程图片名称或流程定义Xml文件名称
-     * @param deploymentId
-     * @param resourceName
-     * @param response
-     * @throws Exception
+     * 根据部署Id和资源名称获取流程资源信息 其中资源名称可以是流程图片名称或流程定义Xml文件名称
+     * @param deploymentId 部署ID
+     * @param resourceName 资源名称
+     * @param response 响应流
+     * @throws Exception 获取失败抛出该异常
      */
     @GetMapping(value = "/getProcessResource")
     public void getProcessResource(@RequestParam("deploymentId") String deploymentId, @RequestParam("resourceName") String resourceName, HttpServletResponse response) throws Exception {

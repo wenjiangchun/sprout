@@ -2,6 +2,7 @@ package com.sprout.oa.leave.web.controller;
 
 import com.sprout.core.spring.SpringContextUtils;
 import com.sprout.oa.leave.entity.Leave;
+import com.sprout.oa.leave.flow.FlowVariable;
 import com.sprout.oa.leave.service.LeaveService;
 import com.sprout.shiro.ShiroUser;
 import com.sprout.shiro.util.ShiroUtils;
@@ -14,10 +15,7 @@ import com.sprout.web.util.RestResult;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -88,4 +86,38 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         model.addAttribute("leaveList", leaveList);
         return "/oa/leave/myLeaveList";
     }
+
+    @GetMapping("/todoView")
+    public String todoView(Model model) {
+        //获取当前用户信息
+        ShiroUser currentUser = ShiroUtils.getCurrentUser();
+        //根据用户查询用户代办事项
+        List<Leave> todoList = this.leaveService.getTodoList(currentUser.getUser());
+        model.addAttribute("todoList", todoList);
+        return "oa/leave/todoList";
+    }
+
+    @GetMapping("/showTask/{taskId}")
+    public String showTask(Model model, @PathVariable String taskId) {
+        //根据用户查询用户代办事项
+        Leave taskLeave = this.leaveService.getLeaveByTaskId(taskId);
+        model.addAttribute("taskLeave", taskLeave);
+        return "oa/leave/showTask";
+    }
+
+    /**
+     * 办理流程
+     */
+    @PostMapping(value = "handleLeave")
+    @ResponseBody
+    public RestResult handleLeave(Map<String, Object> flowVariable, String taskId) {
+        try {
+            this.leaveService.handleLeave(flowVariable, taskId);
+            return RestResult.createSuccessResult("办理成功");
+        } catch (Exception ex) {
+            return RestResult.createErrorResult("办理失败," + ex.getMessage());
+        }
+
+    }
+
 }

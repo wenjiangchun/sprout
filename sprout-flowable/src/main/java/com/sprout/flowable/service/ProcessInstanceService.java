@@ -3,9 +3,6 @@ package com.sprout.flowable.service;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
-import org.flowable.engine.impl.RepositoryServiceImpl;
-import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
@@ -53,6 +50,7 @@ public class ProcessInstanceService {
      * 激活流程实例信息
      * @param processInstanceId 流程实例Id
      */
+    @Transactional
     public void activateProcessInstanceById(String processInstanceId) {
         runtimeService.activateProcessInstanceById(processInstanceId);
         logger.debug("已激活流程信息，流程id=【{}】", processInstanceId);
@@ -62,6 +60,7 @@ public class ProcessInstanceService {
      * 挂起流程实例信息
      * @param processInstanceId 流程实例Id
      */
+    @Transactional
     public void suspendProcessInstanceById(String processInstanceId) {
         runtimeService.suspendProcessInstanceById(processInstanceId);
         logger.debug("已挂起流程信息，流程id=【{}】", processInstanceId);
@@ -100,7 +99,6 @@ public class ProcessInstanceService {
     }
 
     public InputStream getProcessDiagram(String processInstanceId) {
-
         ProcessInstance pi = this.getProcessInstanceById(processInstanceId);
         //流程走完的不显示图
         if (pi == null) {
@@ -127,5 +125,22 @@ public class ProcessInstanceService {
         //定义流程画布生成器
         ProcessDiagramGenerator processDiagramGenerator = engConf.getProcessDiagramGenerator();
         return processDiagramGenerator.generateDiagram(bpmnModel, "png", activityIds, flows, engConf.getActivityFontName(), engConf.getLabelFontName(), engConf.getAnnotationFontName(), engConf.getClassLoader(), 1.0, true);
+    }
+
+    @Transactional
+    public ProcessInstance startProcessInstanceByKey(String processDefinitionKey, String businessKey, Map<String, Object> variables) {
+        return this.runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
+    }
+
+    public List<Task> getTodoList(String userId, String processInstanceKey) {
+        return this.taskService.createTaskQuery().processDefinitionKey(processInstanceKey).taskAssignee(userId).list();
+    }
+
+    public Task getTaskById(String taskId) {
+        return this.taskService.createTaskQuery().taskId(taskId).singleResult();
+    }
+
+    public void complete(String taskId, Map<String, Object> flowVariable) {
+        this.taskService.complete(taskId, flowVariable);
     }
 }
