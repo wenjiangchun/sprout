@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "w_leave")
+@Table(name = "wk_leave")
 public class Leave extends AbstractBaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
@@ -38,6 +38,16 @@ public class Leave extends AbstractBaseEntity<Long> {
     private Date realEndTime;
 
     private Date backTime;
+
+    private int state;
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "applier_id")
@@ -180,6 +190,9 @@ public class Leave extends AbstractBaseEntity<Long> {
                 ", realStartTime=" + realStartTime +
                 ", realEndTime=" + realEndTime +
                 ", backTime=" + backTime +
+                ", state=" + state +
+                ", currentTask=" + currentTask +
+                ", processInstance=" + processInstance +
                 '}';
     }
 }

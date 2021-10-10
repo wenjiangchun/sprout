@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "w_leave_log")
+@Table(name = "wk_leave_log")
 public class LeaveTaskLog extends AbstractBaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
@@ -19,9 +19,9 @@ public class LeaveTaskLog extends AbstractBaseEntity<Long> {
 
     private String result;
 
-    private Date handleTime = new Date();
+    private String taskName;
 
-    private boolean currentTask = false;
+    private Date handleTime = new Date();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "leave_id")
@@ -61,12 +61,12 @@ public class LeaveTaskLog extends AbstractBaseEntity<Long> {
         this.handleTime = handleTime;
     }
 
-    public boolean isCurrentTask() {
-        return currentTask;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setCurrentTask(boolean currentTask) {
-        this.currentTask = currentTask;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class LeaveTaskLog extends AbstractBaseEntity<Long> {
                 ", handler=" + handler +
                 ", result='" + result + '\'' +
                 ", handleTime=" + handleTime +
-                ", currentTask=" + currentTask +
+                ", taskName=" + taskName +
                 '}';
     }
 }

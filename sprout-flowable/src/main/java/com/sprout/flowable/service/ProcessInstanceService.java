@@ -16,10 +16,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
 public class ProcessInstanceService {
+
+    public static final String INITIATOR = "initiator";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -31,11 +34,14 @@ public class ProcessInstanceService {
 
     private HistoryService historyService;
 
-    public ProcessInstanceService(RepositoryService repositoryService, RuntimeService runtimeService, TaskService taskService, HistoryService historyService) {
+    private IdentityService identityService;
+
+    public ProcessInstanceService(RepositoryService repositoryService, RuntimeService runtimeService, TaskService taskService, HistoryService historyService, IdentityService identityService) {
         this.repositoryService = repositoryService;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.historyService = historyService;
+        this.identityService = identityService;
     }
 
     /**
@@ -128,8 +134,14 @@ public class ProcessInstanceService {
     }
 
     @Transactional
-    public ProcessInstance startProcessInstanceByKey(String processDefinitionKey, String businessKey, Map<String, Object> variables) {
-        return this.runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
+    public synchronized ProcessInstance startProcessInstanceByKey(String processDefinitionKey, String businessKey, Map<String, Object> variables) {
+        Object initiator = variables.get(INITIATOR);
+        if (Objects.nonNull(initiator)) {
+            identityService.setAuthenticatedUserId(initiator.toString());
+        }
+        ProcessInstance processInstance = this.runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
+        identityService.setAuthenticatedUserId(null);
+        return processInstance;
     }
 
     public List<Task> getTodoList(String userId, String processInstanceKey) {

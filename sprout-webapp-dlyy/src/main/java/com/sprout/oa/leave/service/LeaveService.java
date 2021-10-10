@@ -3,7 +3,9 @@ package com.sprout.oa.leave.service;
 import com.sprout.core.service.AbstractBaseService;
 import com.sprout.flowable.service.ProcessInstanceService;
 import com.sprout.oa.leave.dao.LeaveDao;
+import com.sprout.oa.leave.dao.LeaveTaskLogDao;
 import com.sprout.oa.leave.entity.Leave;
+import com.sprout.oa.leave.entity.LeaveTaskLog;
 import com.sprout.system.entity.Dict;
 import com.sprout.system.entity.User;
 import com.sprout.system.service.DictService;
@@ -26,12 +28,15 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
 
     private LeaveDao leaveDao;
 
+    private LeaveTaskLogDao leaveTaskLogDao;
+
     private ProcessInstanceService processInstanceService;
 
-    public LeaveService(LeaveDao leaveDao, ProcessInstanceService processInstanceService) {
+    public LeaveService(LeaveDao leaveDao, ProcessInstanceService processInstanceService, LeaveTaskLogDao leaveTaskLogDao) {
         super(leaveDao);
         this.leaveDao = leaveDao;
         this.processInstanceService = processInstanceService;
+        this.leaveTaskLogDao = leaveTaskLogDao;
     }
 
     @Transactional(readOnly = true)
@@ -48,6 +53,13 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         leave.setApplyTime(processInstance.getStartTime());
         this.save(leave);
         logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}", "leave", businessKey, processInstanceId, variables);
+        //保存leaveTaskLog
+        LeaveTaskLog leaveTaskLog = new LeaveTaskLog();
+        leaveTaskLog.setLeave(leave);
+        leaveTaskLog.setTaskName("已发起申请");
+        leaveTaskLog.setHandler(leave.getApplier());
+        leaveTaskLog.setHandleTime(processInstance.getStartTime());
+        leaveTaskLogDao.save(leaveTaskLog);
         return processInstance;
     }
 
@@ -83,5 +95,9 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
     @Transactional
     public void handleLeave(Map<String, Object> flowVariable, String taskId) {
         this.processInstanceService.complete(taskId, flowVariable);
+    }
+
+    public String getInitiatorName() {
+        return ProcessInstanceService.INITIATOR;
     }
 }

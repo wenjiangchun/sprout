@@ -45,20 +45,31 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="approvalResult" class="col-sm-2 control-label">审核结果</label>
+                                            <label for="firstApprovalState" class="col-sm-2 control-label">审核结果</label>
                                             <div class="col-sm-6">
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="flowVariable['firstApprovalState']" id="inlineRadio1" value="1" checked> 通过
+                                                    <input type="radio" name="firstApprovalState" id="inlineRadio1" value="1" data-bind="checked: firstApprovalStateChecked,click: stateControl"> 通过
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="flowVariable['firstApprovalState']" id="inlineRadio2" value="0"> 退回
+                                                    <input type="radio" name="firstApprovalState" id="inlineRadio2" value="0" data-bind="checked: firstApprovalStateChecked,click: stateControl"> 退回
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="approvalContent" class="col-sm-2 control-label">审核意见</label>
+                                            <label for="firstApprovalContent" class="col-sm-2 control-label">审核意见</label>
                                             <div class="col-sm-10">
-                                                <textarea rows="3" name="flowVariable.firstApprovalContent" class="form-control" maxlength="200" required></textarea>
+                                                <textarea rows="3" name="firstApprovalContent" class="form-control" maxlength="200" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" data-bind="visible:showNextApproval">
+                                            <label for="firstApprovalContent" class="col-sm-2 control-label">下一步审核人</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="secondApprovalId" id="secondApprovalId">
+                                                    <option value=""></option>
+                                                    <#list userList as user>
+                                                        <option value="${user.id}">${user.name}</option>
+                                                    </#list>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -146,9 +157,7 @@
 
                                         <div class="timeline-item">
                                             <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
-
                                             <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-
                                             <div class="timeline-body">
                                                 <img src="http://placehold.it/150x100" alt="..." class="margin">
                                                 <img src="http://placehold.it/150x100" alt="..." class="margin">
@@ -169,42 +178,36 @@
 </section>
 <script>
     let viewModel = {
-        weekDay: ko.observable(''),
         firstApprovalId: ko.observable(),
-        startWorkFlow: function(userId) {
-            this.firstApprovalId(userId);
-            $('#inputForm').submit();
+        showNextApproval: ko.observable(true),
+        firstApprovalStateChecked: ko.observable('1'),
+        stateControl: function() {
+            if (this.firstApprovalStateChecked() === '1') {
+                this.showNextApproval(true);
+            } else {
+                this.showNextApproval(false);
+            }
+            return true;
         }
     }
     ko.applyBindings(viewModel);
     $('#inputForm').ajaxForm({
         dataType : 'json',
         beforeSubmit:function(formData, jqForm, options){
-            //$("#dairyStartDay").val($("#dairyStartDay").val() + " 00:00:00")
+            if (viewModel.firstApprovalStateChecked() === '1') {
+                if ($('#secondApprovalId').val() === '') {
+                    layer.alert('请选择下一步审核人');
+                    return false;
+                }
+            } else {
+                $('#secondApprovalId').val('');
+            }
+            return true;
         },
         success : function(data) {
             layer.alert(data.content);
         }
     });
-
-    $('#planStartTime').datepicker({
-        autoclose: true,
-        language: 'zh-CN',
-        calendarWeeks:true,
-        todayHighlight: true,
-        todayBtn: "linked"
-    }).on('hide', function(e) {
-        e.date;
-    })
-    $('#planEndTime').datepicker({
-        autoclose: true,
-        language: 'zh-CN',
-        calendarWeeks:true,
-        todayHighlight: true,
-        todayBtn: "linked"
-    }).on('hide', function(e) {
-
-    })
 </script>
 </body>
 </html>

@@ -45,20 +45,13 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="approvalResult" class="col-sm-2 control-label">审核结果</label>
-                                            <div class="col-sm-6">
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="flowVariable['firstApprovalState']" id="inlineRadio1" value="1" checked> 通过
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="flowVariable['firstApprovalState']" id="inlineRadio2" value="0"> 退回
-                                                </label>
+                                            <label for="leave['realStartTime']" class="col-sm-2 control-label">实际开始时间</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" name="leave['realStartTime']" id="realStartTime">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="approvalContent" class="col-sm-2 control-label">审核意见</label>
-                                            <div class="col-sm-10">
-                                                <textarea rows="3" name="flowVariable['approvalContent']" class="form-control" maxlength="200" required></textarea>
+                                            <label for="leave['realEndTime']" class="col-sm-2 control-label">实际结束时间</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" name="leave['realEndTime']" id="realEndTime">
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +180,7 @@
         }
     });
 
-    $('#planStartTime').datepicker({
+    $('#realStartTime').datepicker({
         autoclose: true,
         language: 'zh-CN',
         calendarWeeks:true,
@@ -196,7 +189,7 @@
     }).on('hide', function(e) {
         e.date;
     })
-    $('#planEndTime').datepicker({
+    $('#realEndTime').datepicker({
         autoclose: true,
         language: 'zh-CN',
         calendarWeeks:true,

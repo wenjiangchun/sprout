@@ -1,9 +1,12 @@
 package com.sprout.oa.leave.web.controller;
 
 import com.sprout.core.spring.SpringContextUtils;
+import com.sprout.flowable.service.ProcessInstanceService;
 import com.sprout.oa.leave.entity.Leave;
-import com.sprout.oa.leave.flow.FlowVariable;
+import com.sprout.oa.leave.entity.LeaveTaskLog;
+import com.sprout.oa.leave.flow.LeaveFlowVariable;
 import com.sprout.oa.leave.service.LeaveService;
+import com.sprout.oa.leave.service.LeaveTaskLogService;
 import com.sprout.shiro.ShiroUser;
 import com.sprout.shiro.util.ShiroUtils;
 import com.sprout.system.entity.Group;
@@ -26,9 +29,12 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
 
     private LeaveService leaveService;
 
-    public LeaveController(LeaveService leaveService) {
+    private LeaveTaskLogService leaveTaskLogService;
+
+    public LeaveController(LeaveService leaveService,LeaveTaskLogService leaveTaskLogService) {
         super("oa", "leave", "请假", leaveService);
         this.leaveService = leaveService;
+        this.leaveTaskLogService = leaveTaskLogService;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
     public RestResult saveAndStartWorkflow(Leave leave, Long firstApprovalId) {
         Map<String, Object> variables = new HashMap<String, Object>();
         variables.put("firstApprovalId", firstApprovalId);
-        variables.put("startUserId", leave.getApplier().getId());
+        variables.put(ProcessInstanceService.INITIATOR, leave.getApplier().getId());
         try {
             ProcessInstance processInstance = this.leaveService.startWorkflow(leave, variables);
             processInstance.getStartUserId();
@@ -103,6 +109,19 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         Leave taskLeave = this.leaveService.getLeaveByTaskId(taskId);
         model.addAttribute("taskLeave", taskLeave);
         String taskKey = taskLeave.getCurrentTask().getTaskDefinitionKey();
+        Group group = ShiroUtils.getCurrentUser().getGroup();
+        if (Objects.nonNull(group)) {
+            Set<User> userSet = SpringContextUtils.getBean(GroupService.class).findById(group.getId()).getUsers();
+            userSet.removeIf(u ->
+                    u.getId().equals(Long.valueOf(ShiroUtils.getCurrentUser().getUserId()))
+            );
+            model.addAttribute("userList", userSet);
+        } else {
+            model.addAttribute("userList", new ArrayList<>());
+        }
+        //查询办理记录
+        List<LeaveTaskLog> leaveTaskLogList = this.leaveTaskLogService.findByLeaveId(taskLeave.getId());
+        model.addAttribute("leaveTaskLogList", leaveTaskLogList);
         return "oa/leave/" + taskKey;
     }
 
@@ -111,11 +130,12 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
      */
     @PostMapping(value = "handleLeave")
     @ResponseBody
-    public RestResult handleLeave(Map<String, Object> flowVariable, String taskId) {
+    public RestResult handleLeave(LeaveFlowVariable leaveFlowVariable, String taskId) {
         try {
-            this.leaveService.handleLeave(flowVariable, taskId);
+            this.leaveService.handleLeave(leaveFlowVariable.transToMap(), taskId);
             return RestResult.createSuccessResult("办理成功");
         } catch (Exception ex) {
+            ex.printStackTrace();
             return RestResult.createErrorResult("办理失败," + ex.getMessage());
         }
 
