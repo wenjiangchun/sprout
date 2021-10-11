@@ -50,7 +50,7 @@
 										 <td>${leave.leaveType.name!}</td>
 										 <td>${leave.currentTask.name!}</td>
 										 <td>${leave.currentTask.createTime?datetime!}</td>
-										 <td><button class="btn btn-primary btn-sm" onclick="viewModel.showTask('${leave.currentTask.id}','${leave.currentTask.name!}')">办理</button></td>
+										 <td><button class="btn btn-default btn-xs" onclick="viewModel.showTask('${leave.currentTask.id}','${leave.currentTask.name!}')" title="办理"><i class="fa fa-pencil"></i></button></td>
 									 </tr>
 								  </#list>
 								  <#if todoList?size==0>
@@ -72,16 +72,19 @@
 		viewModel = {
 			showDiagram: function (processInstanceId) {
 				let url = "${ctx}/flowable/processInstance/genProcessDiagram/" + processInstanceId;
-				showMyModel(url,'查看流程图', '70%', '70%');
+				top.showMyModel(url,'查看流程图', '70%', '70%');
 			},
 			showTask: function(taskId, title) {
 				let url = "${ctx}/oa/leave/showTask/" + taskId;
-				showMyModel(url,title, '900px', '70%');
+				top.showMyModel(url,title, '900px', '70%', callBackAction);
 			}
 		};
 		ko.applyBindings(viewModel);
 	});
 
+	function callBackAction() {
+		window.location.reload();
+	}
 
 </script>
 </html>

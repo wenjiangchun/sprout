@@ -94,7 +94,16 @@ public class LeaveTaskCompleteListener implements TaskListener {
                     if (variables.get("replayState").toString().equals("0")) {
                         result += "放弃请假";
                     } else {
-                        result += "修改请假单，重新提交主管审核";
+                        try {
+                            Map<String, Object> plainLeave = (Map) variables.get("leave");
+                            leave.setPlanEndTime(SproutDateUtils.parseDate(plainLeave.get("planEndTime").toString(), "yyyy-MM-dd"));
+                            leave.setPlanStartTime(SproutDateUtils.parseDate(plainLeave.get("planStartTime").toString(), "yyyy-MM-dd"));
+                            leave.setBackTime(handleTime);
+                            this.leaveService.save(leave);
+                            result += "修改请假单，重新提交主管审核";
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 break;
@@ -108,6 +117,7 @@ public class LeaveTaskCompleteListener implements TaskListener {
                     leave.setRealEndTime(SproutDateUtils.parseDate(plainLeave.get("realEndTime").toString(), "yyyy-MM-dd"));
                     leave.setRealStartTime(SproutDateUtils.parseDate(plainLeave.get("realStartTime").toString(), "yyyy-MM-dd"));
                     leave.setBackTime(handleTime);
+                    leave.setContent(plainLeave.get("content").toString());
                     this.leaveService.save(leave);
                 } catch (Exception e) {
                     e.printStackTrace();

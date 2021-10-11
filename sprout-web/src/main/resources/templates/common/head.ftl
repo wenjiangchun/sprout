@@ -53,8 +53,8 @@
             //skin: 'layui-layer-lan',
             type: 2,
             title: title,
-            shadeClose: false,
-            //shade: 0.8,
+            //shadeClose: false,
+            shade: 0.5,
             area: [width, height],
             content: url
         });

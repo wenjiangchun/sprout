@@ -4,6 +4,7 @@ import com.sprout.core.jpa.entity.BaseEntity;
 import com.sprout.core.service.BaseService;
 import com.sprout.web.datatable.DataTablePage;
 import com.sprout.web.datatable.DataTableParams;
+import com.sprout.web.util.RestResult;
 import com.sprout.web.util.WebMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -87,14 +88,14 @@ public class BaseCrudController<T extends BaseEntity<PK>, PK extends Serializabl
 
     @PostMapping(value = "save")
     @ResponseBody
-    public WebMessage save(T t, HttpServletRequest request) {
+    public RestResult save(T t, HttpServletRequest request) {
         try {
             this.service.save(t);
             logger.debug("保存/更新{}成功,{}", cname, t);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult("保存成功");
         } catch (Exception e) {
             logger.error("保存/更新{}失败,{},error={}", cname, t, e);
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult("保存失败【"+e.getMessage() + "】");
         }
     }
 
@@ -108,14 +109,14 @@ public class BaseCrudController<T extends BaseEntity<PK>, PK extends Serializabl
 
     @PostMapping(value = "delete/{ids}")
     @ResponseBody
-    public WebMessage delete(@PathVariable("ids") PK[] ids, HttpServletRequest request) {
+    public RestResult delete(@PathVariable("ids") PK[] ids, HttpServletRequest request) {
         try {
             this.service.deleteIds(ids);
             logger.debug("删除{}成功,ids=[{}]", cname, ids);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult("删除成功");
         } catch (Exception e) {
             logger.debug("删除{}失败,ids=[{}], error={}", cname, ids, e);
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult("删除失败【"+e.getMessage() + "】");
         }
     }
 

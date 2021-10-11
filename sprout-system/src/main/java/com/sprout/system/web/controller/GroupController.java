@@ -8,6 +8,7 @@ import com.sprout.system.service.DictService;
 import com.sprout.system.service.GroupService;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.tree.TreeNode;
+import com.sprout.web.util.RestResult;
 import com.sprout.web.util.WebMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -97,7 +98,7 @@ public class GroupController extends BaseCrudController<Group, Long> {
     @Override
     @PostMapping(value = "save")
     @ResponseBody
-    public WebMessage save(Group group, HttpServletRequest request) {
+    public RestResult save(Group group, HttpServletRequest request) {
         try {
             Date date = new Date();
 			/*group.setUpdateTime(date);
@@ -106,10 +107,10 @@ public class GroupController extends BaseCrudController<Group, Long> {
 			}*/
             this.groupService.save(group);
             logger.debug("机构添加/更新成功, group={}", group);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult("保存成功");
         } catch (Exception e) {
             logger.error("机构添加/更新失败", e);
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult("保存失败【"+e.getMessage() + "】");
         }
     }
 

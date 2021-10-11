@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class LeaveService extends AbstractBaseService<Leave, Long> {
@@ -48,6 +49,7 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         this.save(leave);
         String businessKey = leave.getId().toString();
         ProcessInstance processInstance = processInstanceService.startProcessInstanceByKey("leaveProcess1", businessKey, variables);
+        processInstance.getProcessVariables();
         String processInstanceId = processInstance.getId();
         leave.setProcessInstanceId(processInstanceId);
         leave.setApplyTime(processInstance.getStartTime());
@@ -56,7 +58,8 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         //保存leaveTaskLog
         LeaveTaskLog leaveTaskLog = new LeaveTaskLog();
         leaveTaskLog.setLeave(leave);
-        leaveTaskLog.setTaskName("已发起申请");
+        leaveTaskLog.setTaskName("提交申请");
+        leaveTaskLog.setResult("已发起申请");
         leaveTaskLog.setHandler(leave.getApplier());
         leaveTaskLog.setHandleTime(processInstance.getStartTime());
         leaveTaskLogDao.save(leaveTaskLog);
@@ -85,16 +88,24 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
     public Leave getLeaveByTaskId(String taskId) {
         Task task = this.processInstanceService.getTaskById(taskId);
         ProcessInstance processInstance = this.processInstanceService.getProcessInstanceById(task.getProcessInstanceId());
+        Map<String, Object> runtimeVariables = this.processInstanceService.getRuntimeVariablesByTaskId(taskId);
         String businessKey = processInstance.getBusinessKey();
         Leave leave = this.leaveDao.getById(Long.valueOf(businessKey));
         leave.setProcessInstance(processInstance);
         leave.setCurrentTask(task);
+        leave.setRuntimeVariables(runtimeVariables);
         return leave;
     }
 
     @Transactional
     public void handleLeave(Map<String, Object> flowVariable, String taskId) {
-        this.processInstanceService.complete(taskId, flowVariable);
+        Map<String, Object> runtimeVariables = this.processInstanceService.getRuntimeVariablesByTaskId(taskId);
+        for (String name : flowVariable.keySet()) {
+            if (Objects.nonNull(flowVariable.get(name))) {
+                runtimeVariables.put(name, flowVariable.get(name));
+            }
+        }
+        this.processInstanceService.complete(taskId, runtimeVariables);
     }
 
     public String getInitiatorName() {

@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
 
 @Entity
 @Table(name = "wk_leave")
@@ -175,6 +176,17 @@ public class Leave extends AbstractBaseEntity<Long> {
         this.processInstance = processInstance;
     }
 
+    private Map<String, Object> runtimeVariables;
+
+    @Transient
+    public Map<String, Object> getRuntimeVariables() {
+        return runtimeVariables;
+    }
+
+    public void setRuntimeVariables(Map<String, Object> runtimeVariables) {
+        this.runtimeVariables = runtimeVariables;
+    }
+
     @Override
     public String toString() {
         return "Leave{" +
@@ -193,6 +205,7 @@ public class Leave extends AbstractBaseEntity<Long> {
                 ", state=" + state +
                 ", currentTask=" + currentTask +
                 ", processInstance=" + processInstance +
+                ", runtimeVariables=" + runtimeVariables +
                 '}';
     }
 }

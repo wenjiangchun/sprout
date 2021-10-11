@@ -30,10 +30,10 @@
 										<th>编号</th>
 										<th>申请人</th>
 										<th>申请时间</th>
-										<th>流程信息</th>
 										<th>计划开始时间</th>
 										<th>计划结束时间</th>
 										<th>请假类型</th>
+										<th>当前状态</th>
 										<th>销假时间</th>
 										<th>实际开始时间</th>
 										<th>实际结束时间</th>
@@ -46,14 +46,30 @@
 										 <td>${leave.id!}</td>
 										 <td>${leave.applier.name!}</td>
 										 <td>${leave.applyTime!}</td>
-										 <td><a href="javascript:void(0)" onclick="viewModel.showDiagram('${leave.processInstanceId!}')">查看流程图</a></td>
 										 <td>${leave.planStartTime!}</td>
 										 <td>${leave.planEndTime!}</td>
 										 <td>${leave.leaveType.name!}</td>
+										 <td>
+											 <#if leave.state==0>
+												 <span class="label label-primary">已申请</span>
+											   <#elseif leave.state==1>
+												   <span class="label label-success">办理中</span>
+											   <#else>
+												 <span class="label label-default">已结束</span>
+											 </#if>
+										 </td>
 										 <td>${leave.backTime!}</td>
 										 <td>${leave.realStartTime!}</td>
 										 <td>${leave.realStartTime!}</td>
-										 <td>操作</td>
+										 <td>
+											 <#if leave.state==0 || leave.state==1>
+												 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showDiagram('${leave.processInstanceId!}')" title="查看流程图"><i class="fa fa-exchange"></i></a>
+											 </#if>
+											 <#if leave.state==0>
+												 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.edit('${leave.id!}')" title="编辑"><i class="fa fa-pencil"></i></a>
+											 </#if>
+											 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showLeave('${leave.id!}')" title="查看"><i class="fa fa-info-circle"></i></a>
+										 </td>
 									 </tr>
 								  </#list>
 								  <#if leaveList?size==0>
@@ -66,7 +82,7 @@
 						</div>
 						<!-- /.box-body -->
 					</div>
-					<!-- /.box -->
+						<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-edit"></i>  发起申请</a>
 				</div>
 				<!-- /.col -->
 			</div>
@@ -79,11 +95,15 @@
 		viewModel = {
 			showDiagram: function (processInstanceId) {
 				let url = "${ctx}/flowable/processInstance/genProcessDiagram/" + processInstanceId;
-				showMyModel(url,'查看流程图', '70%', '70%');
+				top.showMyModel(url,'查看流程图', '70%', '70%');
+			},
+			add: function() {
+				let url = "${ctx}/oa/leave/applyLeave/";
+				top.showMyModel(url,'填写请假申请', '900px', '60%', callBackAction);
 			},
 			edit: function(id) {
-				let url = "${ctx}/work/dairySendConfig/edit/" + id;
-				showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
+				let url = "${ctx}/oa/leave/editLeave/" + id;
+				top.showMyModel(url,'编辑申请', '900px', '60%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -117,5 +137,8 @@
 		ko.applyBindings(viewModel);
 	});
 
+	function callBackAction() {
+		window.location.reload();
+	}
 </script>
 </html>

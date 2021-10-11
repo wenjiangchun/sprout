@@ -152,6 +152,10 @@ public class ProcessInstanceService {
         return this.taskService.createTaskQuery().taskId(taskId).singleResult();
     }
 
+    public Map<String, Object> getRuntimeVariablesByTaskId(String taskId) {
+        Task task = this.taskService.createTaskQuery().taskId(taskId).singleResult();
+        return this.runtimeService.getVariables(task.getExecutionId());
+    }
     public void complete(String taskId, Map<String, Object> flowVariable) {
         this.taskService.complete(taskId, flowVariable);
     }

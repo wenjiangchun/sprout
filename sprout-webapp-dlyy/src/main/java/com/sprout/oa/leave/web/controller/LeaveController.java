@@ -69,7 +69,7 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
     @PostMapping(value = "saveAndStartWorkflow")
     @ResponseBody
     public RestResult saveAndStartWorkflow(Leave leave, Long firstApprovalId) {
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         variables.put("firstApprovalId", firstApprovalId);
         variables.put(ProcessInstanceService.INITIATOR, leave.getApplier().getId());
         try {
@@ -137,6 +137,35 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         } catch (Exception ex) {
             ex.printStackTrace();
             return RestResult.createErrorResult("办理失败," + ex.getMessage());
+        }
+
+    }
+
+
+    @GetMapping("/editLeave/{id}")
+    public String editLeave(Model model, @PathVariable Long id) {
+        Leave leave = this.leaveService.findById(id);
+        model.addAttribute("leave", leave);
+        model.addAttribute("applyTypeList", this.leaveService.getLeaveTypeList(SpringContextUtils.getBean(DictService.class)));
+        return "oa/leave/editLeave";
+    }
+
+    /**
+     * 办理流程
+     */
+    @PostMapping(value = "updateLeave")
+    @ResponseBody
+    public RestResult updateLeave(Leave leave) {
+        try {
+            Leave existLeave = this.leaveService.findById(leave.getId());
+            existLeave.setContent(leave.getContent());
+            existLeave.setPlanEndTime(leave.getPlanEndTime());
+            existLeave.setPlanStartTime(leave.getPlanStartTime());
+            this.leaveService.save(existLeave);
+            return RestResult.createSuccessResult("编辑成功");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return RestResult.createErrorResult("编辑失败," + ex.getMessage());
         }
 
     }

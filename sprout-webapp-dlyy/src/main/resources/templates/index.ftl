@@ -29,7 +29,7 @@
         <span class="sr-only">Toggle navigation</span>
       </a>
 
-      <#--<div class="navbar-custom-menu">
+      <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -40,7 +40,7 @@
               <li class="header">You have 1 messages</li>
               <li>
                 <ul class="menu">
-                  <li><!-- start message &ndash;&gt;
+                  <li>
                     <a href="#">
                       <div class="pull-left">
                         <img src="${ctx}/res/adminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
@@ -86,7 +86,7 @@
               <li class="header">You have 1 tasks</li>
               <li>
                 <ul class="menu">
-                  <li><!-- Task item &ndash;&gt;
+                  <li>
                     <a href="#">
                       <h3>
                         Create a nice theme
@@ -115,7 +115,7 @@
             <ul class="dropdown-menu">
               <li class="user-header">
                 <img src="${ctx}/res/adminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                <p>
+                <p style="color: #0a0a0a">
                   系统管理员
                   <small>Member since Nov. 2012</small>
                 </p>
@@ -134,7 +134,7 @@
             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
           </li>
         </ul>
-      </div>-->
+      </div>
     </nav>
   </header>
   <aside class="main-sidebar">
@@ -185,7 +185,7 @@
         </li>-->
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-reorder"></i>
+            <i class="fa fa-clone"></i>
             <span>流程管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -231,16 +231,15 @@
         </li>
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-dashcube"></i>
+            <i class="fa fa-pencil-square"></i>
             <span>请假管理</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/applyLeave"><i class="fa fa-pencil"></i> 请假申请</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/getMyLeave"><i class="fa fa-pencil"></i> 我的请假</a></li>
-            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/todoView"><i class="fa fa-pencil"></i> 待办请假</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/todoView"><i class="fa fa-list"></i> 待办请假</a></li>
           </ul>
         </li>
       </ul>
@@ -448,11 +447,9 @@
   <div class="control-sidebar-bg"></div>
 </div>
 <script src="${ctx}/res/lib/jquery/dist/jquery.min.js"></script>
-<script>
-  /*$.widget.bridge('uibutton', $.ui.button);*/
-</script>
 <script src="${ctx}/res/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="${ctx}/res/adminLTE/dist/js/adminlte.min.js"></script>
+<script src="${ctx}/res/layer/layer.js"></script>
 <script>
   $(function(){
     $(".menuBtn").click(function(){
@@ -466,6 +463,28 @@
     });
     $(".menuBtn").eq(0).click();
   });
+
+  let myModel = {};
+
+  function showMyModel(url, title, width, height, callBack) {
+    myModel.id = layer.open({
+      //skin: 'layui-layer-lan',
+      type: 2,
+      title: title,
+      //shadeClose: false,
+      shade: 0.5,
+      area: [width, height],
+      content: url
+    });
+    myModel.callBack = callBack;
+  }
+
+  function hideMyModal() {
+    if (myModel.callBack != null) {
+      myModel.callBack.apply(this, arguments);
+    }
+    layer.close(myModel.id);
+  }
 </script>
 </body>
 </html>
