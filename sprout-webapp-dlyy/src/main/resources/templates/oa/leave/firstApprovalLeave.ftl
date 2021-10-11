@@ -76,7 +76,7 @@
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
                                         <input type="hidden" name="taskId" value="${taskLeave.currentTask.id}"/>
-                                        <input type="text" name="firstApprovalId" value="${taskLeave.runtimeVariables["firstApprovalId"]}"/>
+                                        <input type="hidden" name="firstApprovalId" value="${taskLeave.runtimeVariables["firstApprovalId"]}"/>
                                     </div>
                                 </form>
                             </div>
