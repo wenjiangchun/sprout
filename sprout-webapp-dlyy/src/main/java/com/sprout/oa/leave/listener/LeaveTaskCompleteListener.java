@@ -1,6 +1,9 @@
 package com.sprout.oa.leave.listener;
 
 import com.sprout.common.util.SproutDateUtils;
+import com.sprout.common.util.SproutJsonUtils;
+import com.sprout.core.spring.SpringContextUtils;
+import com.sprout.dlyy.message.MessageSender;
 import com.sprout.flowable.service.ProcessInstanceService;
 import com.sprout.oa.leave.entity.Leave;
 import com.sprout.oa.leave.entity.LeaveTaskLog;
@@ -12,6 +15,8 @@ import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -61,9 +66,9 @@ public class LeaveTaskCompleteListener implements TaskListener {
                  //根据firstApprovalState状态来判断
                 if (variables.containsKey("firstApprovalState")) {
                     if (variables.get("firstApprovalState").toString().equals("0")) {
-                        result += "审核不通过";
+                        result += "审核不通过：";
                     } else {
-                        result += "审核通过，提交部门经理审核";
+                        result += "审核通过，提交部门经理审核：";
                     }
                 }
                 if (variables.containsKey("firstApprovalContent")) {
@@ -130,6 +135,7 @@ public class LeaveTaskCompleteListener implements TaskListener {
         try {
             this.leaveTaskLogService.save(leaveTaskLog);
             logger.debug("保存流程记录【{}】", leaveTaskLog);
+            SpringContextUtils.getBean(MessageSender.class).sendMessage(SproutJsonUtils.writeToString(leaveTaskLog));
         } catch (Exception e) {
             logger.error("保存流程记录失败", e);
         }

@@ -17,20 +17,20 @@
                             <div class="form-group">
                                 <label for="name" class="col-sm-2 control-label">人员姓名</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="name"  class="form-control" maxlength="20" value="${worker.name!}" required readonly/>
-                                    <input type="hidden" name="worker.id" class="form-control" maxlength="20" value="${worker.id!}"/>
+                                    <input type="text" id="name"  class="form-control" maxlength="20" value="${dairySendConfig.worker.name!}" required readonly/>
+                                    <input type="hidden" name="worker.id" class="form-control" maxlength="20" value="${dairySendConfig.worker.id!}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="source" class="col-sm-2 control-label">发送邮箱</label>
                                 <div class="col-sm-10">
-                                    <input type="email" id="source" name="source" class="form-control" maxlength="20" required/>
+                                    <input type="email" id="source" name="source" class="form-control" maxlength="20" required value="${dairySendConfig.source!}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="smtp" class="col-sm-2 control-label">邮箱服务器</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="smtp" name="smtp" class="form-control" maxlength="20" required />
+                                    <input type="text" id="smtp" name="smtp" class="form-control" maxlength="20" required value="${dairySendConfig.smtp!}"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -44,44 +44,45 @@
                             <div class="form-group">
                                 <label for="token" class="col-sm-2 control-label">Token</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="token" name="token" class="form-control" maxlength="20" required />
+                                    <input type="password" id="token" name="token" class="form-control" maxlength="20" required value="${dairySendConfig.token!}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="destination" class="col-sm-2 control-label">接收邮箱</label>
                                 <div class="col-sm-10">
-                                    <input type="email" id="destination" name="destination" class="form-control" maxlength="20" required />
+                                    <input type="email" id="destination" name="destination" class="form-control" maxlength="20" required value="${dairySendConfig.destination!}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="copyDestinations" class="col-sm-2 control-label">抄送邮箱</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="copyDestinations" name="copyDestinations" class="form-control" maxlength="50" required />
+                                    <input type="text" id="copyDestinations" name="copyDestinations" class="form-control" maxlength="50" required value="${dairySendConfig.copyDestinations!}"/>
                                     <span class="help-block">多个邮箱以";"隔开</span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="dairyStartDay" class="col-sm-2 control-label">日志开始时间</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="dairyStartDay" name="dairyStartDay" class="form-control" maxlength="50" required />
+                                    <input type="text" id="dairyStartDay" name="dairyStartDay" class="form-control" maxlength="50" required value="${dairySendConfig.dairyStartDay?string('yyyy-MM-dd')}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="weekStartNum" class="col-sm-2 control-label">日志开始周数</label>
                                 <div class="col-sm-10">
-                                    <input type="number" id="weekStartNum" name="weekStartNum" class="form-control" maxlength="50" value="1" required min="1"/>
+                                    <input type="number" id="weekStartNum" name="weekStartNum" class="form-control" maxlength="50" required min="1" value="${dairySendConfig.weekStartNum!}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="personalSign" class="col-sm-2 control-label">邮箱签名</label>
                                 <div class="col-sm-10">
-                                    <textarea rows="3" id="personalSign" name="personalSign" class="form-control" maxlength="200" ></textarea>
+                                    <textarea rows="3" id="personalSign" name="personalSign" class="form-control" maxlength="200" >${dairySendConfig.personalSign!}"</textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="box-footer">
                             <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
                             <button type="reset" class="btn btn-default">重置</button>
+                            <input type="hidden" name="id" value="${dairySendConfig.id}"/>
                         </div>
                     </form>
                 </div>

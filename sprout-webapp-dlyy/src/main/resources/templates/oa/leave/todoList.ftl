@@ -33,6 +33,7 @@
 										<th>计划开始时间</th>
 										<th>计划结束时间</th>
 										<th>请假类型</th>
+										<th>流程状态</th>
 										<th>当前节点</th>
 										<th>任务时间</th>
 										<th>操作</th>
@@ -48,9 +49,20 @@
 										 <td>${leave.planStartTime!}</td>
 										 <td>${leave.planEndTime!}</td>
 										 <td>${leave.leaveType.name!}</td>
+										 <td>
+											 <#if leave.processInstance.suspended>
+												 <span class="label label-danger">已挂起</span>
+											 <#else>
+												 <span class="label label-success">已激活</span>
+											 </#if>
+										 </td>
 										 <td>${leave.currentTask.name!}</td>
 										 <td>${leave.currentTask.createTime?datetime!}</td>
-										 <td><button class="btn btn-default btn-xs" onclick="viewModel.showTask('${leave.currentTask.id}','${leave.currentTask.name!}')" title="办理"><i class="fa fa-pencil"></i></button></td>
+										 <td>
+											 <#if !leave.processInstance.suspended>
+												 <button class="btn btn-default btn-xs" onclick="viewModel.showTask('${leave.currentTask.id}','${leave.currentTask.name!}')" title="办理"><i class="fa fa-pencil"></i></button>
+											 </#if>
+										</td>
 									 </tr>
 								  </#list>
 								  <#if todoList?size==0>

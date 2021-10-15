@@ -141,7 +141,6 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
 
     }
 
-
     @GetMapping("/editLeave/{id}")
     public String editLeave(Model model, @PathVariable Long id) {
         Leave leave = this.leaveService.findById(id);
@@ -151,7 +150,9 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
     }
 
     /**
-     * 办理流程
+     * 编辑请假信息，如果一个流程已发起但未进入办理中，则可以执行该请假编辑
+     * @param leave 请假信息
+     * @return 编辑结果
      */
     @PostMapping(value = "updateLeave")
     @ResponseBody
@@ -167,7 +168,17 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
             ex.printStackTrace();
             return RestResult.createErrorResult("编辑失败," + ex.getMessage());
         }
+    }
 
+    @GetMapping("/showLeave/{id}")
+    public String showLeave(Model model, @PathVariable Long id) {
+        //根据用户查询用户代办事项
+        Leave leave = this.leaveService.findById(id);
+        model.addAttribute("leave", leave);
+        //查询办理记录
+        List<LeaveTaskLog> leaveTaskLogList = this.leaveTaskLogService.findByLeaveId(id);
+        model.addAttribute("leaveTaskLogList", leaveTaskLogList);
+        return "oa/leave/showLeave";
     }
 
 }

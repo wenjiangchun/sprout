@@ -107,11 +107,8 @@
         },
         success : function(data) {
             if (data.flag) {
-                layer.confirm(data.content, {
-                    btn: ['关闭','取消'] //按钮
-                }, function(){
+                layer.alert(data.content, function() {
                     top.hideMyModal();
-                }, function(){
                 });
             } else {
                 layer.alert(data.content);

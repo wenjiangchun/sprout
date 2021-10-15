@@ -156,9 +156,9 @@
     $('#inputForm').ajaxForm({
         dataType : 'json',
         success : function(data) {
-            if (data.messageType === "SUCCESS") {
+            if (data.flag) {
                 layer.alert("操作成功", function() {
-                    parent.hideMyModal();
+                    top.hideMyModal();
                 });
             } else {
                 layer.alert("操作失败【"+data.content+"】");

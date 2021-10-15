@@ -125,12 +125,13 @@
             start          : new Date(dt.year, dt.month - 1, dt.day),
             backgroundColor: dt.holidayItem.color, //red
             borderColor    : dt.holidayItem.color,
-            workDay        : dt.workDay//red,
+            workDay        : dt.workDay,
+            allDay : true
           };
           events.push(holidayEvent)
           //$('#calendar').fullCalendar('renderEvent', holidayEvent, true)
         });
-        $('#calendar').fullCalendar('renderEvents', events, true)
+        $('#calendar').fullCalendar('renderEvents', events, true);
         console.log('getAll=' + (new Date().getTime() - startTime.getTime()))
       });
     },

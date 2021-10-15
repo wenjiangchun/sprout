@@ -129,7 +129,7 @@
 			},
 			add: function() {
 				let url = "${ctx}/work/workDairy/add";
-				showMyModel(url,'填写工作日志', '70%', '70%', callBackAction);
+				top.showMyModel(url,'填写工作日志', '70%', '70%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -139,15 +139,23 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/work/workDairy/edit/" + id;
-				showMyModel(url,'编辑工作日志', '70%', '70%', callBackAction);
+				top.showMyModel(url,'编辑工作日志', '70%', '70%', callBackAction);
 			},
 			sendEmail: function() {
+				layer.msg('数据处理发送中...', {
+					icon: 16,
+					shade: 0.01
+				});
 				let url = "${ctx}/work/workDairy/sendEmail";
 				$.get(url, function(data) {
 					layer.alert(data.content);
 				});
 			},
 			generateWorkDairy: function() {
+				layer.msg('数据生成中...', {
+					icon: 16,
+					shade: 0.01
+				});
 				$.post('${ctx}/work/workDairy/generateWorkDairy', function(data) {
 					if(data.flag) {
 						if (data.result > 0) {
@@ -163,7 +171,7 @@
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
-					alert("ID不能为空");
+					layer.alert("ID不能为空");
 				} else {
 					layer.confirm('确认删除?', {
 						btn: ['确认','取消'] //按钮
@@ -172,11 +180,12 @@
 						$.post({
 							url:'${ctx}/work/workDairy/delete/'+ids,
 							success:function(data) {
-								if (data.messageType === 'SUCCESS') {
-									layer.alert('删除成功');
-									callBackAction(data);
+								if (data.flag) {
+									layer.alert(data.content, function() {
+										refreshTable();
+									});
 								} else {
-									layer.alert('删除失败:' + data.content);
+									layer.alert(data.content);
 								}
 							}
 						});
@@ -198,7 +207,7 @@
 			showUploadedThumbs: false,
 			progressDelay:1000,
 			dropZoneEnabled: false,
-			uploadAsync:false,
+			uploadAsync:true,
 			showUpload : false,
 			showRemove : false,
 			language : 'zh'
@@ -208,6 +217,10 @@
 		}).on("filebatchselected", function(event, files) {
 			$("#uploadExcel").fileinput("upload");
 			$('.kv-hidden').hide();
+			layer.msg('数据上传处理中...', {
+				icon: 16,
+				shade: 0.01
+			});
 		});
 	});
 

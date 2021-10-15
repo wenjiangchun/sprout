@@ -119,7 +119,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/work/dairySendConfig/edit/" + id;
-				showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
+				top.showMyModel(url,'编辑发送配置信息', '70%', '70%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -132,11 +132,12 @@
 						$.post({
 							url:'${ctx}/work/dairySendConfig/delete/'+ids,
 							success:function(data) {
-								if (data.messageType === 'SUCCESS') {
-									layer.alert('删除成功');
-									callBackAction(data);
+								if (data.flag) {
+									layer.alert(data.content, function() {
+										refreshTable();
+									});
 								} else {
-									layer.alert('删除失败:' + data.content);
+									layer.alert(data.content);
 								}
 							}
 						});

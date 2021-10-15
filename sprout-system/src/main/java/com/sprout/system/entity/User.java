@@ -4,20 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
 import com.sprout.system.utils.Sex;
 import com.sprout.system.utils.Status;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -274,8 +263,60 @@ public class User extends AbstractBaseEntity<Long> {
 
     @Override
     public String toString() {
-        String email = this.email != null ? this.email : "";
-        return "User [loginName=" + loginName + ",name=" + name + ",sex=" + sex.getSexName() + ",email=" + email + ",status=" + status.getStatusName() + "]";
+        return "User{" +
+                "id=" + id +
+                ", loginName='" + loginName + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", sex=" + sex +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", tel='" + tel + '\'' +
+                ", status=" + status +
+                ", salt='" + salt + '\'' +
+                ", roles=" + roles +
+                ", group=" + group +
+                ", description='" + description + '\'' +
+                ", entryDay=" + entryDay +
+                ", workStartYear=" + workStartYear +
+                ", workNum='" + workNum + '\'' +
+                '}';
     }
 
+    //入职日期
+    private Date entryDay;
+
+    //工作开始年份
+    private Integer workStartYear;
+
+    //工号
+    private String workNum;
+
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    public Date getEntryDay() {
+        return entryDay;
+    }
+
+    public void setEntryDay(Date entryDay) {
+        this.entryDay = entryDay;
+    }
+
+    @Column(length = 10)
+    public Integer getWorkStartYear() {
+        return workStartYear;
+    }
+
+    public void setWorkStartYear(Integer workStartYear) {
+        this.workStartYear = workStartYear;
+    }
+
+    @Column(length = 10)
+    public String getWorkNum() {
+        return workNum;
+    }
+
+    public void setWorkNum(String workNum) {
+        this.workNum = workNum;
+    }
 }

@@ -33,7 +33,7 @@
                             <th>执行ID</th>
                             <th>流程实例ID</th>
                             <th>流程定义ID</th>
-                            <th>当前节点</th>
+                            <th>流程跟踪</th>
                             <th>是否挂起</th>
                             <th>操作</th>
                         </tr>
@@ -46,7 +46,7 @@
                                 <#--<td>${processDefinition.deploymentId}</td>-->
                                 <td>${instance.processInstanceId}</td>
                                 <td>${instance.processDefinitionId}</td>
-                                <td><a class="trace" href='#' pid="${instance.id}" title="点击查看流程图">点击查看</a></td>
+                                <td><a href="javascript:void(0)" class="btn btn-default btn-sm" onclick="viewModel.showDiagram('${instance.processInstanceId!}')" title="查看流程图"><i class="fa fa-random"></i></a></td>
                                 <td>
                                     <#if !isSuspended>
                                         <span class="label label-success">已激活</span>
@@ -55,14 +55,20 @@
                                     </#if>
                                 </td>
                                 <td>
+                                    <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showDiagram('${instance.processInstanceId!}')" title="查看流程图"><i class="fa fa-random"></i></a>
                                     <#if isSuspended>
-                                        <button class="btn btn-default btn-xs" onclick="viewModel.updateProcessState('${instance.id}','active','激活')">激活</button>
+                                        <button class="btn btn-default btn-xs" onclick="viewModel.updateProcessState('${instance.processInstanceId}','active','激活')">激活</button>
                                     <#else >
-                                        <button class="btn btn-default btn-xs" onclick="viewModel.updateProcessState('${instance.id}','suspend','挂起')">挂起</button>
+                                        <button class="btn btn-default btn-xs" onclick="viewModel.updateProcessState('${instance.processInstanceId}','suspend','挂起')">挂起</button>
                                     </#if>
                                 </td>
                             </tr>
                         </#list>
+                        <#if processInstanceList?size==0>
+                            <tr>
+                                <td colspan="6" align="center">暂无相关数据</td>
+                            </tr>
+                        </#if>
                         </tbody>
                     </table>
                 </div>
@@ -81,11 +87,15 @@
     let viewModel;
     $(document).ready(function () {
         viewModel = {
+            showDiagram: function (processInstanceId) {
+                let url = "${ctx}/flowable/processInstance/genProcessDiagram/" + processInstanceId;
+                top.showMyModel(url,'查看流程图', '70%', '70%');
+            },
 			updateProcessState: function (processId, state, action) {
                 layer.confirm("确认" + action + "流程信息？", {
                     btn: ['确定','取消'] //按钮
                 }, function(){
-                    $.post('${ctx}/flowable/processDefinition/updateProcessDefinitionState/' + processId + "/" + state, function(data) {
+                    $.post('${ctx}/flowable/processInstance/updateProcessInstanceState/' + processId + "/" + state, function(data) {
                         if (data.flag) {
                             window.location.reload()
                         } else {

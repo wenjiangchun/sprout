@@ -88,7 +88,7 @@
         });
     });
     function showData(id) {
-        showMyModel('${ctx}/dlyy/monitor/editConfig/' + id, '编辑规则', '80%', '60%', refreshData);
+        top.showMyModel('${ctx}/dlyy/monitor/editConfig/' + id, '编辑规则', '80%', '60%', refreshData);
     }
 
     function refreshData() {

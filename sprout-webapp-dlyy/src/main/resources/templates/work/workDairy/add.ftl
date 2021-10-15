@@ -45,7 +45,7 @@
                             <div class="form-group db">
                                 <label for="content" class="col-sm-2 control-label">工作内容</label>
                                 <div class="col-sm-10">
-                                    <textarea rows="5" id="content" name="content" class="form-control" maxlength="300">${workDairy.content!}</textarea>
+                                    <textarea rows="5" id="content" name="content" class="form-control" maxlength="300" required>${workDairy.content!}</textarea>
                                 </div>
                             </div>
                             <div class="form-group db">
@@ -77,9 +77,9 @@
         $('#inputForm').ajaxForm({
             dataType : 'json',
             success : function(data) {
-                if (data.messageType === "SUCCESS") {
+                if (data.flag) {
                     layer.alert("操作成功", function() {
-                        parent.hideMyModal();
+                        top.hideMyModal();
                     });
                 } else {
                     layer.alert("操作失败【"+data.content+"】");

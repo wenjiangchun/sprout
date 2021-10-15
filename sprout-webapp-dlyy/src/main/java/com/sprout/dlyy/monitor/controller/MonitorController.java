@@ -10,6 +10,7 @@ import com.sprout.dlyy.monitor.service.MonitorRecordService;
 import com.sprout.dlyy.monitor.util.CustomHorizontalCellStyleStrategy;
 import com.sprout.dlyy.monitor.util.DutyState;
 import com.sprout.web.base.BaseController;
+import com.sprout.web.util.RestResult;
 import com.sprout.web.util.WebMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -267,15 +268,13 @@ public class MonitorController extends BaseController {
 
     @PostMapping("saveConfig")
     @ResponseBody
-    public WebMessage saveConfig(AttendanceConfig config) {
+    public RestResult saveConfig(AttendanceConfig config) {
         try {
             attendanceConfigService.saveConfig(config);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult("保存成功");
         } catch (Exception ex) {
-            return WebMessage.createErrorWebMessage("编辑失败，请重试");
+            logger.error("编辑打卡规则失败", ex);
+            return RestResult.createErrorResult("保存失败:" + ex.getMessage());
         }
     }
-
-
-
 }

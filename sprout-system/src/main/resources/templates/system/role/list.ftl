@@ -102,7 +102,7 @@
 			},
 			add: function() {
 				let url = "${ctx}/system/role/add";
-				showMyModel(url,'添加角色', '900px', '50%', callBackAction);
+				top.showMyModel(url,'添加角色', '900px', '50%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -112,7 +112,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/role/edit/" + id;
-				showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
+				top.showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {

@@ -60,12 +60,6 @@ public class WorkDairyController extends BaseCrudController<WorkDairy, Long> {
         return super.add(model, request);
     }
 
-    @Override
-    public String edit(Long id, Model model, HttpServletRequest request) {
-        model.addAttribute("workDairy", getWorkDairyByWorkDay(new Date()));
-        return super.edit(id, model, request);
-    }
-
     @PostMapping("getWorkDairyByWorkDay")
     @ResponseBody
     public WorkDairy getWorkDairyByWorkDay(@RequestParam Date workDay) {

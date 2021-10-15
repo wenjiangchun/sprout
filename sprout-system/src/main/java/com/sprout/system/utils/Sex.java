@@ -15,12 +15,8 @@ public enum Sex {
 	/**
 	 * 女
 	 */
-	F("女"), 
+	F("女");
 	
-	/**
-	 * 保密
-	 */
-	N("保密");
 
 	private String sexName;
 

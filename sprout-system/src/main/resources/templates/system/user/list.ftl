@@ -132,7 +132,7 @@
 				if (this.groupId() != null && this.groupId() !== "") {
 					url += "?groupId=" + this.groupId();
 				}
-				showMyModel(url,'添加用户', '800px', '60%', callBackAction);
+				top.showMyModel(url,'添加用户', '70%', '70%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');

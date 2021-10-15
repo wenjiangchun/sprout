@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title>请假审核</title>
+    <title>请假查看</title>
     <#include "../../common/head.ftl"/>
     <#include "../../common/form.ftl"/>
 </head>
@@ -16,55 +16,47 @@
                         </ul>
                         <div class="tab-content ">
                             <div class="tab-pane active" id="activity">
-                                <form id="inputForm" class="form-horizontal" action="${ctx}/oa/leave/handleLeave/" method="post">
+                                <form id="inputForm" class="form-horizontal" action="#" method="post">
                                     <div class="box-body">
                                         <div class="form-group">
                                             <label for="name" class="col-sm-2 control-label">申请人姓名</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">【${taskLeave.applier.group.name!}】-- ${taskLeave.applier.name!}</p>
+                                                <p class="form-control-static">【${leave.applier.group.name!}】-- ${leave.applier.name!}</p>
                                             </div>
                                             <label for="leaveType.id" class="col-sm-2 control-label">请假类别</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.leaveType.name!}</p>
+                                                <p class="form-control-static">${leave.leaveType.name!}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="name" class="col-sm-2 control-label">计划开始时间</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.planStartTime!}</p>
+                                                <p class="form-control-static">${leave.planStartTime!}</p>
                                             </div>
                                             <label for="leaveType.id" class="col-sm-2 control-label">计划结束时间</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.planEndTime!}</p>
+                                                <p class="form-control-static">${leave.planEndTime!}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="name" class="col-sm-2 control-label">请假事由</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.content!}</p>
+                                                <p class="form-control-static">${leave.content!}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="secondApprovalState" class="col-sm-2 control-label">审核结果</label>
-                                            <div class="col-sm-6">
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="secondApprovalState" id="inlineRadio1" value="1" checked> 通过
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="secondApprovalState" id="inlineRadio2" value="0"> 退回
-                                                </label>
+                                            <label for="leave['realStartTime']" class="col-sm-2 control-label">实际开始时间</label>
+                                            <div class="col-sm-4">
+                                                <p class="form-control-static">${leave.realStartTime!}</p>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="firstApprovalContent" class="col-sm-2 control-label">审核意见</label>
-                                            <div class="col-sm-10">
-                                                <textarea rows="3" name="secondApprovalContent" class="form-control" maxlength="200" required></textarea>
+                                            <label for="leave['realEndTime']" class="col-sm-2 control-label">实际结束时间</label>
+                                            <div class="col-sm-4">
+                                                <p class="form-control-static">${leave.realEndTime!}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
-                                        <input type="hidden" name="taskId" value="${taskLeave.currentTask.id}"/>
+                                        <button type="button" class="btn btn-primary pull-right"><i class="fa fa-close"></i> 关闭</button>
                                     </div>
                                 </form>
                             </div>
@@ -99,24 +91,9 @@
 </section>
 <script>
     let viewModel = {
-
     }
     ko.applyBindings(viewModel);
-    $('#inputForm').ajaxForm({
-        dataType : 'json',
-        beforeSubmit:function(formData, jqForm, options){
-            return true;
-        },
-        success : function(data) {
-            if (data.flag) {
-                layer.alert(data.content, function() {
-                    top.hideMyModal();
-                });
-            } else {
-                layer.alert(data.content);
-            }
-        }
-    });
+
 </script>
 </body>
 </html>

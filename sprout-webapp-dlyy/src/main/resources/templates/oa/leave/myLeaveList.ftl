@@ -105,6 +105,10 @@
 				let url = "${ctx}/oa/leave/editLeave/" + id;
 				top.showMyModel(url,'编辑申请', '900px', '60%', callBackAction);
 			},
+			showLeave: function(id) {
+				let url = "${ctx}/oa/leave/showLeave/" + id;
+				top.showMyModel(url,'查看信息', '900px', '60%');
+			},
 			delete: function(id) {
 				if (id == null || id === "") {
 					alert("ID不能为空");
