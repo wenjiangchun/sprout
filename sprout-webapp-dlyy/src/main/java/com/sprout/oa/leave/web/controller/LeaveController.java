@@ -16,6 +16,7 @@ import com.sprout.system.service.GroupService;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -98,7 +99,7 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         //获取当前用户信息
         ShiroUser currentUser = ShiroUtils.getCurrentUser();
         //根据用户查询用户代办事项
-        List<Leave> todoList = this.leaveService.getTodoList(currentUser.getUser());
+        List<Leave> todoList = this.leaveService.getTodoList(Long.valueOf(currentUser.userId));
         model.addAttribute("todoList", todoList);
         return "oa/leave/todoList";
     }
@@ -181,4 +182,20 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         return "oa/leave/showLeave";
     }
 
+    @GetMapping("/getTodoList/{userId}")
+    @ResponseBody
+    public List<Leave> getTodoList(@PathVariable Long userId) {
+        List<Leave> leaveList =  this.leaveService.getTodoList(userId);
+        leaveList.forEach(leave -> {
+            Task task = leave.getCurrentTask();
+            //ProcessInstance processInstance = leave.getProcessInstance();
+            Map<String, Object> runtimeVariables = new HashMap<>();
+            runtimeVariables.put("taskName", task.getName());
+            runtimeVariables.put("taskTime", task.getCreateTime());
+            leave.setRuntimeVariables(runtimeVariables);
+            leave.setCurrentTask(null);
+            leave.setProcessInstance(null);
+        });
+        return leaveList;
+    }
 }

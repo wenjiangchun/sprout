@@ -10,7 +10,7 @@ import com.sprout.system.service.ResourceService;
 import com.sprout.system.service.RoleService;
 import com.sprout.system.utils.Status;
 import com.sprout.web.base.BaseCrudController;
-import com.sprout.web.util.WebMessage;
+import com.sprout.web.util.RestResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -73,12 +73,12 @@ public class RoleController extends BaseCrudController<Role, Long> {
 	 */
 	@PostMapping(value = "saveResources")
     @ResponseBody
-	public WebMessage saveResources(@RequestParam("roleId") Long id, @RequestParam(value = "resourceIds[]", required = false) Long[] resourceIds) {
+	public RestResult saveResources(@RequestParam("roleId") Long id, @RequestParam(value = "resourceIds[]", required = false) Long[] resourceIds) {
         try {
             this.roleService.addResources(id, resourceIds);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
     }
 	
@@ -89,16 +89,15 @@ public class RoleController extends BaseCrudController<Role, Long> {
 	 */
 	@PostMapping(value = "update")
     @ResponseBody
-	public WebMessage update(Role role) {
+	public RestResult update(Role role) {
 		Role r = this.roleService.findById(role.getId());
 		r.setName(role.getName());
 		r.setEnabled(role.getEnabled());
 		try {
 			this.roleService.saveOrUpdate(r);
-            /*return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));*/
-            return WebMessage.createSuccessWebMessage();
+			return RestResult.createSuccessResult();
 		} catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+			return RestResult.createErrorResult(e.getMessage());
 		}
 	}
 	

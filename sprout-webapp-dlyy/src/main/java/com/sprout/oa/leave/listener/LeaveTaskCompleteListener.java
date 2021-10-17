@@ -9,8 +9,11 @@ import com.sprout.oa.leave.entity.Leave;
 import com.sprout.oa.leave.entity.LeaveTaskLog;
 import com.sprout.oa.leave.service.LeaveService;
 import com.sprout.oa.leave.service.LeaveTaskLogService;
+import com.sprout.oa.notice.NoticeMessage;
+import com.sprout.oa.notice.NoticeType;
 import com.sprout.system.entity.User;
 import com.sprout.system.service.UserService;
+import com.sprout.web.websocket.WebSocketServer;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.slf4j.Logger;
@@ -61,6 +64,7 @@ public class LeaveTaskCompleteListener implements TaskListener {
         leaveTaskLog.setTaskName(taskName);
         String result = "";
         //设置处理结果
+        String noticeUser = variables.get("INITIATOR").toString();
         switch (taskKey) {
             case "firstApprovalLeave":
                  //根据firstApprovalState状态来判断
@@ -69,6 +73,7 @@ public class LeaveTaskCompleteListener implements TaskListener {
                         result += "审核不通过：";
                     } else {
                         result += "审核通过，提交部门经理审核：";
+                        noticeUser = variables.get("secondApprovalId").toString();
                     }
                 }
                 if (variables.containsKey("firstApprovalContent")) {
@@ -99,6 +104,7 @@ public class LeaveTaskCompleteListener implements TaskListener {
                     if (variables.get("replayState").toString().equals("0")) {
                         result += "放弃请假";
                     } else {
+                        noticeUser = variables.get("firstApprovalId").toString();
                         try {
                             Map<String, Object> plainLeave = (Map) variables.get("leave");
                             leave.setPlanEndTime(SproutDateUtils.parseDate(plainLeave.get("planEndTime").toString(), "yyyy-MM-dd"));
@@ -140,5 +146,12 @@ public class LeaveTaskCompleteListener implements TaskListener {
             logger.error("保存流程记录失败", e);
         }
 
+        if (!handlerId.equals(variables.get("INITIATOR"))) {
+            //对流程发起人发送通知
+            SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(leaveTaskLog, NoticeType.NOTICE), noticeUser);
+        } else {
+            //对流程发起人发送代办提醒
+            SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(leaveTaskLog, NoticeType.TODO), noticeUser);
+        }
     }
 }

@@ -1,4 +1,4 @@
-<#assign ctx=ctx.contextPath/>
+<#assign ctx=context.contextPath/>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,5 +1,6 @@
 package com.sprout.web.websocket;
 
+import com.sprout.common.util.SproutJsonUtils;
 import com.sprout.common.util.SproutStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -139,10 +141,24 @@ public class WebSocketServer {
      */
     public void sendMessageToName(String message, String name) {
         try {
-            //connectedMap.get(name).session.getBasicRemote().sendObject(message);
             connectedMap.get(name).session.getBasicRemote().sendText(message);
         } catch (Exception e) {
             logger.error("[WebSocketServer] sendMessageToName 信息发送失败, name={}, message={}, e={}", name, message, e);
+        }
+    }
+
+    /**
+     * 对指定名称的连接发送信息
+     *
+     * @param webSocketMessage 信息对象
+     * @param name    连接名称
+     */
+    public <T extends Serializable> void sendMessageToName(WebSocketMessage<T> webSocketMessage, String name) {
+        try {
+            //connectedMap.get(name).session.getBasicRemote().sendObject(webSocketMessage);
+            connectedMap.get(name).session.getBasicRemote().sendText(SproutJsonUtils.writeToString(webSocketMessage));
+        } catch (Exception e) {
+            logger.error("[WebSocketServer] sendMessageToName 信息发送失败, name={}, message={}, e={}", name, webSocketMessage, e);
         }
     }
 

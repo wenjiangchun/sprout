@@ -1,16 +1,21 @@
 package com.sprout.oa.leave.service;
 
 import com.sprout.core.service.AbstractBaseService;
+import com.sprout.core.spring.SpringContextUtils;
 import com.sprout.flowable.service.ProcessInstanceService;
 import com.sprout.oa.leave.dao.LeaveDao;
 import com.sprout.oa.leave.dao.LeaveTaskLogDao;
 import com.sprout.oa.leave.entity.Leave;
 import com.sprout.oa.leave.entity.LeaveTaskLog;
+import com.sprout.oa.notice.NoticeMessage;
+import com.sprout.oa.notice.NoticeType;
 import com.sprout.system.entity.Dict;
 import com.sprout.system.entity.User;
 import com.sprout.system.service.DictService;
+import com.sprout.web.websocket.WebSocketServer;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,21 +67,23 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         leaveTaskLog.setHandler(leave.getApplier());
         leaveTaskLog.setHandleTime(processInstance.getStartTime());
         leaveTaskLogDao.save(leaveTaskLog);
+        SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(leaveTaskLog, NoticeType.TODO), variables.get("firstApprovalId").toString());
         return processInstance;
     }
 
     /**
      * 获取指定用户待办请假信息
-     * @param user 用户信息
+     * @param userId 用户ID
      * @return 返回正在执行流程中的用户待办请假列表
      */
-    public List<Leave> getTodoList(User user) {
-        List<Task> todoTaskList = this.processInstanceService.getTodoList(user.getId().toString(), PROCESS_KEY);
+    @Transactional(readOnly = true)
+    public List<Leave> getTodoList(Long userId) {
+        List<Task> todoTaskList = this.processInstanceService.getTodoList(userId.toString(), PROCESS_KEY);
         List<Leave> leaveList = new ArrayList<>();
         todoTaskList.forEach(task -> {
             ProcessInstance processInstance = this.processInstanceService.getProcessInstanceById(task.getProcessInstanceId());
             String businessKey = processInstance.getBusinessKey();
-            Leave leave = this.leaveDao.getById(Long.valueOf(businessKey));
+            Leave leave = this.findById(Long.valueOf(businessKey));
             leave.setProcessInstance(processInstance);
             leave.setCurrentTask(task);
             leaveList.add(leave);
@@ -84,6 +91,7 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         return leaveList;
     }
 
+    @Transactional(readOnly = true)
     public Leave getLeaveByTaskId(String taskId) {
         Task task = this.processInstanceService.getTaskById(taskId);
         ProcessInstance processInstance = this.processInstanceService.getProcessInstanceById(task.getProcessInstanceId());

@@ -14,7 +14,7 @@ import com.sprout.system.service.UserService;
 import com.sprout.system.utils.Sex;
 import com.sprout.system.utils.Status;
 import com.sprout.web.base.BaseCrudController;
-import com.sprout.web.util.WebMessage;
+import com.sprout.web.util.RestResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -95,7 +95,7 @@ public class UserController extends BaseCrudController<User, Long> {
 	 */
 	@PostMapping(value = "saveUser")
     @ResponseBody
-	public WebMessage save(User user, Long[] roleIds) {
+	public RestResult save(User user, Long[] roleIds) {
 		Set<Role> roles = new HashSet<>();
 		if (roleIds != null) {
 			for (Long roleId : roleIds) {
@@ -109,10 +109,10 @@ public class UserController extends BaseCrudController<User, Long> {
 		}
         try {
             this.userService.saveOrUpdate(user);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
         	logger.error("用户添加/更新失败", e);
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
     }
 	
@@ -144,8 +144,8 @@ public class UserController extends BaseCrudController<User, Long> {
 	 */
 	@PostMapping(value = "saveRoles")
     @ResponseBody
-	public WebMessage saveRoles(@RequestParam(value="roleIds",required=false) Long[] roleIds, @RequestParam("id") Long id) {
-		Set<Role> roles = new HashSet<Role>();
+	public RestResult saveRoles(@RequestParam(value="roleIds",required=false) Long[] roleIds, @RequestParam("id") Long id) {
+		Set<Role> roles = new HashSet<>();
 		if (null != roleIds) {
 			for (Long roleId :roleIds) {
 				Role role = new Role();
@@ -155,37 +155,30 @@ public class UserController extends BaseCrudController<User, Long> {
 		}
         try {
             this.userService.addRoles(id, roles);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
 	}
 	
-	/**
-	 * 更改用户密码
-	 * @author 王先先  修改  2013-11-28   先判断用户输入的旧密码是否正确，正确的情况下才可修改密码
-	 * @param id    用户id
-	 * @param newPassword  新密码
-	 * @return
-	 */
 	@PostMapping(value = "updatePassword")
 	@ResponseBody
 	public String updatePassword(@RequestParam(value = "id") Long id,@RequestParam(value = "newPassword") String newPassword) {
 		try {
 			this.userService.updatePassword(id, newPassword);
-			return WebMessage.ACTION_SUCCESS_MESSAGE;
+			return "修改成功";
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 	}
 	
 	@PostMapping(value = "resetPassword/{id}")
-	public WebMessage resetPassword(@PathVariable Long id, Model model) {
+	public RestResult resetPassword(@PathVariable Long id, Model model) {
         try {
             this.userService.resetPassword(id);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
     }
 	
@@ -215,7 +208,7 @@ public class UserController extends BaseCrudController<User, Long> {
 	 */
 	@PostMapping(value = "update")
 	@ResponseBody
-	public WebMessage update(User user) {
+	public RestResult update(User user) {
 		User u = this.userService.findById(user.getId());
 		u.setName(user.getName());
 		u.setEmail(user.getEmail());
@@ -231,9 +224,9 @@ public class UserController extends BaseCrudController<User, Long> {
 		u.setRoles(user.getRoles());
         try {
             this.userService.saveOrUpdate(u);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
 	}
 	

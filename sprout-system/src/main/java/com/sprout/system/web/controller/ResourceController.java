@@ -19,11 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * 资源操作Controller
- * @author Sofar
- *
- */
 @Controller
 @RequestMapping(value = "/system/resource")
 public class ResourceController extends BaseCrudController<Resource, Long> {

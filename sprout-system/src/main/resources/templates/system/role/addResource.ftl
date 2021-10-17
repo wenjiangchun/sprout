@@ -90,12 +90,12 @@
                 },
                 dataType:"json",
                 success: function(data) {
-                    if (data.messageType === "SUCCESS") {
-                        layer.alert("操作成功", function() {
-                            parent.hideMyModal();
+                    if (data.flag) {
+                        layer.alert(data.content, function() {
+                            top.hideMyModal();
                         });
                     } else {
-                        layer.alert("操作失败【"+data.content+"】");
+                        layer.alert(data.content);
                     }
                 }
             });

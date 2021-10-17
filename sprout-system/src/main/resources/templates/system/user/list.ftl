@@ -84,8 +84,7 @@
 					divId : "contentTable",
 					url : "${ctx}/system/user/search",
 					columns:[{
-						'data':'id',
-						'orderable': false
+						'data':'id'
 					},{
 						'data':'loginName',
 						'orderable': false
@@ -113,7 +112,8 @@
 								return "<span class='label label-danger'>禁用</span>";
 							}
 							return "<span class='label label-success'>启用</span>";
-						}
+						},
+						'orderable': false
 					},{
 						'data':function(row, type, val, meta) {
 							var html = "";
@@ -142,7 +142,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/user/edit/" + id;
-				showMyModel(url,'编辑用户', '800px', '60%', callBackAction);
+				top.showMyModel(url,'编辑用户', '800px', '60%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -187,7 +187,7 @@
 							rootPId:null
 						},
 						key:{
-							name:"fullName"
+							name:"name"
 						}
 					}, callback: {
 						onClick:onClick
@@ -204,7 +204,7 @@
 					tree.selectNode(node,false);
 					tree.expandNode(node, true, false, true);
 				} else {
-					let node = tree.getNodeByParam("fullName","组织机构树");
+					let node = tree.getNodeByParam("name","组织机构树");
 					tree.expandNode(node, true, false, true);
 				}
 			}
@@ -213,9 +213,9 @@
 
 	function onClick(event, treeId, treeNode, clickFlag) {
 		tree.expandNode(treeNode, true, false, true);
-		let fullName = treeNode.fullName!= null && treeNode.fullName !== '组织机构树' ? '(所属机构: ' + treeNode.fullName + ')': '';
+		let name = treeNode.name!= null && treeNode.name !== '组织机构树' ? '(所属机构: ' + treeNode.name + ')': '';
 		viewModel.groupId(treeNode.id);
-		viewModel.groupName(fullName);
+		viewModel.groupName(name);
 		refreshTable();
 	}
 

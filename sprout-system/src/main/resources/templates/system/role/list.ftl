@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
 <title>角色管理</title>
 	<#include "../../common/head.ftl"/>
@@ -125,7 +125,7 @@
 						$.post({
 							url:'${ctx}/system/role/delete/'+ids,
 							success:function(data) {
-								if (data.messageType === 'SUCCESS') {
+								if (data.flag) {
 									layer.alert('删除成功');
 									callBackAction(data);
 								} else {
@@ -139,7 +139,7 @@
 			},
 			addResource: function(id) {
 				let url = "${ctx}/system/role/addResources/" + id;
-				showMyModel(url,'角色授权', '800px', '60%', callBackAction);
+				top.showMyModel(url,'角色授权', '800px', '60%', callBackAction);
 			}
 		};
 		ko.applyBindings(viewModel);

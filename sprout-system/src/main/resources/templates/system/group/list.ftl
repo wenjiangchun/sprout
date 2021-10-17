@@ -53,13 +53,13 @@
 							<table id="contentTable" class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
-									<th sName="id" type="checkbox">编号</th>
-									<th sName="fullName">机构全称</th>
-									<th sName="name">机构简称</th>
-									<th sName="groupType.name">机构类型</th>
-									<th sName="code">机构代码</th>
-									<th sName="tel">固定电话</th>
-									<th sName="operator" columnRender="formatOperator">操作</th>
+									<th>编号</th>
+									<th>机构全称</th>
+									<th>机构简称</th>
+									<th>机构类型</th>
+									<th>机构代码</th>
+									<th>固定电话</th>
+									<th>操作</th>
 								</tr>
 								</thead>
 							</table>
@@ -162,7 +162,7 @@
 							rootPId:null
 						},
 						key:{
-							name:"fullName"
+							name:"name"
 						}
 					}, callback: {
 						onClick:onClick
@@ -179,7 +179,7 @@
 					tree.selectNode(node,false);
 					tree.expandNode(node, true, false, true);
 				} else {
-					var node = tree.getNodeByParam("fullName","组织机构树");
+					var node = tree.getNodeByParam("name","组织机构树");
 					tree.expandNode(node, true, false, true);
 				}
 			}
@@ -189,9 +189,9 @@
 	function onClick(event, treeId, treeNode, clickFlag) {
 		//currentViewModel.id = treeNode.id;
 		tree.expandNode(treeNode, true, false, true);
-		let fullName = treeNode.fullName!= null && treeNode.fullName !== '组织机构树' ? '(' + treeNode.fullName + ')': '';
+		let name = treeNode.name!= null && treeNode.name !== '组织机构树' ? '(' + treeNode.name + ')': '';
 		viewModel.groupId(treeNode.id);
-		viewModel.groupName(fullName);
+		viewModel.groupName(name);
 		refreshTable();
 	}
 

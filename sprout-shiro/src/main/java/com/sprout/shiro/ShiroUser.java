@@ -137,7 +137,7 @@ public class ShiroUser implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return loginName;
+		return name;
 	}
 
 	/**

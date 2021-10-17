@@ -17,12 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-/**
- * 字典对象Controller
- * 
- * @author sofar
- */
 @Controller
 @RequestMapping(value = "/system/dict")
 public class DictController extends BaseCrudController<Dict, Long> {

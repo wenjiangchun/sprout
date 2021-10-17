@@ -6,19 +6,13 @@ import com.sprout.system.entity.Config;
 import com.sprout.system.service.ConfigService;
 import com.sprout.system.utils.ConfigType;
 import com.sprout.web.base.BaseCrudController;
-import com.sprout.web.util.WebMessage;
+import com.sprout.web.util.RestResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * 系统配置Controller
- *
- * @author sofar
- *
- */
 @Controller
 @RequestMapping(value = "/system/config")
 public class ConfigController extends BaseCrudController<Config, Long> {
@@ -43,15 +37,14 @@ public class ConfigController extends BaseCrudController<Config, Long> {
 
 	@PostMapping(value="updateConfigValue")
     @ResponseBody 
-	public WebMessage updateConfigValue(@RequestParam(value="id")Long id, @RequestParam(value="value") String value) {
+	public RestResult updateConfigValue(@RequestParam(value="id")Long id, @RequestParam(value="value") String value) {
         try {
             Config config = this.configService.findById(id);
             config.setValue(value);
             this.configService.updateConfig(config);
-            //return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
     }
 	

@@ -9,7 +9,6 @@ import com.sprout.system.service.GroupService;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.tree.TreeNode;
 import com.sprout.web.util.RestResult;
-import com.sprout.web.util.WebMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * 组织机构Controller
- *
- * @author wenjiangchun
- */
 @Controller
 @RequestMapping(value = "/system/group")
 public class GroupController extends BaseCrudController<Group, Long> {
@@ -67,7 +61,7 @@ public class GroupController extends BaseCrudController<Group, Long> {
         List<Group> groups = groupService.findAll();
         Set<Group> newGroup = new HashSet<>();
         Group root = new Group();
-        root.setFullName("组织机构树");
+        root.setName("组织机构树");
         for (Group g : groups) {
             g.setUsers(null);
             g.setChilds(null);
@@ -116,12 +110,12 @@ public class GroupController extends BaseCrudController<Group, Long> {
 
     @PostMapping(value = "update")
     @ResponseBody
-    public WebMessage update(Group group) {
+    public RestResult update(Group group) {
         try {
             this.groupService.save(group);
-            return WebMessage.createSuccessWebMessage();
+            return RestResult.createSuccessResult();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
+            return RestResult.createErrorResult(e.getMessage());
         }
     }
 

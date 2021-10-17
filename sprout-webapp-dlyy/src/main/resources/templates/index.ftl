@@ -1,10 +1,11 @@
-<#assign ctx=ctx.contextPath/>
+<#assign ctx=context.contextPath/>
 <!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>东龙优易信息管理平台</title>
+  <link rel="icon" href="${ctx}/res/img/favicon.ico">
+  <title>东龙优易办公平台</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="${ctx}/res/lib/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${ctx}/res/lib/font-awesome/css/font-awesome.min.css">
@@ -21,8 +22,8 @@
       <span class="logo-lg"><b>Sprout</b>管理平台</span>
     </a>-->
     <a href="#" class="logo">
-      <span class="logo-mini"></span>
-      <span class="logo-lg">东龙优易信息平台</span>
+      <span class="logo-mini"><img src="${ctx}/res/img/dept-logo.png"></span>
+      <span class="logo-lg"><img src="${ctx}/res/img/dept-logo.png">办公平台</span>
     </a>
     <nav class="navbar navbar-static-top">
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
@@ -60,10 +61,10 @@
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">1</span>
+              <span class="label label-warning" data-bind="text:noticeList().length"></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 1 notifications</li>
+              <li class="header">您有 <span data-bind="text:noticeList().length"></span>条通知信息</li>
               <li>
                 <ul class="menu">
                   <li>
@@ -80,13 +81,21 @@
           <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-flag-o"></i>
-              <span class="label label-danger">1</span>
+              <span class="label label-danger" data-bind="text:todoList().length"></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 1 tasks</li>
+              <li class="header">您有 <span data-bind="text:todoList().length"></span>条待办信息</li>
               <li>
-                <ul class="menu">
+                <ul class="menu" data-bind="foreach:todoList">
                   <li>
+                    <a href="#">
+                      <h3>
+                        <span data-bind="text:$data.taskName"></span>
+                        <small class="pull-right" data-bind="text:$data.taskTime"></small>
+                      </h3>
+                    </a>
+                  </li>
+                  <#--<li>
                     <a href="#">
                       <h3>
                         Create a nice theme
@@ -99,7 +108,7 @@
                         </div>
                       </div>
                     </a>
-                  </li>
+                  </li>-->
                 </ul>
               </li>
               <li class="footer">
@@ -110,14 +119,14 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="${ctx}/res/adminLTE/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">系统管理员</span>
+              <span class="hidden-xs"><@shiro.principal/></span>
             </a>
             <ul class="dropdown-menu">
               <li class="user-header">
                 <img src="${ctx}/res/adminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                 <p style="color: #0a0a0a">
-                  系统管理员
-                  <small>Member since Nov. 2012</small>
+                  <@shiro.principal/>
+                  <small><@shiro.principal property="startLoginTime"/></small>
                 </p>
               </li>
               <li class="user-footer">
@@ -240,6 +249,18 @@
           <ul class="treeview-menu">
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/getMyLeave"><i class="fa fa-pencil"></i> 我的请假</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/todoView"><i class="fa fa-list"></i> 待办请假</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-opera"></i>
+            <span>运维管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="menuBtn" url="${ctx}/devops/docker/view"><i class="fa fa-server"></i> Docker主机管理</a></li>
           </ul>
         </li>
       </ul>
@@ -450,7 +471,13 @@
 <script src="${ctx}/res/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="${ctx}/res/adminLTE/dist/js/adminlte.min.js"></script>
 <script src="${ctx}/res/layer/layer.js"></script>
+<script src="${ctx}/res/lib/knockout/knockout-3.5.0.js"></script>
+<script src="${ctx}/res/lib/underscore/underscore-min.js"></script>
 <script>
+  let viewModel = {
+    todoList: ko.observableArray([]),
+    noticeList: ko.observableArray([])
+  }
   $(function(){
     $(".menuBtn").click(function(){
       let $this = $(this);
@@ -462,6 +489,8 @@
       document.getElementById("content").src = $(this).attr("url");
     });
     $(".menuBtn").eq(0).click();
+    ko.applyBindings(viewModel);
+    initWebSocket();
   });
 
   let myModel = {};
@@ -484,6 +513,53 @@
       myModel.callBack.apply(this, arguments);
     }
     layer.close(myModel.id);
+  }
+
+  function initWebSocket() {
+    if ('WebSocket' in window) {
+      websocket = new WebSocket('ws://localhost:8080/websocket/<@shiro.principal property="userId"/>');
+      websocket.onopen = function () {
+        console.log("连接成功");
+        //获取待办事项和通知
+        $.get('${ctx}/oa/leave/getTodoList/<@shiro.principal property="userId"/>', function(dts) {
+          _.each(dts, function(dt) {
+            viewModel.todoList.push({
+              taskName: '【' + dt.applier.name + '】' +  dt.runtimeVariables.taskName,
+              taskTime: dt.runtimeVariables.taskTime
+            });
+          });
+          console.log(viewModel.todoList().length)
+        });
+      };
+
+      websocket.onclose = function () {
+        console.log("退出连接");
+      };
+
+      websocket.onmessage = function (message) {
+        console.log(message);
+        message = JSON.parse(message.data);
+        //console.log("收到消息" + message.payLoad);
+        //websocket.send("发送信息至服务器")
+        console.log(message);
+        if (message.messageType == 0) {
+          viewModel.todoList.push({
+            taskName: '【' + message.payLoad.applier.name + '】' +  message.payLoad.runtimeVariables.taskName,
+            taskTime: message.payLoad.runtimeVariables.taskTime
+          });
+        }
+      };
+
+      websocket.onerror = function () {
+        console.log("连接出错");
+      };
+
+      window.onbeforeunload = function () {
+        websocket.close();
+      };
+    } else {
+      console.warn('当前浏览器不支持websocket')
+    }
   }
 </script>
 </body>
