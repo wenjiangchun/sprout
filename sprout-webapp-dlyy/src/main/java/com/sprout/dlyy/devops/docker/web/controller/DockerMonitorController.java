@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -31,11 +32,19 @@ public class DockerMonitorController extends BaseCrudController<DockerHost, Long
         this.restTemplate = restTemplate;
     }
 
+    @Override
+    @GetMapping(value = "view")
+    public String list(Model model, HttpServletRequest request) {
+        setModel(model, request);
+        return "devops/docker/list";
+    }
+
+
     @GetMapping("manager/{id}")
     public String manager(@PathVariable Long id, Model model) {
         DockerHost dockerHost = this.dockerHostService.findById(id);
         model.addAttribute("dockerHost", dockerHost);
-        return "devops/dockerHost/manager";
+        return "devops/docker/manager";
     }
 
     @GetMapping("manager/getImages")
@@ -91,7 +100,7 @@ public class DockerMonitorController extends BaseCrudController<DockerHost, Long
         model.addAttribute("dockerHost", this.dockerHostService.findById(dockerHostId));
         model.addAttribute("containerId", containerId);
         model.addAttribute("action", action);
-        return "devops/dockerHost/" + action;
+        return "devops/docker/" + action;
     }
 
     @GetMapping("getContainerInfo/{containerId}/{action}")

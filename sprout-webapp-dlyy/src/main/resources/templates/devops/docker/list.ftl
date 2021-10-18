@@ -83,7 +83,7 @@
 			},
 			add: function() {
 				let url = "${ctx}/devops/docker/add";
-				top.showMyModel(url,'添加Docker主机', '70%', '70%', callBackAction);
+				top.showMyModel(url,'添加Docker主机', '70%', '50%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -104,7 +104,7 @@
 				if (id == null || id === "") {
 					layer.alert("ID不能为空");
 				} else {
-					layer.confirm('确认删除?', {
+					top.layer.confirm('确认删除?', {
 						btn: ['确认','取消'] //按钮
 					}, function(){
 						const ids = [id];
@@ -112,11 +112,12 @@
 							url:'${ctx}/devops/docker/delete/'+ids,
 							success:function(data) {
 								if (data.flag) {
-									layer.alert(data.content, function() {
+									top.layer.alert(data.content, function(index) {
 										refreshTable();
+										top.layer.close(index);
 									});
 								} else {
-									layer.alert(data.content);
+									top.layer.alert(data.content);
 								}
 							}
 						});

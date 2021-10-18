@@ -1,4 +1,4 @@
-package com.sprout.dlyy.k8s;
+package com.sprout.dlyy.devops.k8s;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
@@ -54,6 +54,16 @@ public final class K8sUtils {
 
     public static List<V1Node> getNodes() throws ApiException {
          V1NodeList list = api.listNode(null, null, null,null, null, null, null, null,null,null);
+        for (V1Node item : list.getItems()) {
+        }
          return list.getItems();
+    }
+
+    public static List<V1Pod> getPods(String ip) throws ApiException {
+        V1PodList list = api.listPodForAllNamespaces(null,null,null,null,null,null,null,null,null,null);
+        for (V1Pod item : list.getItems()) {
+            System.out.println(item);
+        }
+        return list.getItems();
     }
 }

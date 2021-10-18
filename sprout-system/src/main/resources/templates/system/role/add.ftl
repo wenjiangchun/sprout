@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
     <#include "../../common/head.ftl"/>
     <#include "../../common/form.ftl"/>

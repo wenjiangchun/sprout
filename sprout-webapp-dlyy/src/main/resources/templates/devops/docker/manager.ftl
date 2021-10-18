@@ -45,7 +45,7 @@
                                   <td><a href="#" data-bind="text:$data.brevId,click: $parent.showContainerInfo" title="点击查看"></a></td>
                                   <td><a href="#" data-bind="text:$data.containerName,click: $parent.renameContainer" title="点击修改"></a></td>
                                   <td data-bind="text:$data.Command"></td>
-                                  <td data-bind="text:$data.portMapping"></td>
+                                  <td data-bind="html:$data.portBidding"></td>
                                   <td data-bind="text:$data.Image"></td>
                                   <td>
                                       <div data-bind="if: $data.State == 'running'">
@@ -145,11 +145,22 @@
                     dt.brevId = dt.Id.substr(0, 12);
                     dt.createTime = timestampToTime(dt.Created);
                     dt.containerName = dt.Names[0].replaceAll("/","");
-                    let portMapping = '';
+                    let portBidding = '';
                     if (dt.Ports != null && dt.Ports.length > 0) {
-                        portMapping = dt.Ports[0].Type + ':' + dt.Ports[0].PrivatePort + '->' + dt.Ports[0].PublicPort;
+                        _.each(dt.Ports, function(p, idx) {
+                            if (p.PublicPort !== undefined && p.PublicPort !== "" ) {
+
+                                const bidding = p.Type + ':' + p.PrivatePort + '->' + p.PublicPort;
+                                if (portBidding.indexOf(bidding) == -1) {
+                                    portBidding += p.Type + ':' + p.PrivatePort + '->' + p.PublicPort;
+                                    if (idx != 0) {
+                                        portBidding += '<br>';
+                                    }
+                                }
+                            }
+                        });
                     }
-                    dt.portMapping = portMapping;
+                    dt.portBidding = portBidding;
                 });
                 viewModel.containers(dts);
                 console.log(dts);

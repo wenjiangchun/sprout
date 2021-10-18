@@ -1,4 +1,4 @@
-package com.sprout.dlyy.k8s;
+package com.sprout.dlyy.devops.k8s;
 
 import io.kubernetes.client.openapi.models.V1Node;
 
