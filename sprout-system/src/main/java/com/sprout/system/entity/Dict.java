@@ -60,7 +60,7 @@ public class Dict extends AbstractBaseEntity<Long> {
 		this.name = name;
 	}
 
-	@Column(length = 20)
+	@Column(length = 50)
 	public String getCode() {
 		return code;
 	}

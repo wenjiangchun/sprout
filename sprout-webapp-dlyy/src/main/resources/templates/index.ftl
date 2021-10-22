@@ -253,6 +253,20 @@
         </li>
         <li class="treeview">
           <a href="#">
+            <i class="fa fa-pencil-square"></i>
+            <span>办公资产</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/asset/view"><i class="fa fa-pencil"></i> 资产管理</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/asset/addAssetIn"><i class="fa fa-list"></i> 资产入库</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/todoView"><i class="fa fa-list"></i> 资产申请</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-opera"></i>
             <span>运维管理</span>
             <span class="pull-right-container">

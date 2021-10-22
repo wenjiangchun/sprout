@@ -131,7 +131,7 @@
 				if (this.parentId() != null && this.parentId() !== "") {
 					url += "?parentId=" + this.parentId();
 				}
-				showMyModel(url,'添加字典', '900px', '60%', callBackAction);
+				top.showMyModel(url,'添加字典', '900px', '60%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -141,7 +141,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/dict/edit/" + id;
-				showMyModel(url,'编辑字典', '900px', '60%', callBackAction);
+				top.showMyModel(url,'编辑字典', '900px', '60%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {

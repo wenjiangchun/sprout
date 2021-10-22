@@ -61,9 +61,6 @@ public final class K8sUtils {
 
     public static List<V1Pod> getPods(String ip) throws ApiException {
         V1PodList list = api.listPodForAllNamespaces(null,null,null,null,null,null,null,null,null,null);
-        for (V1Pod item : list.getItems()) {
-            System.out.println(item);
-        }
         return list.getItems();
     }
 }
