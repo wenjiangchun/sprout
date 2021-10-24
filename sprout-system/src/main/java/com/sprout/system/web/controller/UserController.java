@@ -83,6 +83,8 @@ public class UserController extends BaseCrudController<User, Long> {
 		String parentId = request.getParameter("groupId");
 		if (parentId != null) {
 			model.addAttribute("group", groupService.findById(Long.parseLong(parentId)));
+		} else {
+			model.addAttribute("group", new Group());
 		}
 		return "system/user/add";
 	}
@@ -109,9 +111,9 @@ public class UserController extends BaseCrudController<User, Long> {
 		}
         try {
             this.userService.saveOrUpdate(user);
-            return RestResult.createSuccessResult();
+            return RestResult.createSuccessResult("用户保存成功");
         } catch (Exception e) {
-        	logger.error("用户添加/更新失败", e);
+        	logger.error("用户保存失败", e);
             return RestResult.createErrorResult(e.getMessage());
         }
     }

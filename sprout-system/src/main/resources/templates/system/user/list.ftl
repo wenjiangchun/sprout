@@ -29,21 +29,21 @@
 				<div class="col-xs-9">
 					<div class="box">
 						<div class="box-header">
-							<h3 class="box-title">用户列表<span data-bind="text: groupName"></span></h3>
-							<div class="box-tools">
-
+							<h3 class="box-title">用户列表<span data-bind="text: groupName" class="text-red"></span></h3>
+							<div class="box-tools pull-right">
+									<button class="btn btn-box-tool" onclick="refreshTable()" title="刷新"><i class="fa fa-refresh"></i> </button>
 							</div>
 								<form class="form-inline">
 									<input type="hidden" class="datatable_query" name="group.id" data-bind="value: groupId"/>
 									<div class="box-body">
 										<div class="form-group">
-											<label for="loginname">登录名</label>
+											<label for="loginname" class="control-label">登录名 </label>
 											<input type="text" id="loginname" name="loginName_like" class="datatable_query form-control">
 										</div>
-										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
+										<button type="button" class="btn btn-default" data-bind='click: query'>
 											<i class="fa fa-search"></i> 查询
 										</button>
-										<button type="button" class="btn btn-sm btn-danger" data-bind='click: reset' style="margin-left:10px;">清空</button>
+										<button type="button" class="btn btn-default" data-bind='click: reset'><i class="fa fa-circle-o-notch"></i> 重置</button>
 									</div>
 								</form>
 						</div>
@@ -52,12 +52,14 @@
 							<table id="contentTable" class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
-									<th>编号</th>
+									<th>工号</th>
 									<th>登录名</th>
 									<th>用户名</th>
 									<th>手机号</th>
-									<th>所在机构</th>
+									<th>邮箱</th>
 									<th>性别</th>
+									<th>入职日期</th>
+									<th>角色</th>
 									<th>状态</th>
 									<th>操作</th>
 								</tr>
@@ -84,7 +86,7 @@
 					divId : "contentTable",
 					url : "${ctx}/system/user/search",
 					columns:[{
-						'data':'id'
+						'data':'workNum'
 					},{
 						'data':'loginName',
 						'orderable': false
@@ -94,7 +96,7 @@
 						'data':'mobile',
 						'orderable': false
 					},{
-						'data':'group.name',
+						'data':'email',
 						'orderable': false
 					},{
 						'data':function(row, type, val, meta) {
@@ -107,6 +109,12 @@
 						},
 						'orderable': false
 					},{
+						'data':'entryDay',
+						'orderable': false
+					},{
+						'data':'roleNames',
+						'orderable': false
+					},{
 						'data':function(row, type, val, meta) {
 							if (row.status === "D") {
 								return "<span class='label label-danger'>禁用</span>";
@@ -117,8 +125,8 @@
 					},{
 						'data':function(row, type, val, meta) {
 							var html = "";
-							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-							html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
+							html += "<button class='btn btn-default btn-xs' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </button> ";
+							html += "<button class='btn btn-default btn-xs' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </button> ";
 							/*	html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
 							return html;
 						},
@@ -132,7 +140,9 @@
 				if (this.groupId() != null && this.groupId() !== "") {
 					url += "?groupId=" + this.groupId();
 				}
-				top.showMyModel(url,'添加用户', '70%', '70%', callBackAction);
+				//top.showMyModel(url,'添加用户', '70%', '80%', callBackAction);
+				window.location.href = url;
+
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -141,8 +151,8 @@
 				refreshTable();
 			},
 			edit: function(id) {
-				let url = "${ctx}/system/user/edit/" + id;
-				top.showMyModel(url,'编辑用户', '800px', '60%', callBackAction);
+				//top.showMyModel(url,'编辑用户', '70%', '80%', callBackAction);
+				window.location.href = "${ctx}/system/user/edit/" + id;
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -155,11 +165,13 @@
 						$.post({
 							url:'${ctx}/system/user/delete/'+ids,
 							success:function(data) {
-								if (data.messageType === 'SUCCESS') {
-									layer.alert('删除成功');
-									callBackAction(data);
+								if (data.flag) {
+									layer.alert(data.content, function(index){
+										callBackAction(data);
+										layer.close(index);
+									});
 								} else {
-									layer.alert('删除失败:' + data.content);
+									layer.alert(data.content);
 								}
 							}
 						});
@@ -196,13 +208,14 @@
 
 				tree = $.fn.zTree.getZTreeObj("groupTree");
 				let parentId = viewModel.groupId();
-				if (parentId != null && parentId != "") {
+				if (parentId != null && parentId !== "") {
 					let node = tree.getNodeByParam("id",parentId);
 					if(!node.isParent){
 						node = node.getParentNode();
 					}
 					tree.selectNode(node,false);
 					tree.expandNode(node, true, false, true);
+					viewModel.groupName(' 【当前机构/部门: ' + node.name + '】');
 				} else {
 					let node = tree.getNodeByParam("name","组织机构树");
 					tree.expandNode(node, true, false, true);
@@ -213,7 +226,7 @@
 
 	function onClick(event, treeId, treeNode, clickFlag) {
 		tree.expandNode(treeNode, true, false, true);
-		let name = treeNode.name!= null && treeNode.name !== '组织机构树' ? '(所属机构: ' + treeNode.name + ')': '';
+		let name = treeNode.name!= null && treeNode.name !== '组织机构树' ? ' 【当前机构/部门: ' + treeNode.name + '】': '';
 		viewModel.groupId(treeNode.id);
 		viewModel.groupName(name);
 		refreshTable();

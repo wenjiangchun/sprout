@@ -113,10 +113,10 @@ public class BaseCrudController<T extends BaseEntity<PK>, PK extends Serializabl
         try {
             this.service.deleteIds(ids);
             logger.debug("删除{}成功,ids=[{}]", cname, ids);
-            return RestResult.createSuccessResult("删除成功");
+            return RestResult.createSuccessResult("用户删除成功");
         } catch (Exception e) {
             logger.debug("删除{}失败,ids=[{}], error={}", cname, ids, e);
-            return RestResult.createErrorResult("删除失败【"+e.getMessage() + "】");
+            return RestResult.createErrorResult("用户删除失败【"+e.getMessage() + "】");
         }
     }
 

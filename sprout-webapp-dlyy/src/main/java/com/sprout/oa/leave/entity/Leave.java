@@ -3,7 +3,6 @@ package com.sprout.oa.leave.entity;
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
 import com.sprout.system.entity.Dict;
 import com.sprout.system.entity.User;
-import com.sprout.work.entity.HolidayItem;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.format.annotation.DateTimeFormat;

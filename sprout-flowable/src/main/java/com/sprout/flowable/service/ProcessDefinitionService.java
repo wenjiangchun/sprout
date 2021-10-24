@@ -61,7 +61,7 @@ public class ProcessDefinitionService {
      * @param file 流程文件
      * @param exportDir 导出路径
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public void deployProcessDefinition(MultipartFile file, String exportDir) throws Exception {
         String fileName = file.getOriginalFilename();
         try {

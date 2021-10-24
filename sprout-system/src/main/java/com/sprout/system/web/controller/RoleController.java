@@ -59,7 +59,6 @@ public class RoleController extends BaseCrudController<Role, Long> {
 	public String addResources(@PathVariable("id") Long id, Model model) {
 		Role role = this.roleService.findById(id);
 		List<Resource> menus = this.resourceService.findMenuResources();
-		List<Resource> newMenus = new ArrayList<Resource>();
 		model.addAttribute("role",role);
 		model.addAttribute("menus", menus);
 		return "system/role/addResource";
@@ -76,9 +75,9 @@ public class RoleController extends BaseCrudController<Role, Long> {
 	public RestResult saveResources(@RequestParam("roleId") Long id, @RequestParam(value = "resourceIds[]", required = false) Long[] resourceIds) {
         try {
             this.roleService.addResources(id, resourceIds);
-            return RestResult.createSuccessResult();
+            return RestResult.createSuccessResult("角色授权成功");
         } catch (Exception e) {
-            return RestResult.createErrorResult(e.getMessage());
+            return RestResult.createErrorResult("角色授权失败:" + e.getMessage());
         }
     }
 	

@@ -113,11 +113,11 @@
 				if (this.groupId() != null && this.groupId() !== "") {
 					url += "?parentId=" + this.groupId();
 				}
-				showMyModel(url,'添加机构', '800px', '60%', callBackAction);
+				top.showMyModel(url,'添加机构', '80%', '70%', callBackAction);
 		    },
 			edit: function(id) {
 				let url = "${ctx}/system/group/edit/" + id;
-				showMyModel(url,'编辑机构', '800px', '60%', callBackAction);
+				top.showMyModel(url,'编辑机构', '80%', '70%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {

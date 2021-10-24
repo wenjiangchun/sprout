@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="${ctx}/res/lib/bootstrap-daterangepicker/daterangepicker.css">
 <link rel="stylesheet" href="${ctx}/res/lib/select2/dist/css/select2.min.css">
 <link rel="stylesheet" href="${ctx}/res/css/main.css">
-
+<link rel="stylesheet" href="${ctx}/res/lib/iCheck/all.css">
 <script src="${ctx}/res/lib/jquery/dist/jquery.min.js"></script>
 
 <script src="${ctx}/res/lib/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -38,6 +38,7 @@
 <script src="${ctx}/res/lib/knockout/knockout-3.5.0.js"></script>
 <script src="${ctx}/res/lib/select2/dist/js/select2.full.min.js"></script>
 <script src="${ctx}/res/lib/underscore/underscore-min.js"></script>
+<script src="${ctx}/res/lib/iCheck/icheck.min.js"></script>
 <script type="text/javascript">
     function initMenu(menuId) {
         let parent = $("#" + menuId).parent().parent().parent();
@@ -67,4 +68,12 @@
         }
         layer.close(myModel.id);
     }
+
+    $(function(){
+        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue',
+            radioClass   : 'iradio_minimal-blue'
+        })
+    });
+    //layer = top.layer;
 </script>

@@ -24,13 +24,13 @@
 								<form class="form-inline">
 									<div class="box-body">
 										<div class="form-group">
-											<label for="name_like">角色名称</label>
+											<label for="name_like" class="control-label">角色名称 </label>
 											<input type="text" name="name_like" class="datatable_query form-control">
 										</div>
-										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
+										<button type="button" class="btn btn-default" data-bind='click: query'>
 											<i class="fa fa-search"></i> 查询
 										</button>
-										<button type="button" class="btn btn-sm btn-danger" data-bind='click: reset' style="margin-left:10px;">清空</button>
+										<button type="button" class="btn btn-default" data-bind='click: reset'><i class="fa fa-circle-o-notch"></i> 重置</button>
 									</div>
 								</form>
 						</div>
@@ -40,12 +40,12 @@
 								<thead>
 								<tr>
 								<tr>
-									<th sName="id">编号</th>
-									<th sName="name">角色名称</th>
-									<th sName="code">角色代码</th>
-									<th sName="status" columnRender="formatStatus">状态</th>
-									<th sName="description">角色说明</th>
-									<th sName="operate" columnRender="formatOperator">操作</th>
+									<th>编号</th>
+									<th>角色名称</th>
+									<th>角色代码</th>
+									<th>状态</th>
+									<th>角色说明</th>
+									<th>操作</th>
 								</tr>
 								</tr>
 								</thead>
@@ -70,10 +70,10 @@
 					divId : "contentTable",
 					url : "${ctx}/system/role/search",
 					columns:[{
-						'data':'id',
-						'orderable': false
+						'data':'id'
 					},{
-						'data':'name'
+						'data':'name',
+						'orderable': false
 					},{
 						'data':'code',
 						'orderable': false
@@ -83,16 +83,17 @@
 								return "<span class='label label-danger'>禁用</span>";
 							}
 							return "<span class='label label-success'>启用</span>";
-						}
+						},
+						'orderable': false
 					},{
 						'data':'description',
 						'orderable': false
 					},{
 						'data':function(row, type, val, meta) {
 							var html = "";
-							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-							html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> | ";
-							html += "<a href='javascript:void(0)' onclick='viewModel.addResource(" + row.id + ")' title='资源授权'> <i class='fa fa-database'></i> </a>";
+							html += "<button class='btn btn-default btn-xs' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </button> ";
+							html += "<button class='btn btn-default btn-xs' onclick='viewModel.delete(\"" + row.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </button> ";
+							html += "<button class='btn btn-default btn-xs' onclick='viewModel.addResource(" + row.id + ")' title='资源授权'> <i class='fa fa-database'></i> </button>";
 							return html;
 						},
 						'orderable': false
@@ -101,8 +102,8 @@
 				createTable(options);
 			},
 			add: function() {
-				let url = "${ctx}/system/role/add";
-				top.showMyModel(url,'添加角色', '900px', '50%', callBackAction);
+				window.location.href = "${ctx}/system/role/add";
+				//top.showMyModel(url,'添加角色', '900px', '50%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -112,7 +113,8 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/role/edit/" + id;
-				top.showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
+				window.location.href = url;
+				//top.showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -138,8 +140,8 @@
 				}
 			},
 			addResource: function(id) {
-				let url = "${ctx}/system/role/addResources/" + id;
-				top.showMyModel(url,'角色授权', '800px', '60%', callBackAction);
+				window.location.href = "${ctx}/system/role/addResources/" + id;
+				//top.showMyModel(url,'角色授权', '800px', '60%', callBackAction);
 			}
 		};
 		ko.applyBindings(viewModel);

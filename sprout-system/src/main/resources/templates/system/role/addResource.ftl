@@ -6,14 +6,25 @@
     <#include "../../common/ztree.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li><a href="${ctx}/system/role/view">角色管理</a></li>
+        <li class="active">添加角色</li>
+    </ol>
+</section>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-                <div class="box box-info">
+                <div class="box box-default">
                     <div class="box-header with-border">
-                        <h3 class="box-title">角色授权</h3>
+                        <h3 class="box-title">角色授权 【${role.name}】</h3>
+                        <div class="pull-right">
+                            <button class="btn btn-box-tool" onclick="window.history.go(-1)"><i class="fa fa-reply"></i> </button>
+                        </div>
                     </div>
-                    <form id="inputForm" class="form-horizontal" action="" method="post">
+                    <form id="inputForm" class="form-horizontal" action="${ctx}/system/role/saveResources" method="post">
                         <div class="box-body">
                             <ul id="resTree" class="ztree"></ul>
                             <div>
@@ -25,8 +36,8 @@
                             </div>
                         </div>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-primary" id="submit_btn"><i class="fa fa-check"></i> 提交</button>
-                            <button type="reset" class="btn btn-danger">重置</button>
+                            <button type="button" id="submit_btn" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> 提交</button>
+                            <button type="reset" class="btn btn-default">重置</button>
                         </div>
                     </form>
                 </div>
@@ -91,8 +102,9 @@
                 dataType:"json",
                 success: function(data) {
                     if (data.flag) {
-                        layer.alert(data.content, function() {
-                            top.hideMyModal();
+                        layer.alert(data.content, function(index) {
+                            //top.hideMyModal();
+                            window.history.go(-1);
                         });
                     } else {
                         layer.alert(data.content);

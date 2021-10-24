@@ -133,7 +133,7 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
     @ResponseBody
     public RestResult handleLeave(LeaveFlowVariable leaveFlowVariable, String taskId) {
         try {
-            this.leaveService.handleLeave(leaveFlowVariable.transToMap(), taskId);
+            this.leaveService.handleLeave(leaveFlowVariable.getFlowVariables(), taskId);
             return RestResult.createSuccessResult("办理成功");
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -1,6 +1,7 @@
 package com.sprout.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sprout.common.util.SproutStringUtils;
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
 import com.sprout.system.utils.Sex;
 import com.sprout.system.utils.Status;
@@ -237,10 +238,10 @@ public class User extends AbstractBaseEntity<Long> {
         String roleName = "";
         if (roles != null) {
             for (Role role : roles) {
-                roleName += role.getCode() + ",";
+                roleName += role.getName() + ",";
             }
         }
-        return roleName;
+        return SproutStringUtils.removeEnd(roleName, ",");
     }
 
     public String getDescription() {

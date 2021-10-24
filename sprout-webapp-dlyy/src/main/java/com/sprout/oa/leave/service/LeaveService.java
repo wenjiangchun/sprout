@@ -12,24 +12,37 @@ import com.sprout.oa.notice.NoticeType;
 import com.sprout.system.entity.Dict;
 import com.sprout.system.entity.User;
 import com.sprout.system.service.DictService;
+import com.sprout.system.service.UserService;
 import com.sprout.web.websocket.WebSocketServer;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
-import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class LeaveService extends AbstractBaseService<Leave, Long> {
 
     private static final String DICT_LEAVE_TYPE = "LEAVE_TYPE";
 
-    private static final String PROCESS_KEY = "leaveProcess1";
+    //普通员工
+    private static final String ROLE_ORDINARY_EMPLOYEE = "ordinary_employee";
+
+    //部门经理
+    private static final String ROLE_DEPT_MANAGER = "dept_manager";
+
+    //主管副总经理
+    private static final String ROLE_DEPUTY_MANAGER = "deputy_manager";
+
+    //总经理
+    private static final String ROLE_GENERAL_MANAGER = "general_manager";
+
+    //董事长
+    private static final String ROLE_CHAIRMAN_MANAGER = "chairman_manager";
+
+
+    private static final String PROCESS_KEY = "leaveProcess";
 
     private LeaveDao leaveDao;
 
@@ -52,7 +65,7 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
     public ProcessInstance startWorkflow(Leave leave, Map<String, Object> variables) throws Exception {
         this.save(leave);
         String businessKey = leave.getId().toString();
-        ProcessInstance processInstance = processInstanceService.startProcessInstanceByKey("leaveProcess1", businessKey, variables);
+        ProcessInstance processInstance = processInstanceService.startProcessInstanceByKey(PROCESS_KEY, businessKey, variables);
         processInstance.getProcessVariables();
         String processInstanceId = processInstance.getId();
         leave.setProcessInstanceId(processInstanceId);
@@ -118,4 +131,24 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
     public String getInitiatorName() {
         return ProcessInstanceService.INITIATOR;
     }
+
+
+    /**
+     * 判断员工级别
+     * @param userId 用户ID
+     * @return [普通员工1，部门经理，主管副总经理及总经理2，董事长3，其它0]
+     */
+    public int getUserLevel(Long userId) {
+        User user = SpringContextUtils.getBean(UserService.class).findById(userId);
+        if ( user.getRoles().stream().anyMatch(role -> role.getCode().equals(ROLE_ORDINARY_EMPLOYEE))) {
+            return 1;
+        } else if (user.getRoles().stream().anyMatch(role -> Arrays.asList(ROLE_DEPT_MANAGER, ROLE_DEPUTY_MANAGER, ROLE_GENERAL_MANAGER).contains(role.getCode()))) {
+            return 2;
+        } else if (user.getRoles().stream().anyMatch(role -> role.getCode().equals(ROLE_CHAIRMAN_MANAGER))) {
+            return 3;
+        } else {
+            return 0;
+        }
+    }
+
 }
