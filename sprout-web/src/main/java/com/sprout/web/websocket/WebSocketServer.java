@@ -158,7 +158,7 @@ public class WebSocketServer {
             //connectedMap.get(name).session.getBasicRemote().sendObject(webSocketMessage);
             connectedMap.get(name).session.getBasicRemote().sendText(SproutJsonUtils.writeToString(webSocketMessage));
         } catch (Exception e) {
-            logger.error("[WebSocketServer] sendMessageToName 信息发送失败, name={}, message={}, e={}", name, webSocketMessage, e);
+            //logger.error("[WebSocketServer] sendMessageToName 信息发送失败, name={}, message={}, e={}", name, webSocketMessage, e);
         }
     }
 

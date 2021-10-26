@@ -7,12 +7,14 @@ import com.sprout.oa.leave.entity.LeaveTaskLog;
 import com.sprout.oa.leave.flow.LeaveFlowVariable;
 import com.sprout.oa.leave.service.LeaveService;
 import com.sprout.oa.leave.service.LeaveTaskLogService;
+import com.sprout.oa.util.UserHelper;
 import com.sprout.shiro.ShiroUser;
 import com.sprout.shiro.util.ShiroUtils;
 import com.sprout.system.entity.Group;
 import com.sprout.system.entity.User;
 import com.sprout.system.service.DictService;
 import com.sprout.system.service.GroupService;
+import com.sprout.system.service.UserService;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -50,31 +52,32 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
 
     @GetMapping("/applyLeave")
     public String applyLeave(Model model) {
+        ShiroUser currentUser = ShiroUtils.getCurrentUser();
         model.addAttribute("applier", ShiroUtils.getCurrentUser());
         model.addAttribute("applyTypeList", this.leaveService.getLeaveTypeList(SpringContextUtils.getBean(DictService.class)));
-        //TODO 查询该用户机构下人员信息
-        Group group = ShiroUtils.getCurrentUser().getGroup();
-        if (Objects.nonNull(group)) {
-            Set<User> userSet = SpringContextUtils.getBean(GroupService.class).findById(group.getId()).getUsers();
-            userSet.removeIf(u ->
-                    u.getId().equals(Long.valueOf(ShiroUtils.getCurrentUser().getUserId()))
-            );
-            model.addAttribute("userList", userSet);
-        } else {
-            model.addAttribute("userList", new ArrayList<>());
+        assert currentUser != null;
+        //获取用户级别信息
+        int userLevel = UserHelper.getUserLevel(Long.valueOf(currentUser.userId));
+        //判断用户是哪个级别 普通员工还是经理董事长级别
+        if (userLevel == 1) { //普通员工
+            model.addAttribute("userLevel", 1);
+            model.addAttribute("userList", UserHelper.getDeptManagerList(Long.valueOf(currentUser.userId), true));
+        } else { //部门经理及以上
+            model.addAttribute("userLevel", 2);
+            model.addAttribute("userList", UserHelper.getChairmanManagerList(Long.valueOf(currentUser.userId)));
         }
+        User user = SpringContextUtils.getBean(UserService.class).findById(Long.valueOf(currentUser.userId));
+        model.addAttribute("holiday", UserHelper.getTotalHoliday(user, new Date()));
         return "/oa/leave/applyLeave";
     }
 
 
     @PostMapping(value = "saveAndStartWorkflow")
     @ResponseBody
-    public RestResult saveAndStartWorkflow(Leave leave, Long firstApprovalId) {
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("firstApprovalId", firstApprovalId);
-        variables.put(ProcessInstanceService.INITIATOR, leave.getApplier().getId());
+    public RestResult saveAndStartWorkflow(Leave leave, LeaveFlowVariable variable) {
+        variable.getFlowVariables().put(ProcessInstanceService.INITIATOR, leave.getApplier().getId());
         try {
-            ProcessInstance processInstance = this.leaveService.startWorkflow(leave, variables);
+            ProcessInstance processInstance = this.leaveService.startWorkflow(leave, variable.getFlowVariables());
             processInstance.getStartUserId();
             return RestResult.createSuccessResult("申请已发起,流程已成功启动");
         } catch (Exception ex) {
@@ -110,19 +113,11 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         Leave taskLeave = this.leaveService.getLeaveByTaskId(taskId);
         model.addAttribute("taskLeave", taskLeave);
         String taskKey = taskLeave.getCurrentTask().getTaskDefinitionKey();
-        Group group = ShiroUtils.getCurrentUser().getGroup();
-        if (Objects.nonNull(group)) {
-            Set<User> userSet = SpringContextUtils.getBean(GroupService.class).findById(group.getId()).getUsers();
-            userSet.removeIf(u ->
-                    u.getId().equals(Long.valueOf(ShiroUtils.getCurrentUser().getUserId()))
-            );
-            model.addAttribute("userList", userSet);
-        } else {
-            model.addAttribute("userList", new ArrayList<>());
-        }
+        //TODO 计算本次请假天数，本周请假天数，本月请假天数
         //查询办理记录
         List<LeaveTaskLog> leaveTaskLogList = this.leaveTaskLogService.findByLeaveId(taskLeave.getId());
         model.addAttribute("leaveTaskLogList", leaveTaskLogList);
+        model.addAttribute("recentLeaveList", this.leaveService.getRecentLeave(taskLeave.getApplier().getId()));
         return "oa/leave/" + taskKey;
     }
 
@@ -188,7 +183,6 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         List<Leave> leaveList =  this.leaveService.getTodoList(userId);
         leaveList.forEach(leave -> {
             Task task = leave.getCurrentTask();
-            //ProcessInstance processInstance = leave.getProcessInstance();
             Map<String, Object> runtimeVariables = new HashMap<>();
             runtimeVariables.put("taskName", task.getName());
             runtimeVariables.put("taskTime", task.getCreateTime());
@@ -197,5 +191,24 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
             leave.setProcessInstance(null);
         });
         return leaveList;
+    }
+
+
+    @GetMapping("/getDeputyManagerList")
+    @ResponseBody
+    public List<User> getDeputyManagerList() {
+        return UserHelper.getDeputyManagerList(Long.valueOf(Objects.requireNonNull(ShiroUtils.getCurrentUser()).userId));
+    }
+
+    @GetMapping("/getGeneralManagerList")
+    @ResponseBody
+    public List<User> getGeneralManagerList() {
+        return UserHelper.getGeneralManagerList(Long.valueOf(Objects.requireNonNull(ShiroUtils.getCurrentUser()).userId));
+    }
+
+    @GetMapping("/getChairmanManagerList")
+    @ResponseBody
+    public List<User> getChairmanManagerList() {
+        return UserHelper.getChairmanManagerList(Long.valueOf(Objects.requireNonNull(ShiroUtils.getCurrentUser()).userId));
     }
 }

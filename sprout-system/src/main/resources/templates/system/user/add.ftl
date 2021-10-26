@@ -143,7 +143,7 @@
                 if (data.flag) {
                     layer.alert(data.content, function(index) {
                         //top.hideMyModal();
-                        //layer.close(index);
+                        layer.close(index);
                         let url = "${ctx}/system/user/view";
                         if ($('input[name=pname]').val() !== '') {
                             url += '?groupId=' + $('#groupId').val();

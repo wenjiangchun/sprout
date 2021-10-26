@@ -46,8 +46,24 @@
 										 <td>${leave.id!}</td>
 										 <td>${leave.applier.name!}</td>
 										 <td>${leave.applyTime!}</td>
-										 <td>${leave.planStartTime!}</td>
-										 <td>${leave.planEndTime!}</td>
+										 <td>${leave.planStartTime!} |
+										     <#if leave.planStartFlag == 0>
+										     	[全天]
+												 <#elseif leave.planStartFlag == 1>
+													 [上午]
+													 <#else >
+												 [下午]
+										     </#if>
+										 </td>
+										 <td>${leave.planEndTime!} |
+											 <#if leave.planEndFlag == 0>
+												 [全天]
+											 <#elseif leave.planEndFlag == 1>
+												 [上午]
+											 <#else >
+												 [下午]
+											 </#if>
+										 </td>
 										 <td>${leave.leaveType.name!}</td>
 										 <td>
 											 <#if leave.state==0>
@@ -99,7 +115,7 @@
 			},
 			add: function() {
 				let url = "${ctx}/oa/leave/applyLeave/";
-				top.showMyModel(url,'填写请假申请', '900px', '60%', callBackAction);
+				top.showMyModel(url,'填写请假申请', '900px', '65%', callBackAction);
 			},
 			edit: function(id) {
 				let url = "${ctx}/oa/leave/editLeave/" + id;

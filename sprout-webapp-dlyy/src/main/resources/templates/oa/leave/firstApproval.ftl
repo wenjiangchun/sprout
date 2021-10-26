@@ -6,6 +6,14 @@
     <#include "../../common/form.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li><a href="#">请假管理</a></li>
+        <li><a href="${ctx}/oa/leave/todoView">待办请假</a></li>
+        <li class="active">请假审核</li>
+    </ol>
+</section>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -13,6 +21,7 @@
                         <ul class="nav nav-tabs">
                             <li class="active"><a href="#activity" data-toggle="tab" aria-expanded="true">申请信息</a></li>
                             <li><a href="#timeline" data-toggle="tab" aria-expanded="true">流程信息</a></li>
+                            <li class="pull-right"><button class="btn btn-box-tool" onclick="window.history.go(-1)"><i class="fa fa-reply"></i> </button></li>
                         </ul>
                         <div class="tab-content ">
                             <div class="tab-pane active" id="activity">
@@ -48,10 +57,10 @@
                                             <label for="firstApprovalState" class="col-sm-2 control-label">审核结果</label>
                                             <div class="col-sm-6">
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="firstApprovalState" id="inlineRadio1" value="1" data-bind="checked: firstApprovalStateChecked,click: stateControl"> 通过
+                                                    <input type="radio" name="firstApprovalState" class="minimal" id="inlineRadio1" value="1" data-bind="checked: firstApprovalStateChecked,click: stateControl"> 通过
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="firstApprovalState" id="inlineRadio2" value="0" data-bind="checked: firstApprovalStateChecked,click: stateControl"> 退回
+                                                    <input type="radio" name="firstApprovalState" class="minimal" id="inlineRadio2" value="0" data-bind="checked: firstApprovalStateChecked,click: stateControl"> 退回
                                                 </label>
                                             </div>
                                         </div>
@@ -64,7 +73,7 @@
                                         <div class="form-group" data-bind="visible:showNextApproval">
                                             <label for="firstApprovalContent" class="col-sm-2 control-label">下一步审核人</label>
                                             <div class="col-sm-10">
-                                                <select class="form-control" name="secondApprovalId" id="secondApprovalId">
+                                                <select class="form-control" name="secondApprovalId" id="secondApprovalId" data-bind="options:nextApprovalArr, optionsText:'name', optionsValue:'id'">
                                                     <option value=""></option>
                                                     <#list userList as user>
                                                         <option value="${user.id}">${user.name}</option>
@@ -77,6 +86,38 @@
                                         <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
                                         <input type="hidden" name="taskId" value="${taskLeave.currentTask.id}"/>
                                         <input type="hidden" name="firstApprovalId" value="${taskLeave.runtimeVariables["firstApprovalId"]}"/>
+                                        <div class="table-responsive no-padding" style="margin-top: 20px">
+                                        <h5 class="box-title">近3个月请假记录</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th>申请人</th>
+                                                <th>申请时间</th>
+                                                <th>请假开始时间</th>
+                                                <th>请假结束时间</th>
+                                                <th>请假类型</th>
+                                                <th>销假时间</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <#list recentLeaveList as r>
+                                                <tr>
+                                                    <td>${r.applier.group.name!}-${r.applier.name}</td>
+                                                    <td>${r.applierTime!}</td>
+                                                    <td>${r.realStartTime!}</td>
+                                                    <td>${r.realEndTime!}</td>
+                                                    <td>${r.leaveType.name!}</td>
+                                                    <td>${r.backTime!}</td>
+                                                </tr>
+                                            </#list>
+                                            <#if recentLeaveList?size==0>
+                                                <tr>
+                                                    <td colspan="6" align="center">暂无相关数据</td>
+                                                </tr>
+                                            </#if>
+                                            </tbody>
+                                        </table>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -114,6 +155,7 @@
         firstApprovalId: ko.observable(),
         showNextApproval: ko.observable(true),
         firstApprovalStateChecked: ko.observable('1'),
+        nextApprovalArr: ko.observableArray([]),
         stateControl: function() {
             if (this.firstApprovalStateChecked() === '1') {
                 this.showNextApproval(true);
@@ -121,9 +163,16 @@
                 this.showNextApproval(false);
             }
             return true;
+        },
+        getDeputyManagerList: function() {
+            let that = this;
+            $.get('${ctx}/oa/leave/getDeputyManagerList', function(dts){
+                that.nextApprovalArr(dts);
+            });
         }
     }
     ko.applyBindings(viewModel);
+    viewModel.getDeputyManagerList();
     $('#inputForm').ajaxForm({
         dataType : 'json',
         beforeSubmit:function(formData, jqForm, options){
@@ -140,7 +189,7 @@
         success : function(data) {
             if (data.flag) {
                 layer.alert(data.content, function() {
-                    top.hideMyModal();
+                    //top.hideMyModal();
                 });
             } else {
                 layer.alert(data.content);

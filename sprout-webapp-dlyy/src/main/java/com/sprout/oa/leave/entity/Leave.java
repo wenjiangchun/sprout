@@ -207,4 +207,44 @@ public class Leave extends AbstractBaseEntity<Long> {
                 ", runtimeVariables=" + runtimeVariables +
                 '}';
     }
+
+    private int planStartFlag;
+
+    private int planEndFlag;
+
+    private int realStartFlag;
+
+    private int realEndFlag;
+
+    public int getPlanStartFlag() {
+        return planStartFlag;
+    }
+
+    public void setPlanStartFlag(int planStartFlag) {
+        this.planStartFlag = planStartFlag;
+    }
+
+    public int getPlanEndFlag() {
+        return planEndFlag;
+    }
+
+    public void setPlanEndFlag(int planEndFlag) {
+        this.planEndFlag = planEndFlag;
+    }
+
+    public int getRealStartFlag() {
+        return realStartFlag;
+    }
+
+    public void setRealStartFlag(int realStartFlag) {
+        this.realStartFlag = realStartFlag;
+    }
+
+    public int getRealEndFlag() {
+        return realEndFlag;
+    }
+
+    public void setRealEndFlag(int realEndFlag) {
+        this.realEndFlag = realEndFlag;
+    }
 }

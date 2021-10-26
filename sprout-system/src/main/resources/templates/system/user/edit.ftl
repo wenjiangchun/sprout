@@ -91,11 +91,11 @@
                         <div class="form-group">
                             <label for="entryDay" class="col-sm-2 control-label">入职日期</label>
                             <div class="col-sm-4">
-                                <input type="text" id="entryDay" name="entryDay" placeholder="请选择入职日期" class="form-control" value="${user.entryDay!}" required/>
+                                <input type="text" id="entryDay" name="entryDay" placeholder="请选择入职日期" class="form-control" value="${user.entryDay?string("yyyy-MM-dd")}" required/>
                             </div>
                             <label for="workStartYear" class="col-sm-2 control-label">参加工作年份</label>
                             <div class="col-sm-4">
-                                <input type="number" id="workStartYear" name="workStartYear" placeholder="请选择参加工作年份" class="form-control" value="{user.workStartYear!}" max="2021" min="1950" required/>
+                                <input type="number" id="workStartYear" name="workStartYear" placeholder="请选择参加工作年份" class="form-control" value="${user.workStartYear!}" min="1950" max="2021" required/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -147,9 +147,11 @@
         success: function (data) {
             if (data.flag) {
                 layer.alert(data.content, function(index) {
+                    let url = '${ctx}/system/user/view';
                     if ($('input[name=pname]').val() !== '') {
                         url += '?groupId=' + $('#parentID').val();
                     }
+                    layer.close(index);
                     window.location.href = url;
                 });
             } else {

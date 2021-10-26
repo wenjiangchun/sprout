@@ -1,4 +1,5 @@
 <#assign ctx=context.contextPath/>
+<#setting number_format="#">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Tell the browser to be responsive to screen width -->
@@ -75,5 +76,5 @@
             radioClass   : 'iradio_minimal-blue'
         })
     });
-    //layer = top.layer;
+    layer = top.layer;
 </script>

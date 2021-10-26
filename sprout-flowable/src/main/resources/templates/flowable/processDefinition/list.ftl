@@ -123,7 +123,11 @@
                 }, function(){
                     $.post('${ctx}/flowable/processDefinition/deleteProcessDefination/' + deploymentId, function(data) {
                         if (data.flag) {
-                            window.location.reload()
+                            layer.alert('删除成功', function(idx) {
+                                layer.close(idx);
+                                window.location.reload();
+                            });
+
                         } else {
                             layer.alert(data.content);
                         }
@@ -150,7 +154,8 @@
             showRemove: false,
             language: 'zh'
         }).on('fileuploaded', function(event, data, previewId, index, fileId) {
-            layer.alert(data.response.content);
+            //layer.alert(data.response);
+            layer.alert('流程已部署')
             window.location.reload()
         }).on("filebatchselected", function (event, files) {
             $("#uploadExcel").fileinput("upload");

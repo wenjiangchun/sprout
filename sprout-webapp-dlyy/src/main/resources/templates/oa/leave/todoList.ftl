@@ -88,7 +88,8 @@
 			},
 			showTask: function(taskId, title) {
 				let url = "${ctx}/oa/leave/showTask/" + taskId;
-				top.showMyModel(url,title, '900px', '70%', callBackAction);
+				//top.showMyModel(url,title, '900px', '70%', callBackAction);
+				window.location.href = url;
 			}
 		};
 		ko.applyBindings(viewModel);

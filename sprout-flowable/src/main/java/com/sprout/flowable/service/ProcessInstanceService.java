@@ -22,7 +22,7 @@ import java.util.Objects;
 @Transactional(readOnly = true)
 public class ProcessInstanceService {
 
-    public static final String INITIATOR = "initiator";
+    public static final String INITIATOR = "INITIATOR";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
