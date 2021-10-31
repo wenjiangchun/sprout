@@ -1,5 +1,7 @@
 package com.sprout.oa.leave.flow;
 
+import com.sprout.oa.leave.entity.Leave;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +19,4 @@ public class LeaveFlowVariable implements Serializable {
         this.flowVariables = flowVariables;
     }
 
-    private Map<String, Object> leave;
-
-    public Map<String, Object> getLeave() {
-        return leave;
-    }
-
-    public void setLeave(Map<String, Object> leave) {
-        this.leave = leave;
-    }
 }

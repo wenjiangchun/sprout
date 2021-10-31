@@ -3,7 +3,7 @@ package com.sprout.core.service;
 /**
  * 对于名称唯一的数据，当插入或者更新名称重复时抛出该异常
  */
-public class NameAlreadyExistException extends HazeServiceException {
+public class NameAlreadyExistException extends SproutServiceException {
 
 	private static final long serialVersionUID = 1L;
 

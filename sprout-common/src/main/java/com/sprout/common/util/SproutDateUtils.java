@@ -19,7 +19,9 @@ import java.util.Date;
  */
 public class SproutDateUtils extends DateUtils {
 
-	public static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
+	public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+	public static final String DAY_PATTERN = "yyyy-MM-dd";
 
     private static  Calendar cal = Calendar.getInstance();
 
@@ -32,7 +34,7 @@ public class SproutDateUtils extends DateUtils {
 	}
 
     public static String format(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_PATTERN);
         return sdf.format(date);
     }
     public static String format(Date date, String pattern) {

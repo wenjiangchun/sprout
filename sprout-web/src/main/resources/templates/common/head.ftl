@@ -39,7 +39,7 @@
 <script src="${ctx}/res/lib/knockout/knockout-3.5.0.js"></script>
 <script src="${ctx}/res/lib/select2/dist/js/select2.full.min.js"></script>
 <script src="${ctx}/res/lib/underscore/underscore-min.js"></script>
-<script src="${ctx}/res/lib/iCheck/icheck.min.js"></script>
+<#--<script src="${ctx}/res/lib/iCheck/icheck.min.js"></script>-->
 <script type="text/javascript">
     function initMenu(menuId) {
         let parent = $("#" + menuId).parent().parent().parent();
@@ -70,11 +70,17 @@
         layer.close(myModel.id);
     }
 
-    $(function(){
-        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+    /*$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+        checkboxClass: 'icheckbox_minimal-blue',
+        radioClass   : 'iradio_minimal-blue'
+    })*/
+
+    /*$(function(){
+        /!*$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
             checkboxClass: 'icheckbox_minimal-blue',
             radioClass   : 'iradio_minimal-blue'
-        })
-    });
+        })*!/
+    });*/
     layer = top.layer;
+
 </script>

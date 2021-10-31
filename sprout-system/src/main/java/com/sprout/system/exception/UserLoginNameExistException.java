@@ -1,6 +1,6 @@
 package com.sprout.system.exception;
 
-import com.sprout.core.service.HazeServiceException;
+import com.sprout.core.service.SproutServiceException;
 
 /**
  * 用户登录名已存在异常
@@ -8,7 +8,7 @@ import com.sprout.core.service.HazeServiceException;
  * @author sofar
  *
  */
-public class UserLoginNameExistException extends HazeServiceException {
+public class UserLoginNameExistException extends SproutServiceException {
 
 	/**
 	 * 

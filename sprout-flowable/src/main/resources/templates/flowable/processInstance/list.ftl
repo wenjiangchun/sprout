@@ -46,7 +46,7 @@
                                 <#--<td>${processDefinition.deploymentId}</td>-->
                                 <td>${instance.processInstanceId}</td>
                                 <td>${instance.processDefinitionId}</td>
-                                <td><a href="javascript:void(0)" class="btn btn-default btn-sm" onclick="viewModel.showDiagram('${instance.processInstanceId!}')" title="查看流程图"><i class="fa fa-random"></i></a></td>
+                                <td><a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showDiagram('${instance.processInstanceId!}')" title="查看流程图"><i class="fa fa-random"></i></a></td>
                                 <td>
                                     <#if !isSuspended>
                                         <span class="label label-success">已激活</span>
@@ -55,7 +55,6 @@
                                     </#if>
                                 </td>
                                 <td>
-                                    <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showDiagram('${instance.processInstanceId!}')" title="查看流程图"><i class="fa fa-random"></i></a>
                                     <#if isSuspended>
                                         <button class="btn btn-default btn-xs" onclick="viewModel.updateProcessState('${instance.processInstanceId}','active','激活')">激活</button>
                                     <#else >
@@ -97,7 +96,10 @@
                 }, function(){
                     $.post('${ctx}/flowable/processInstance/updateProcessInstanceState/' + processId + "/" + state, function(data) {
                         if (data.flag) {
-                            window.location.reload()
+                            layer.alert(data.content, function(idx) {
+                                window.location.reload();
+                                layer.close(idx);
+                            });
                         } else {
                             layer.alert(data.content);
                         }

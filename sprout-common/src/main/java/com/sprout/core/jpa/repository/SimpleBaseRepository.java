@@ -135,7 +135,7 @@ public class SimpleBaseRepository<T extends BaseEntity<ID>, ID extends Serializa
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<T> findBySql(String sql, Map<String, Object> queryParams) {
+    public List<?> findBySql(String sql, Map<String, Object> queryParams) {
         Assert.notNull(sql, "查询语句不能为空!");
         Query query = em.createNativeQuery(sql);
         setParams(queryParams, query);

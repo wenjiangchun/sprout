@@ -37,7 +37,7 @@ public interface BaseService<T extends BaseEntity<PK>, PK extends Serializable> 
 
     List<T> findByJql(String jql, Map<String, Object> queryParams);
 
-    List<T> findBySql(String sql, Map<String, Object> queryParams);
+    List<?> findBySql(String sql, Map<String, Object> queryParams);
 
     T findOneByProperty(String propertyName, Object value);
 

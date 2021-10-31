@@ -11,14 +11,10 @@ import com.sprout.web.websocket.WebSocketServer;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.event.FlowableEntityEventImpl;
-import org.flowable.engine.delegate.TaskListener;
-import org.flowable.task.service.delegate.DelegateTask;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 public class LeaveTaskCreateListener implements FlowableEventListener {
@@ -46,6 +42,7 @@ public class LeaveTaskCreateListener implements FlowableEventListener {
         if (event.getType().name().equals("TASK_CREATED")) {
             FlowableEntityEventImpl ent = (FlowableEntityEventImpl) event;
             TaskEntityImpl taskEntity = (TaskEntityImpl) ent.getEntity();
+            logger.debug("Flowable-task创建完成, taskId={}, taskName={}, createTime={}", taskEntity.getTaskDefinitionId(), taskEntity.getName(), taskEntity.getCreateTime());
             String assignee = taskEntity.getAssignee();
             SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(taskEntity.getName(), NoticeType.TODO), assignee);
         }

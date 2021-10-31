@@ -249,6 +249,7 @@
           <ul class="treeview-menu">
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/getMyLeave"><i class="fa fa-pencil"></i> 我的请假</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/oa/leave/todoView"><i class="fa fa-list"></i> 待办请假</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/oa/leaveStatistic/view"><i class="fa fa-table"></i> 请假汇总</a></li>
           </ul>
         </li>
         <li class="treeview">
@@ -289,8 +290,7 @@
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0.0
     </div>
-    <strong>Copyright &copy; 2020-2021 <a href="https://zdlonghu.com">东龙优易</a>.</strong> All rights
-    reserved.
+    <strong>Copyright &copy; 2021 <a href="https://zdlonghu.com">东龙优易</a>.</strong>
   </footer>
 
   <aside class="control-sidebar control-sidebar-dark" style="display: none;">

@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title>请假审核</title>
+    <title>销假</title>
     <#include "../../common/head.ftl"/>
     <#include "../../common/form.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li><a href="#">请假管理</a></li>
+        <li><a href="${ctx}/oa/leave/todoView">待办请假</a></li>
+        <li class="active">${taskLeave.currentTask.name!}</li>
+    </ol>
+</section>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -13,45 +21,59 @@
                         <ul class="nav nav-tabs">
                             <li class="active"><a href="#activity" data-toggle="tab" aria-expanded="true">申请信息</a></li>
                             <li><a href="#timeline" data-toggle="tab" aria-expanded="true">流程信息</a></li>
+                            <li class="pull-right"><button class="btn btn-box-tool" onclick="window.history.go(-1)"><i class="fa fa-reply"></i> </button></li>
                         </ul>
                         <div class="tab-content ">
                             <div class="tab-pane active" id="activity">
                                 <form id="inputForm" class="form-horizontal" action="${ctx}/oa/leave/handleLeave/" method="post">
                                     <div class="box-body">
                                         <div class="form-group">
-                                            <label for="name" class="col-sm-2 control-label">申请人姓名</label>
+                                            <label for="name" class="col-sm-2 control-label">申请人姓名:</label>
                                             <div class="col-sm-4">
                                                 <p class="form-control-static">【${taskLeave.applier.group.name!}】-- ${taskLeave.applier.name!}</p>
                                             </div>
-                                            <label for="leaveType.id" class="col-sm-2 control-label">请假类别</label>
+                                            <label for="leaveType.id" class="col-sm-2 control-label">请假类别:</label>
                                             <div class="col-sm-4">
                                                 <p class="form-control-static">${taskLeave.leaveType.name!}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="name" class="col-sm-2 control-label">计划开始时间</label>
+                                            <label for="name" class="col-sm-2 control-label">计划开始时间:</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.planStartTime!}</p>
+                                                <p class="form-control-static">${taskLeave.planStartTime?string("yyyy-MM-dd")}</p>
                                             </div>
-                                            <label for="leaveType.id" class="col-sm-2 control-label">计划结束时间</label>
+                                            <label for="leaveType.id" class="col-sm-2 control-label">计划结束时间:</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.planEndTime!}</p>
+                                                <p class="form-control-static">${taskLeave.planEndTime?string("yyyy-MM-dd")}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="name" class="col-sm-2 control-label">请假事由</label>
+                                            <label for="name" class="col-sm-2 control-label">请假事由:</label>
                                             <div class="col-sm-4">
                                                 <p class="form-control-static">${taskLeave.content!}</p>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="leave['realStartTime']" class="col-sm-2 control-label">实际开始时间</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" class="form-control" name="leave['realStartTime']" id="realStartTime">
+                                            <label for="leave['leave.realStartTime']" class="col-sm-2 control-label">实际开始时间:</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" class="form-control" name="flowVariables['leave.realStartTime']" id="realStartTime"  value="${taskLeave.planStartTime?string("yyyy-MM-dd")}" required>
                                             </div>
-                                            <label for="leave['realEndTime']" class="col-sm-2 control-label">实际结束时间</label>
                                             <div class="col-sm-4">
-                                                <input type="text" class="form-control" name="leave['realEndTime']" id="realEndTime">
+                                                <label class="radio-inline"><input type="radio" class="minimal" name="flowVariables['leave.realStartFlag']" checked="checked" value="0"/> 全天</label>
+                                                <label class="radio-inline"><input type="radio" class="minimal" name="flowVariables['leave.realStartFlag']" value="1"/> 上午</label>
+                                                <label class="radio-inline"><input type="radio" class="minimal" name="flowVariables['leave.realStartFlag']" value="2"/> 下午</label>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="leave['leave.realEndTime']" class="col-sm-2 control-label">实际结束时间:</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" class="form-control" name="flowVariables['leave.realEndTime']" id="realEndTime" value="${taskLeave.planEndTime?string("yyyy-MM-dd")}" required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="radio-inline"><input type="radio" class="minimal" name="flowVariables['leave.realEndFlag']" checked="checked" value="0"/> 全天</label>
+                                                <label class="radio-inline"><input type="radio" class="minimal" name="flowVariables['leave.realEndFlag']" value="1"/> 上午</label>
+                                                <label class="radio-inline"><input type="radio" class="minimal" name="flowVariables['leave.realEndFlag']" value="2"/> 下午</label>
                                             </div>
                                         </div>
                                     </div>
@@ -107,8 +129,9 @@
         },
         success : function(data) {
             if (data.flag) {
-                layer.alert(data.content, function() {
-                    top.hideMyModal();
+                layer.alert(data.content, function(idx) {
+                    layer.close(idx);
+                    window.location.href='${ctx}/oa/leave/todoView';
                 });
             } else {
                 layer.alert(data.content);

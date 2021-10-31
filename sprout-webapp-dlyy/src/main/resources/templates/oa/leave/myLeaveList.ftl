@@ -46,43 +46,58 @@
 										 <td>${leave.id!}</td>
 										 <td>${leave.applier.name!}</td>
 										 <td>${leave.applyTime!}</td>
-										 <td>${leave.planStartTime!} |
+										 <td>${leave.planStartTime?string("yyyy-MM-dd")}
 										     <#if leave.planStartFlag == 0>
-										     	[全天]
 												 <#elseif leave.planStartFlag == 1>
-													 [上午]
+													<span class="text-bold text-red">[上午]</span>
 													 <#else >
-												 [下午]
+												   <span class="text-bold text-red">[下午]</span>
 										     </#if>
 										 </td>
-										 <td>${leave.planEndTime!} |
+										 <td>${leave.planEndTime?string("yyyy-MM-dd")}
 											 <#if leave.planEndFlag == 0>
-												 [全天]
 											 <#elseif leave.planEndFlag == 1>
-												 [上午]
+												  <span class="text-bold text-red">[上午]</span>
 											 <#else >
-												 [下午]
+												   <span class="text-bold text-red">[下午]</span>
 											 </#if>
 										 </td>
 										 <td>${leave.leaveType.name!}</td>
 										 <td>
-											 <#if leave.state==0>
+											 <#if leave.state.state==0>
 												 <span class="label label-primary">已申请</span>
-											   <#elseif leave.state==1>
+											   <#elseif leave.state.state==1>
 												   <span class="label label-success">办理中</span>
+											 <#elseif leave.state.state==-1>
+												 <span class="label label-danger">已放弃</span>
 											   <#else>
 												 <span class="label label-default">已结束</span>
 											 </#if>
 										 </td>
 										 <td>${leave.backTime!}</td>
-										 <td>${leave.realStartTime!}</td>
-										 <td>${leave.realStartTime!}</td>
+										 <td><#if leave.realStartTime??>${leave.realStartTime?string("yyyy-MM-dd")}</#if>
+											 <#if leave.realStartFlag == 0>
+											 <#elseif leave.realStartFlag == 1>
+												 <span class="text-bold text-red">[上午]</span>
+											 <#else >
+												 <span class="text-bold text-red">[下午]</span>
+											 </#if>
+										 </td>
+										 <td><#if leave.realEndTime??>${leave.realEndTime!string("yyyy-MM-dd")}</#if>
+											 <#if leave.realEndFlag == 0>
+											 <#elseif leave.realEndFlag == 1>
+												 <span class="text-bold text-red">[上午]</span>
+											 <#else >
+												 <span class="text-bold text-red">[下午]</span>
+											 </#if>
+										 </td>
 										 <td>
-											 <#if leave.state==0 || leave.state==1>
+											 <#if leave.state.state==0 || leave.state.state==1>
 												 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showDiagram('${leave.processInstanceId!}')" title="查看流程图"><i class="fa fa-exchange"></i></a>
 											 </#if>
-											 <#if leave.state==0>
+											 <#if leave.state.state==0>
 												 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.edit('${leave.id!}')" title="编辑"><i class="fa fa-pencil"></i></a>
+												 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.delete('${leave.id!}')" title="删除"><i class="fa fa-trash-o"></i></a>
 											 </#if>
 											 <a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showLeave('${leave.id!}')" title="查看"><i class="fa fa-info-circle"></i></a>
 										 </td>
@@ -98,7 +113,7 @@
 						</div>
 						<!-- /.box-body -->
 					</div>
-						<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-edit"></i>  发起申请</a>
+						<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-edit"></i>  发起请假申请</a>
 				</div>
 				<!-- /.col -->
 			</div>
@@ -115,7 +130,8 @@
 			},
 			add: function() {
 				let url = "${ctx}/oa/leave/applyLeave/";
-				top.showMyModel(url,'填写请假申请', '900px', '65%', callBackAction);
+				//top.showMyModel(url,'填写请假申请', '900px', '65%', callBackAction);
+				window.location.href = url;
 			},
 			edit: function(id) {
 				let url = "${ctx}/oa/leave/editLeave/" + id;

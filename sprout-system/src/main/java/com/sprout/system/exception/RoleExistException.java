@@ -1,13 +1,13 @@
 package com.sprout.system.exception;
 
-import com.sprout.core.service.HazeServiceException;
+import com.sprout.core.service.SproutServiceException;
 
 /**
  * 角色已存在异常类
  * @author Sofar
  *
  */
-public class RoleExistException extends HazeServiceException {
+public class RoleExistException extends SproutServiceException {
 
 	/**
 	 * 

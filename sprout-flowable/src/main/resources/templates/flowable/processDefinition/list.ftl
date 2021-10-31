@@ -108,7 +108,10 @@
                 }, function(){
                     $.post('${ctx}/flowable/processDefinition/updateProcessDefinitionState/' + processId + "/" + state, function(data) {
                         if (data.flag) {
-                            window.location.reload()
+                            layer.alert(data.content, function(idx) {
+                                window.location.reload();
+                                layer.close(idx);
+                            });
                         } else {
                             layer.alert(data.content);
                         }

@@ -1,6 +1,8 @@
 package com.sprout.oa.leave.entity;
 
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
+import com.sprout.oa.leave.util.LeaveState;
+import com.sprout.oa.leave.util.LeaveStateConverter;
 import com.sprout.system.entity.Dict;
 import com.sprout.system.entity.User;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -39,13 +41,14 @@ public class Leave extends AbstractBaseEntity<Long> {
 
     private Date backTime;
 
-    private int state;
+    private LeaveState state;
 
-    public int getState() {
+    @Convert(converter = LeaveStateConverter.class)
+    public LeaveState getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(LeaveState state) {
         this.state = state;
     }
 

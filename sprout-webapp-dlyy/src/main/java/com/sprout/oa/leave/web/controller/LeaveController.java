@@ -7,6 +7,7 @@ import com.sprout.oa.leave.entity.LeaveTaskLog;
 import com.sprout.oa.leave.flow.LeaveFlowVariable;
 import com.sprout.oa.leave.service.LeaveService;
 import com.sprout.oa.leave.service.LeaveTaskLogService;
+import com.sprout.oa.leave.util.LeaveState;
 import com.sprout.oa.util.UserHelper;
 import com.sprout.shiro.ShiroUser;
 import com.sprout.shiro.util.ShiroUtils;
@@ -72,14 +73,37 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
     }
 
 
+    /**
+     * 发起请假流程申请
+     * @param leave 请假信息
+     * @param variable 流程变量
+     * @return RestResult
+     */
     @PostMapping(value = "saveAndStartWorkflow")
     @ResponseBody
     public RestResult saveAndStartWorkflow(Leave leave, LeaveFlowVariable variable) {
+        leave.setState(LeaveState.UNDO);
         variable.getFlowVariables().put(ProcessInstanceService.INITIATOR, leave.getApplier().getId());
         try {
-            ProcessInstance processInstance = this.leaveService.startWorkflow(leave, variable.getFlowVariables());
-            processInstance.getStartUserId();
-            return RestResult.createSuccessResult("申请已发起,流程已成功启动");
+            //判断是否存在未完成的请假信息
+            List<Leave> existLeaveList = this.leaveService.getUnFinishedLeaveList(leave.getApplier().getId());
+            if (!existLeaveList.isEmpty()) {
+                StringBuilder errorMessage = new StringBuilder("存在进行中的请假信息，请先完成之前请假信息:");
+                for (Leave lv : existLeaveList) {
+                    errorMessage.append("【请假单ID=").append(lv.getId()).append(lv.getLeaveType().getName()).append("】");
+                }
+                return RestResult.createErrorResult(errorMessage.toString());
+            } else {
+                //判断请假时间是否冲突 如果冲突则本次请假不能申请
+                boolean checkApplyTime = this.leaveService.checkApplyTime(leave);
+                if (checkApplyTime) {
+                    ProcessInstance processInstance = this.leaveService.startWorkflow(leave, variable.getFlowVariables());
+                    processInstance.getStartUserId();
+                    return RestResult.createSuccessResult("申请已发起,流程已成功启动");
+                } else {
+                    return RestResult.createErrorResult("请假日期和已有记录冲突！");
+                }
+            }
         } catch (Exception ex) {
             logger.error("请假申请失败", ex);
             return RestResult.createErrorResult("申请失败,请重试", ex.getMessage());
@@ -113,7 +137,9 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
         Leave taskLeave = this.leaveService.getLeaveByTaskId(taskId);
         model.addAttribute("taskLeave", taskLeave);
         String taskKey = taskLeave.getCurrentTask().getTaskDefinitionKey();
-        //TODO 计算本次请假天数，本周请假天数，本月请假天数
+        //TODO 计算本次请假审核级别
+        int approvalLevel = this.leaveService.getApprovalLevel(taskLeave.getId());
+        model.addAttribute("approvalLevel", approvalLevel);
         //查询办理记录
         List<LeaveTaskLog> leaveTaskLogList = this.leaveTaskLogService.findByLeaveId(taskLeave.getId());
         model.addAttribute("leaveTaskLogList", leaveTaskLogList);
@@ -128,7 +154,7 @@ public class LeaveController extends BaseCrudController<Leave, Long> {
     @ResponseBody
     public RestResult handleLeave(LeaveFlowVariable leaveFlowVariable, String taskId) {
         try {
-            this.leaveService.handleLeave(leaveFlowVariable.getFlowVariables(), taskId);
+            this.leaveService.handleLeave(leaveFlowVariable, taskId);
             return RestResult.createSuccessResult("办理成功");
         } catch (Exception ex) {
             ex.printStackTrace();

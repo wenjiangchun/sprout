@@ -23,7 +23,9 @@ public class LeaveStatistic extends AbstractBaseEntity<Long> {
 
     private int year;
 
-    private float holiday;
+    private int month;
+
+    private float days;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "applier_id")
@@ -53,12 +55,20 @@ public class LeaveStatistic extends AbstractBaseEntity<Long> {
         this.year = year;
     }
 
-    public float getHoliday() {
-        return holiday;
+    public int getMonth() {
+        return month;
     }
 
-    public void setHoliday(float holiday) {
-        this.holiday = holiday;
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public float getDays() {
+        return days;
+    }
+
+    public void setDays(float days) {
+        this.days = days;
     }
 
     @Override
@@ -68,7 +78,7 @@ public class LeaveStatistic extends AbstractBaseEntity<Long> {
                 ", applier=" + applier +
                 ", leaveType=" + leaveType +
                 ", year=" + year +
-                ", holiday=" + holiday +
+                ", days=" + days +
                 '}';
     }
 }

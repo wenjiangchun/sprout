@@ -7,23 +7,23 @@ package com.sprout.core.service;
  * 
  * @author sofar
  */
-public class HazeServiceException extends Exception {
+public class SproutServiceException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	public HazeServiceException() {
+	public SproutServiceException() {
 		super();
 	}
 
-	public HazeServiceException(String message) {
+	public SproutServiceException(String message) {
 		super(message);
 	}
 
-	public HazeServiceException(Throwable cause) {
+	public SproutServiceException(Throwable cause) {
 		super(cause);
 	}
 
-	public HazeServiceException(String message, Throwable cause) {
+	public SproutServiceException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

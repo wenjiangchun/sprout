@@ -46,8 +46,22 @@
 										 <td>${leave.applier.name!}</td>
 										 <td>${leave.applyTime!}</td>
 										 <td><a href="javascript:void(0)" onclick="viewModel.showDiagram('${leave.processInstanceId!}')">查看流程图</a></td>
-										 <td>${leave.planStartTime!}</td>
-										 <td>${leave.planEndTime!}</td>
+										 <td>${leave.planStartTime?string("yyyy-MM-dd")}
+											 <#if leave.planStartFlag == 0>
+											 <#elseif leave.planStartFlag == 1>
+												 <span class="text-bold text-red">[上午]</span>
+											 <#else >
+												 <span class="text-bold text-red">[下午]</span>
+											 </#if>
+										 </td>
+										 <td>${leave.planEndTime?string("yyyy-MM-dd")}
+											 <#if leave.planEndFlag == 0>
+											 <#elseif leave.planEndFlag == 1>
+												 <span class="text-bold text-red">[上午]</span>
+											 <#else >
+												 <span class="text-bold text-red">[下午]</span>
+											 </#if>
+										 </td>
 										 <td>${leave.leaveType.name!}</td>
 										 <td>
 											 <#if leave.processInstance.suspended>

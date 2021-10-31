@@ -6,19 +6,30 @@
     <#include "../../common/form.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li><a href="#">请假管理</a></li>
+        <li><a href="${ctx}/oa/leave/getMyLeave">待办请假</a></li>
+        <li class="active">请假申请</li>
+    </ol>
+</section>
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-                <div class="box box-info">
+                <div class="box box-default">
                    <div class="box-header with-border">
                         <h3 class="box-title">请假申请信息</h3>
+                       <div class="pull-right">
+                           <button class="btn btn-box-tool" onclick="window.history.go(-1)"><i class="fa fa-reply"></i> </button>
+                       </div>
                     </div>
                     <form id="inputForm" class="form-horizontal" action="${ctx}/oa/leave/saveAndStartWorkflow/" method="post">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="name" class="col-sm-2 control-label">申请人姓名</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="name"  class="form-control" maxlength="20" value="${applier.group.name!}|${applier.name!}" required readonly/>
+                                    <input type="text" id="name"  class="form-control" maxlength="20" value="${applier.group.name!}-->${applier.name!}" required readonly/>
                                     <input type="hidden" name="applier.id" class="form-control" maxlength="20" value="${applier.userId!}"/>
                                 </div>
                             </div>
@@ -31,7 +42,7 @@
                                         </#list>
                                     </select>
                                 </div>
-                                <span id="helpBlock" class="help-block text-red" data-bind="visible: showUseHoliday">年休假共${holiday}天</span>
+                                <span id="helpBlock" class="help-block text-red text-bold" data-bind="visible: showUseHoliday">年休假共${holiday}天</span>
                             </div>
                             <div class="form-group">
                                 <label for="planStartTime" class="col-sm-2 control-label">计划开始时间</label>
@@ -110,7 +121,7 @@
                  if (dts.length > 0) {
                      html = '';
                      _.each(dts, function(dt) {
-                         html += ' ' + dt.leaveType.name + ':' + dt.holiday + '天'
+                         html += ' 已使用'+ dt.days + '天'
                      });
                  }
                  $('#helpBlock').html($('#helpBlock').html() + ', ' + html);
@@ -127,8 +138,8 @@
         success : function(data) {
             if (data.flag) {
                 layer.alert(data.content, function(index) {
-                    top.hideMyModal();
                     layer.close(index);
+                    window.location.href = "${ctx}/oa/leave/getMyLeave";
                 });
             } else {
                 layer.alert(data.content);

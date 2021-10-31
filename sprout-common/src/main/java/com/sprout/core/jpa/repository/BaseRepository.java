@@ -35,5 +35,5 @@ public interface BaseRepository<T extends BaseEntity<ID>, ID extends Serializabl
 
     List<T> findByJql(String jpql, Map<String, Object> queryParams);
 
-    List<T> findBySql(String sql, Map<String, Object> queryParams);
+    List<?> findBySql(String sql, Map<String, Object> queryParams);
 }

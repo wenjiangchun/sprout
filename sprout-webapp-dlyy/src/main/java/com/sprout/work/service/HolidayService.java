@@ -10,6 +10,7 @@ import com.sprout.work.util.WorkDayUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
@@ -135,5 +136,28 @@ public class HolidayService extends AbstractBaseService<Holiday, Long> {
         holidayItem.setName(name);
         this.holidayItemDao.save(holidayItem);
         getHolidayCache(true);
+    }
+
+
+    /**
+     * 获取两个日期之间的节假日信息
+     * @param startDay 开始日期
+     * @param endDay 结束日期
+     * @return 正序排列节假日信息
+     */
+    public List<Holiday> getHolidayList(String startDay, String endDay) {
+        return this.holidayDao.getHolidayList(startDay, endDay);
+    }
+
+
+    /**
+     * 判断日期是否存在于固定节假日列表中
+     * @param day 需对比日期
+     * @param holidayList 节假日列表
+     * @return 存在返回true,否则返回false
+     */
+    public boolean existHoliday(String day, List<Holiday> holidayList) {
+        //String day = SproutDateUtils.format(workDay, "yyyy-MM-dd");
+        return holidayList.stream().anyMatch(holiday -> holiday.getWorkDay().equals(day));
     }
 }

@@ -9,15 +9,9 @@ import com.sprout.system.service.UserService;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/oa/leaveStatistic")
@@ -41,4 +35,9 @@ public class LeaveStatisticController extends BaseCrudController<LeaveStatistic,
         return this.leaveStatisticService.findByJql("from LeaveStatistic where year=:year and applier.id=:applierId", queryParams);
     }
 
+    @GetMapping("/getLeaveStatisticList")
+    @ResponseBody
+    public List<Object[]> getLeaveStatisticList(@RequestParam(required = false) Long userId, @RequestParam(required = false) Integer year) {
+        return this.leaveStatisticService.getLeaveStatisticList(userId, year);
+    }
 }
