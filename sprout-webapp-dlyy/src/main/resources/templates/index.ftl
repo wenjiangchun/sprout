@@ -126,7 +126,7 @@
                 <img src="${ctx}/res/adminLTE/dist/img/avatar5.png" class="img-circle" alt="User Image">
                 <p style="color: #0a0a0a">
                   <@shiro.principal/>
-                  <small><@shiro.principal property="startLoginTime"/></small>
+                  <small><@shiro.principal property="groupName"/></small>
                 </p>
               </li>
               <li class="user-footer">

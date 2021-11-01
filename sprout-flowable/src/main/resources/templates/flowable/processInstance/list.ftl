@@ -30,9 +30,11 @@
                     <table id="contentTable" class="table table-bordered table-striped table-hover">
                         <thead>
                         <tr>
-                            <th>执行ID</th>
                             <th>流程实例ID</th>
+                            <th>发起时间</th>
                             <th>流程定义ID</th>
+                            <th>流程定义名称</th>
+                            <th>流程定义版本号</th>
                             <th>流程跟踪</th>
                             <th>是否挂起</th>
                             <th>操作</th>
@@ -42,10 +44,12 @@
                         <#list processInstanceList as instance>
                             <#assign isSuspended=instance.suspended/>
                             <tr>
-                                <td>${instance.id}</td>
                                 <#--<td>${processDefinition.deploymentId}</td>-->
                                 <td>${instance.processInstanceId}</td>
+                                <td>${instance.startTime?string("yyyy-MM-dd hh:mm:ss")}</td>
                                 <td>${instance.processDefinitionId}</td>
+                                <td>${instance.processDefinitionName}</td>
+                                <td>${instance.processDefinitionVersion}</td>
                                 <td><a href="javascript:void(0)" class="btn btn-default btn-xs" onclick="viewModel.showDiagram('${instance.processInstanceId!}')" title="查看流程图"><i class="fa fa-random"></i></a></td>
                                 <td>
                                     <#if !isSuspended>

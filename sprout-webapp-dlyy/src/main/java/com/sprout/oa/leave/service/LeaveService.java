@@ -76,7 +76,7 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         leaveTaskLog.setHandler(leave.getApplier());
         leaveTaskLog.setHandleTime(processInstance.getStartTime());
         leaveTaskLogDao.save(leaveTaskLog);
-        SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(leaveTaskLog, NoticeType.TODO), variables.get("firstApprovalId").toString());
+        //SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(leaveTaskLog, NoticeType.TODO), variables.get("firstApprovalId").toString());
         return processInstance;
     }
 
@@ -242,7 +242,7 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         queryParams.put("startTime", leave.getPlanStartTime());
         queryParams.put("endTime", leave.getPlanEndTime());
         queryParams.put("leaveState", LeaveState.DONE);
-        List<Leave> leaveList = this.leaveDao.findByJql("from Leave lv where (lv.realStartTime <=:startTime and lv.realEndTime >=:endTime) or (lv.realStartTime <=:endTime and lv.realEndTime >=:endTime) and lv.applier.id=:userId and state=:leaveState", queryParams);
+        List<Leave> leaveList = this.leaveDao.findByJql("from Leave lv where ((lv.realStartTime <=:startTime and lv.realEndTime >=:endTime) or (lv.realStartTime <=:endTime and lv.realEndTime >=:endTime)) and lv.applier.id=:userId and state=:leaveState", queryParams);
         return leaveList.isEmpty();
     }
 }

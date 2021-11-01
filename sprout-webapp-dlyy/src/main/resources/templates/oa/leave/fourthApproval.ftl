@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title>请假审核</title>
+    <title>${taskLeave.currentTask.name!}</title>
     <#include "../../common/head.ftl"/>
     <#include "../../common/form.ftl"/>
 </head>
@@ -40,7 +40,7 @@
                                         <div class="form-group">
                                             <label for="name" class="col-sm-2 control-label">计划开始时间:</label>
                                             <div class="col-sm-4">
-                                                <p class="form-control-static">${taskLeave.planStartTime!}
+                                                <p class="form-control-static">${taskLeave.planStartTime?string("yyyy-MM-dd")}
                                                     <#if taskLeave.planStartFlag == 0>
                                                     <#elseif taskLeave.planStartFlag == 1>
                                                         <span class="text-bold text-red">[上午]</span>
@@ -51,7 +51,7 @@
                                             </div>
                                             <label for="leaveType.id" class="col-sm-2 control-label">计划结束时间:</label>
                                             <div class="col-sm-4 ">
-                                                <p class="form-control-static">${taskLeave.planEndTime!}
+                                                <p class="form-control-static">${taskLeave.planEndTime?string("yyyy-MM-dd")}
                                                     <#if taskLeave.planEndFlag == 0>
                                                     <#elseif taskLeave.planEndFlag == 1>
                                                         <span class="text-bold text-red">[上午]</span>
@@ -68,45 +68,28 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="firstApprovalState" class="col-sm-2 control-label">审核结果:</label>
+                                            <label for="flowVariables['fourthApprovalState']" class="col-sm-2 control-label">审核结果:</label>
                                             <div class="col-sm-6">
-                                                <#if approvalLevel == 1>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="flowVariables['firstApprovalState']" class="minimal" id="inlineRadio1" value="1" data-bind="click:stateControl,checked:firstApprovalStateChecked">
+                                                        <input type="radio" name="flowVariables['fourthApprovalState']" class="minimal" id="inlineRadio2" value="1" checked>
                                                         通过
                                                     </label>
-                                                <#else >
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="flowVariables['firstApprovalState']" class="minimal" id="inlineRadio2" value="2" data-bind="click:stateControl,checked:firstApprovalStateChecked">
-                                                        通过
-                                                    </label>
-                                                </#if>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="flowVariables['firstApprovalState']" class="minimal" id="inlineRadio3" value="0" data-bind="click:stateControl,checked:firstApprovalStateChecked"> 退回
+                                                    <input type="radio" name="flowVariables['fourthApprovalState']" class="minimal" id="inlineRadio3" value="0"> 退回
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="firstApprovalContent" class="col-sm-2 control-label">审核意见:</label>
+                                            <label for="flowVariables['fourthApprovalContent']" class="col-sm-2 control-label">审核意见:</label>
                                             <div class="col-sm-10">
-                                                <textarea rows="3" id="firstApprovalContent" name="flowVariables['firstApprovalContent']" class="form-control" maxlength="200" required></textarea>
+                                                <textarea rows="3" id="firstApprovalContent" name="flowVariables['fourthApprovalContent']" class="form-control" maxlength="200" required></textarea>
                                             </div>
                                         </div>
-                                        <#if approvalLevel != 1>
-                                            <div class="form-group" data-bind="visible:showNextApproval" id="showNextApprovalDiv">
-                                                <label for="secondApprovalId" class="col-sm-2 control-label">下一步审核人:</label>
-                                                <div class="col-sm-10">
-                                                    <select class="form-control" name="flowVariables['secondApprovalId']" id="secondApprovalId" data-bind="options:nextApprovalArr, optionsText:'name', optionsValue:'id'">
-                                                        <option value=""></option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </#if>
                                     </div>
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交审核</button>
                                         <input type="hidden" name="taskId" value="${taskLeave.currentTask.id}"/>
-                                        <input type="hidden" name="flowVariables['firstApprovalId']" value="${taskLeave.runtimeVariables["firstApprovalId"]}"/>
+                                        <input type="hidden" name="flowVariables['fourthApprovalId']" value="${taskLeave.runtimeVariables["fourthApprovalId"]}"/>
                                         <div class="table-responsive no-padding" style="margin-top: 60px">
                                             <h5 class="box-title">近3个月请假记录</h5>
                                             <table class="table table-bordered">
@@ -174,47 +157,15 @@
 <script>
 
     let viewModel;
-    let approvalLevel = '${approvalLevel}';
-    if (approvalLevel !== '1') {
-        approvalLevel = '2';
-    }
+
     viewModel = {
-        firstApprovalId: ko.observable(),
-        showNextApproval: ko.observable(true),
-        firstApprovalStateChecked: ko.observable(approvalLevel),
-        nextApprovalArr: ko.observableArray([]),
-        approvalLevel: ko.observable(approvalLevel),
-        stateControl: function () {
-            if (this.firstApprovalStateChecked() === '0') {
-                this.showNextApproval(true);
-            } else {
-                this.showNextApproval(false);
-            }
-            return true;
-        },
-        getDeputyManagerList: function () {
-            let that = this;
-            $.get('${ctx}/oa/leave/getDeputyManagerList', function (dts) {
-                that.nextApprovalArr(dts);
-            });
-        }
+
     }
     ko.applyBindings(viewModel);
-    if (viewModel.approvalLevel() === '2') {
-        viewModel.getDeputyManagerList();
-    }
     $(function(){
         $('#inputForm').ajaxForm({
             dataType : 'json',
             beforeSubmit:function(formData, jqForm, options){
-                if (viewModel.approvalLevel() !== 1) {
-                    if (viewModel.firstApprovalStateChecked() === '2' && $('#secondApprovalId').val() === '') {
-                        layer.alert('请选择下一步审核人');
-                        return false;
-                    } else {
-                        $('#secondApprovalId').val('');
-                    }
-                }
                 return true;
             },
             success : function(data) {

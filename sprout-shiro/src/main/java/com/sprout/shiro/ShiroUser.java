@@ -41,6 +41,8 @@ public class ShiroUser implements Serializable {
 
 	private User user;
 
+	private String groupName;
+
 	public ShiroUser(User user) {
 		this.user = user;
 		this.userId = user.getId().toString();
@@ -163,5 +165,12 @@ public class ShiroUser implements Serializable {
 		if (loginName == null) {
 			return other.loginName == null;
 		} else return loginName.equals(other.loginName);
+	}
+
+	public String getGroupName() {
+		if (Objects.nonNull(this.group)) {
+			return this.group.getFullName();
+		}
+		return "";
 	}
 }
