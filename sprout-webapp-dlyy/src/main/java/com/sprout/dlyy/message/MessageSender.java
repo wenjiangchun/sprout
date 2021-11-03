@@ -28,12 +28,7 @@ public class MessageSender {
         ExecutorService threadPool = Executors.newFixedThreadPool(50);
         for (int i = 0; i < 50000000; i++) {
             String msg = message.toString() + i;
-            threadPool.submit(new Runnable() {
-                @Override
-                public void run() {
-                    amqpTemplate.convertAndSend("dlyy", null, msg);
-                }
-            });
+            threadPool.submit(() -> amqpTemplate.convertAndSend("dlyy", null, msg));
         }
         logger.debug("发送消息到队列【{}】,消息【{}】", "dlyy", message);
     }
