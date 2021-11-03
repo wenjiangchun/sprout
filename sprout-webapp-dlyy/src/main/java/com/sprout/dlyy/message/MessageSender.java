@@ -6,6 +6,10 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Component
 public class MessageSender {
 
@@ -21,7 +25,16 @@ public class MessageSender {
     }
 
     public void sendMessage(Object message) {
-        this.amqpTemplate.convertAndSend("dlyy", null, message);
+        ExecutorService threadPool = Executors.newFixedThreadPool(50);
+        for (int i = 0; i < 50000000; i++) {
+            String msg = message.toString() + i;
+            threadPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    amqpTemplate.convertAndSend("dlyy", null, msg);
+                }
+            });
+        }
         logger.debug("发送消息到队列【{}】,消息【{}】", "dlyy", message);
     }
 }

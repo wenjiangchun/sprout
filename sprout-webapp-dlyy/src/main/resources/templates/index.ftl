@@ -278,6 +278,7 @@
             <li><a href="#" class="menuBtn" url="${ctx}/devops/docker/view"><i class="fa fa-server"></i> Docker主机管理</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/dlyy/kudu/view"><i class="fa fa-circle-o"></i> Kudu资源库</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/devops/k8s/view"><i class="fa fa-cloud"></i> K8s集群监控</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/dlyy/demo/message"><i class="fa fa-send"></i> 消息发送测试</a></li>
           </ul>
         </li>
       </ul>
