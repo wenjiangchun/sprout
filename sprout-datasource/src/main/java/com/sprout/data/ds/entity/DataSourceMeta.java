@@ -89,7 +89,15 @@ public class DataSourceMeta extends AbstractBaseEntity<Long> {
                     if (Objects.nonNull(this.schema)) {
                         url += this.schema;
                     }
+                    break;
+                case PostgreSQL:
+                    String postgresqlTemplate = "jdbc:postgresql://%s:%s";
                     //url = "jdbc:impala://node-3:21050";
+                    url = String.format(postgresqlTemplate, this.ip, this.port);
+                    if (Objects.nonNull(this.schema)) {
+                        url += "/" + this.schema;
+                    }
+                    break;
                 default:
                     break;
             }

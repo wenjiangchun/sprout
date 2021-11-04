@@ -25,8 +25,8 @@ public class MessageSender {
     }
 
     public void sendMessage(Object message) {
-        ExecutorService threadPool = Executors.newFixedThreadPool(50);
-        for (int i = 0; i < 50000000; i++) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(20);
+        for (int i = 0; i < 5000000; i++) {
             String msg = message.toString() + i;
             threadPool.submit(new Runnable() {
                 @Override

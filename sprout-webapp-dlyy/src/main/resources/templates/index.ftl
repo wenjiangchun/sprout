@@ -179,7 +179,7 @@
 
           </ul>
         </li>
-        <#--<li class="treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-anchor"></i>
             <span>数据管理</span>
@@ -191,7 +191,7 @@
             <li><a href="#" class="menuBtn" url="${ctx}/data/dataSourceMeta/list"><i class="fa fa-circle-o"></i> 数据源管理</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/data/dataSourceNavigate/view"><i class="fa fa-circle-o"></i> 数据浏览</a></li>
           </ul>
-        </li>-->
+        </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-clone"></i>
