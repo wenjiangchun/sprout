@@ -22,4 +22,5 @@ public interface SproutDataSource {
 
     DataSourceMeta getDataSourceMeta();
 
+    List<Object> getTableNames() throws Exception;
 }

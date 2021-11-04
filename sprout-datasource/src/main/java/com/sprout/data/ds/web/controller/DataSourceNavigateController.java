@@ -54,7 +54,7 @@ public class DataSourceNavigateController extends BaseController {
 				//首先查询schema
 				TreeNode treeNodeRoot = new TreeNode(startId, schema, null, "schema", false);
 				treeNodeList.add(treeNodeRoot);
-				List<Object> rs = sproutDataSource.query("show tables", null);
+				List<Object> rs = sproutDataSource.getTableNames();
 				for (Object r : rs) {
 					List<String> nr = (List<String>) r;
 					startId ++;
@@ -91,7 +91,7 @@ public class DataSourceNavigateController extends BaseController {
          DataSourceMeta dataSourceMeta = dataSourceMetaService.findById(metaId);
          SproutDataSource sproutDataSource = dataSourceMetaService.getSourceMetaMap().get(dataSourceMeta.getName());
 		try {
-			return sproutDataSource.query("DESCRIBE " + schemaName + "." + tableName, null);
+			return sproutDataSource.query("\\d " + schemaName + "." + tableName, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -81,4 +81,22 @@ public class JdbcSproutDataSource implements SproutDataSource {
         return this.dataSourceMeta;
     }
 
+    @Override
+    public List<Object> getTableNames()throws Exception {
+        PreparedStatement preparedStatement = getConnection().prepareStatement("select tablename from pg_tables where schemaname='public'");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        int count = preparedStatement.getMetaData().getColumnCount();
+        List<Object> list = new ArrayList<>();
+        while (resultSet.next()) {
+            List<Object> row = new ArrayList<>();
+            for (int i = 1; i <= count; i++) {
+                row.add(resultSet.getObject(i));
+            }
+            list.add(row);
+        }
+        resultSet.close();
+        preparedStatement.close();
+        return list;
+    }
+
 }
