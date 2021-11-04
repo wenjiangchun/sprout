@@ -1,10 +1,10 @@
-package com.sprout.data.ds.service;
+package com.sprout.datasource.data.ds.service;
 
 import com.sprout.core.service.AbstractBaseService;
-import com.sprout.data.ds.dao.DataSourceMetaDao;
-import com.sprout.data.ds.entity.DataSourceMeta;
-import com.sprout.data.ds.provider.JdbcSproutDataSource;
-import com.sprout.data.ds.provider.SproutDataSource;
+import com.sprout.datasource.data.ds.dao.DataSourceMetaDao;
+import com.sprout.datasource.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.provider.AbstractJdbcSproutDataSource;
+import com.sprout.datasource.provider.SproutDataSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +47,7 @@ public class DataSourceMetaService extends AbstractBaseService<DataSourceMeta, L
             case Oracle:
             case PostgreSQL:
             case Impala:
-                DATA_SOURCE_MAP.put(dataSourceMeta.getName(), new JdbcSproutDataSource(dataSourceMeta));
+                DATA_SOURCE_MAP.put(dataSourceMeta.getName(), new AbstractJdbcSproutDataSource(dataSourceMeta));
                 break;
             default:
                 break;
@@ -65,7 +65,7 @@ public class DataSourceMetaService extends AbstractBaseService<DataSourceMeta, L
                 case Oracle:
                 case PostgreSQL:
                 case Impala:
-                    JdbcSproutDataSource dataSource = new JdbcSproutDataSource(dataSourceMeta);
+                    AbstractJdbcSproutDataSource dataSource = new AbstractJdbcSproutDataSource(dataSourceMeta);
                     state = dataSource.getConnectState();
                     if (state) {
                         dataSource.closeConnection();

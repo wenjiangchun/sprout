@@ -1,6 +1,7 @@
-package com.sprout.data.ds.provider;
+package com.sprout.datasource.provider;
 
-import com.sprout.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.data.db.TableWrapper;
+import com.sprout.datasource.data.ds.entity.DataSourceMeta;
 
 import java.sql.Connection;
 import java.util.List;
@@ -22,5 +23,5 @@ public interface SproutDataSource {
 
     DataSourceMeta getDataSourceMeta();
 
-    List<Object> getTableNames() throws Exception;
+    List<TableWrapper> getTables() throws Exception;
 }

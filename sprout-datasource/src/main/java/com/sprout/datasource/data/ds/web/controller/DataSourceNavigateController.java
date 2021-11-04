@@ -1,9 +1,9 @@
-package com.sprout.data.ds.web.controller;
+package com.sprout.datasource.data.ds.web.controller;
 
 import com.sprout.common.util.SproutStringUtils;
-import com.sprout.data.ds.entity.DataSourceMeta;
-import com.sprout.data.ds.provider.SproutDataSource;
-import com.sprout.data.ds.service.DataSourceMetaService;
+import com.sprout.datasource.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.provider.SproutDataSource;
+import com.sprout.datasource.data.ds.service.DataSourceMetaService;
 import com.sprout.web.base.BaseController;
 import com.sprout.web.tree.TreeNode;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller

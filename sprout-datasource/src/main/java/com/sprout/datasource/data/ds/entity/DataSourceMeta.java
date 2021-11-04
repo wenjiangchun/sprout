@@ -1,8 +1,8 @@
-package com.sprout.data.ds.entity;
+package com.sprout.datasource.data.ds.entity;
 
 import com.sprout.common.util.SproutStringUtils;
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
-import com.sprout.data.ds.util.DataSourceMetaType;
+import com.sprout.datasource.data.ds.util.DataSourceMetaType;
 
 import javax.persistence.*;
 import java.util.Objects;

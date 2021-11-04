@@ -1,6 +1,6 @@
-package com.sprout.data.ds.provider;
+package com.sprout.datasource.provider;
 
-import com.sprout.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.data.ds.entity.DataSourceMeta;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class JdbcSproutDataSource implements SproutDataSource {
+public abstract class AbstractJdbcSproutDataSource implements SproutDataSource {
 
     private Connection connection;
 
     private DataSourceMeta dataSourceMeta;
 
-    public JdbcSproutDataSource(DataSourceMeta dataSourceMeta) {
+    public AbstractJdbcSproutDataSource(DataSourceMeta dataSourceMeta) {
         this.dataSourceMeta = dataSourceMeta;
     }
 
@@ -81,22 +81,6 @@ public class JdbcSproutDataSource implements SproutDataSource {
         return this.dataSourceMeta;
     }
 
-    @Override
-    public List<Object> getTableNames()throws Exception {
-        PreparedStatement preparedStatement = getConnection().prepareStatement("select tablename from pg_tables where schemaname='public'");
-        ResultSet resultSet = preparedStatement.executeQuery();
-        int count = preparedStatement.getMetaData().getColumnCount();
-        List<Object> list = new ArrayList<>();
-        while (resultSet.next()) {
-            List<Object> row = new ArrayList<>();
-            for (int i = 1; i <= count; i++) {
-                row.add(resultSet.getObject(i));
-            }
-            list.add(row);
-        }
-        resultSet.close();
-        preparedStatement.close();
-        return list;
-    }
+
 
 }

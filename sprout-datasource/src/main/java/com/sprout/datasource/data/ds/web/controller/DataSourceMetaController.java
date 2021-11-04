@@ -1,8 +1,8 @@
-package com.sprout.data.ds.web.controller;
+package com.sprout.datasource.data.ds.web.controller;
 
-import com.sprout.data.ds.entity.DataSourceMeta;
-import com.sprout.data.ds.service.DataSourceMetaService;
-import com.sprout.data.ds.util.DataSourceMetaType;
+import com.sprout.datasource.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.data.ds.service.DataSourceMetaService;
+import com.sprout.datasource.data.ds.util.DataSourceMetaType;
 import com.sprout.web.base.BaseCrudController;
 import com.sprout.web.util.RestResult;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package com.sprout.data.ds.util;
+package com.sprout.datasource.data.ds.util;
 
 public enum DataSourceMetaType {
 
