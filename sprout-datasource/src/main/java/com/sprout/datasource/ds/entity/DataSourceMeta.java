@@ -1,8 +1,8 @@
-package com.sprout.datasource.data.ds.entity;
+package com.sprout.datasource.ds.entity;
 
 import com.sprout.common.util.SproutStringUtils;
 import com.sprout.core.jpa.entity.AbstractBaseEntity;
-import com.sprout.datasource.data.ds.util.DataSourceMetaType;
+import com.sprout.datasource.ds.util.DataSourceMetaType;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -143,7 +143,7 @@ public class DataSourceMeta extends AbstractBaseEntity<Long> {
 
     @Override
     public String toString() {
-        return "DataSource{" +
+        return "DataSourceMeta{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", ip='" + ip + '\'' +
@@ -152,6 +152,8 @@ public class DataSourceMeta extends AbstractBaseEntity<Long> {
                 ", port='" + port + '\'' +
                 ", url='" + url + '\'' +
                 ", state=" + state +
+                ", dataSourceMetaType=" + dataSourceMetaType +
+                ", schema='" + schema + '\'' +
                 ", remark='" + remark + '\'' +
                 '}';
     }

@@ -1,4 +1,4 @@
-package com.sprout.datasource.data.db;
+package com.sprout.datasource.db;
 
 import java.util.ArrayList;
 import java.util.List;

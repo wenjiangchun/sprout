@@ -1,7 +1,11 @@
 package com.sprout.datasource.provider;
 
-import com.sprout.datasource.data.db.TableWrapper;
-import com.sprout.datasource.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.db.ColumnWrapper;
+import com.sprout.datasource.db.TableWrapper;
+import com.sprout.datasource.ds.entity.DataSourceMeta;
+import com.sprout.web.datatable.DataTablePage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.sql.Connection;
 import java.util.List;
@@ -15,7 +19,7 @@ public interface SproutDataSource {
 
     <T> List<T> query(String sql, Map<Integer, Object> queryParams, Class<T> tClass) throws Exception;
 
-    List<Object> query(String sql, Map<Integer, Object> queryParams) throws Exception;
+    List<Map<String, Object>> query(String sql, Map<String, Object> queryParams) throws Exception;
 
     boolean getConnectState() throws Exception;
 
@@ -24,4 +28,14 @@ public interface SproutDataSource {
     DataSourceMeta getDataSourceMeta();
 
     List<TableWrapper> getTables() throws Exception;
+
+    List<ColumnWrapper> getColumnList(String tableName) throws Exception;
+
+    /**
+     * 获取指定表中所有数据
+     * @param p 分页参数
+     * @param tableName
+     * @return
+     */
+    Page<?> getDataPage(PageRequest p, String tableName) throws Exception;
 }

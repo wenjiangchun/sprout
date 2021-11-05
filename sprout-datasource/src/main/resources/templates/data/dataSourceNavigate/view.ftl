@@ -43,21 +43,20 @@
 						<ul class="nav nav-tabs">
 							<li class="active"><a href="#tab_1" data-toggle="tab">数据浏览</a></li>
 							<li><a href="#tab_2" data-toggle="tab">元数据</a></li>
-							<li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
+							<li class="pull-right"><span data-bind="text:tableName" class="text-red text-bold"></span></li>
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane active" id="tab_1">
-								<b>How to use:</b>
+								<table id="contentTable1" class="table table-bordered table-striped table-hover">
+									<thead>
+									   <tr data-bind="foreach: dbDescArr">
+										   <td data-bind="text: columnName"></td>
+									   </tr>
+									</thead>
+									<tbody>
 
-								<p>Exactly like the original bootstrap tabs except you should use
-									the custom wrapper <code>.nav-tabs-custom</code> to achieve this style.</p>
-								A wonderful serenity has taken possession of my entire soul,
-								like these sweet mornings of spring which I enjoy with my whole heart.
-								I am alone, and feel the charm of existence in this spot,
-								which was created for the bliss of souls like mine. I am so happy,
-								my dear friend, so absorbed in the exquisite sense of mere tranquil existence,
-								that I neglect my talents. I should be incapable of drawing a single stroke
-								at the present moment; and yet I feel that I never was a greater artist than now.
+									</tbody>
+								</table>
 							</div>
 							<!-- /.tab-pane -->
 							<div class="tab-pane" id="tab_2">
@@ -76,14 +75,14 @@
 									</thead>
 									<tbody data-bind="foreach: dbDescArr">
 										<tr>
-											<td data-bind="text: $data[0]"></td>
-											<td data-bind="text: $data[1]"></td>
-											<td data-bind="text: $data[2]"></td>
-											<td data-bind="text: $data[3]"></td>
-											<td data-bind="text: $data[4]"></td>
-											<td data-bind="text: $data[5]"></td>
-											<td data-bind="text: $data[6]"></td>
-											<td data-bind="text: $data[7]"></td>
+											<td data-bind="text: columnName"></td>
+											<td data-bind="text: columnType"></td>
+											<td data-bind="text: comment"></td>
+											<td></td>
+											<td data-bind="text: notNull"></td>
+											<td></td>
+											<td></td>
+											<td></td>
 										</tr>
 									</tbody>
 								</table>
@@ -107,6 +106,19 @@
 		viewModel = {
 			dbTables: ko.observableArray([]),
 			dbDescArr: ko.observableArray([]),
+			tableName: ko.observable(),
+			initTable: function(metaId, tableName) {
+				let columns = [];
+				_.each(this.dbDescArr(), function(column) {
+					columns.push({'data':column.columnName});
+				});
+				const options = {
+					divId : "contentTable1",
+					url : "${ctx}/data/dataSourceNavigate/getDBData/" + metaId + "/" + tableName,
+					columns:columns
+				};
+				createTable(options);
+			},
 			reloadTables: function() {
 				$.get('${ctx}/data/dataSourceNavigate/showDB', {"metaId": $("#dataSourceMeta").val()}, function(data) {
 					var setting = {data:{
@@ -133,9 +145,11 @@
 						schemaName : tree.getNodeByParam("id",treeNode.parentId).name,
 						metaId : $("#dataSourceMeta").val()
 					}
+					viewModel.tableName(treeNode.name);
 					$.get('${ctx}/data/dataSourceNavigate/showTableDesc', param, function(data) {
 						//根据获取数据取得结果
 						viewModel.dbDescArr(data);
+						viewModel.initTable(param.metaId, param.tableName);
 					});
 				}
 			}

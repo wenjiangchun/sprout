@@ -1,7 +1,12 @@
 package com.sprout.datasource.provider;
 
-import com.sprout.datasource.data.ds.entity.DataSourceMeta;
+import com.sprout.datasource.ds.entity.DataSourceMeta;
+import org.springframework.beans.BeanUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,23 +15,27 @@ import java.util.Objects;
 
 public abstract class AbstractJdbcSproutDataSource implements SproutDataSource {
 
-    private Connection connection;
-
     private DataSourceMeta dataSourceMeta;
 
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @SuppressWarnings("unchecked")
     public AbstractJdbcSproutDataSource(DataSourceMeta dataSourceMeta) {
         this.dataSourceMeta = dataSourceMeta;
+        Class<Driver> driverClass;
+        try {
+            driverClass = (Class<Driver>) Class.forName(dataSourceMeta.getDataSourceMetaType().getDriverClass());
+            Driver driver = BeanUtils.instantiateClass(driverClass);
+            DataSource dateSource = new SimpleDriverDataSource(driver,dataSourceMeta.getUrl(), dataSourceMeta.getUserName(), dataSourceMeta.getPassword());
+            this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dateSource);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Connection getConnection() throws Exception{
-        if (connection != null && !connection.isClosed()) {
-            return connection;
-        } else {
-            Class.forName(dataSourceMeta.getDataSourceMetaType().getDriverClass());
-            connection = DriverManager.getConnection(dataSourceMeta.getUrl(), dataSourceMeta.getUserName(), dataSourceMeta.getPassword());
-        }
-        return connection;
+        return this.namedParameterJdbcTemplate.getJdbcTemplate().getDataSource().getConnection();
     }
 
     @Override
@@ -40,30 +49,8 @@ public abstract class AbstractJdbcSproutDataSource implements SproutDataSource {
     }
 
     @Override
-    public List<Object> query(String sql, Map<Integer, Object> queryParams) throws Exception {
-        PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
-        if (Objects.nonNull(queryParams) && !queryParams.isEmpty()) {
-            queryParams.forEach((k, v) -> {
-                try {
-                    preparedStatement.setObject(k, v);
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            });
-        }
-        ResultSet resultSet = preparedStatement.executeQuery();
-        int count = preparedStatement.getMetaData().getColumnCount();
-        List<Object> list = new ArrayList<>();
-        while (resultSet.next()) {
-            List<Object> row = new ArrayList<>();
-            for (int i = 1; i <= count; i++) {
-                row.add(resultSet.getObject(i));
-            }
-            list.add(row);
-        }
-        resultSet.close();
-        preparedStatement.close();
-        return list;
+    public List<Map<String, Object>> query(String sql, Map<String, Object> queryParams) throws Exception {
+        return namedParameterJdbcTemplate.queryForList(sql, queryParams);
     }
 
     @Override
@@ -81,6 +68,8 @@ public abstract class AbstractJdbcSproutDataSource implements SproutDataSource {
         return this.dataSourceMeta;
     }
 
-
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return this.namedParameterJdbcTemplate;
+    }
 
 }
