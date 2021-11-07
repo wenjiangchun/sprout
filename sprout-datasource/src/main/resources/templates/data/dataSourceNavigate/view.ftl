@@ -40,10 +40,10 @@
 				</div>
 				<div class="col-xs-9">
 					<div class="nav-tabs-custom">
-						<ul class="nav nav-tabs">
+						<ul class="nav nav-tabs pull-right">
 							<li class="active"><a href="#tab_1" data-toggle="tab">数据浏览</a></li>
 							<li><a href="#tab_2" data-toggle="tab">元数据</a></li>
-							<li class="pull-right"><span data-bind="text:tableName" class="text-red text-bold"></span></li>
+							<li class="pull-left header" data-bind="text:tableName"></li>
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane active" id="tab_1">
@@ -54,7 +54,6 @@
 									   </tr>
 									</thead>
 									<tbody>
-
 									</tbody>
 								</table>
 							</div>
@@ -110,7 +109,7 @@
 			initTable: function(metaId, tableName) {
 				let columns = [];
 				_.each(this.dbDescArr(), function(column) {
-					columns.push({'data':column.columnName});
+					columns.push({'data':column.columnName, 'orderable':false});
 				});
 				const options = {
 					divId : "contentTable1",

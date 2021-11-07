@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>办公平台 | 登录</title>
+    <title>平台 | 登录</title>
     <link rel="icon" href="${ctx}/res/img/favicon.ico">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="${ctx}/res/lib/bootstrap/dist/css/bootstrap.min.css">
@@ -25,7 +25,7 @@
 <body class="hold-transition login-page" style="background-image: url('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F0137755bb2433fa8012099c80f9faa.jpg%402o.jpg&refer=http%3A%2F%2Fimg.zcool.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1634527660&t=429e5fe6e52f5a6bdfa895af03f2526c')" >
 <div class="login-box">
     <div class="login-logo">
-        <a href="#" style="color: white">东龙优易办公平台</a>
+        <a href="#" style="color: white">平台登录</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">

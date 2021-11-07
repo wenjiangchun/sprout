@@ -76,13 +76,14 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
 
     @Override
     public Page<?> getDataPage(PageRequest p, String tableName) throws Exception {
-        String countSQL = "select count(1) from :tableName";
+        String countSQL = "select count(1) from " + tableName;
         Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("tableName", tableName);
+        //queryParams.put("tableName", tableName);
         int totalCount = getNamedParameterJdbcTemplate().queryForObject(countSQL, queryParams, Integer.class);
         if (totalCount > 0) {
-            String pageSQL = "select * from :tableName where limit :pageSize offset :numStart";
-            int numStart = (p.getPageNumber() - 1) * p.getPageSize();
+            String pageSQL = "select * from " + tableName + " limit :pageSize offset :numStart";
+            System.out.println(pageSQL);
+            int numStart = (p.getPageNumber()) * p.getPageSize();
             queryParams.put("numStart", numStart);
             queryParams.put("pageSize", p.getPageSize());
             List<Map<String, Object>> result = getNamedParameterJdbcTemplate().queryForList(pageSQL, queryParams);
