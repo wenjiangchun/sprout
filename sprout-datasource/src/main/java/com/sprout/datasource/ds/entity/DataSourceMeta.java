@@ -84,7 +84,7 @@ public class DataSourceMeta extends AbstractBaseEntity<Long> {
                     }
                     break;
                 case Impala:
-                    String impalaTemplate = "jdbc:impala://%s:%s";
+                    String impalaTemplate = "jdbc:impala://%s:%s/";
                     url = String.format(impalaTemplate, this.ip, this.port);
                     if (Objects.nonNull(this.schema)) {
                         url += this.schema;

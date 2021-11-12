@@ -120,9 +120,11 @@
                  let html = '本年度暂无请假记录';
                  if (dts.length > 0) {
                      html = '';
+                     let days = 0;
                      _.each(dts, function(dt) {
-                         html += ' 已使用'+ dt.days + '天'
+                         days += dt.days;
                      });
+                     html += ' 已使用'+ days + '天';
                  }
                  $('#helpBlock').html($('#helpBlock').html() + ', ' + html);
             });

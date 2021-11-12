@@ -44,7 +44,7 @@ public class LeaveTaskCreateListener implements FlowableEventListener {
             TaskEntityImpl taskEntity = (TaskEntityImpl) ent.getEntity();
             logger.debug("Flowable-task创建完成, taskId={}, taskName={}, createTime={}", taskEntity.getTaskDefinitionId(), taskEntity.getName(), taskEntity.getCreateTime());
             String assignee = taskEntity.getAssignee();
-            SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(taskEntity.getName(), NoticeType.TODO), assignee);
+            //SpringContextUtils.getBean(WebSocketServer.class).sendMessageToName(new NoticeMessage<>(taskEntity.getName(), NoticeType.TODO), assignee);
         }
     }
 

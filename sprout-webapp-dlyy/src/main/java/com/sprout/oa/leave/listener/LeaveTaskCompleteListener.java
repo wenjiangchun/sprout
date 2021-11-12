@@ -52,7 +52,6 @@ public class LeaveTaskCompleteListener implements FlowableEventListener {
     @Transactional
     @Override
     public void onEvent(FlowableEvent event) {
-        System.out.println(event.getType());
         if (event.getType().name().equals("TASK_COMPLETED")) {
             FlowableEntityWithVariablesEventImpl ent = (FlowableEntityWithVariablesEventImpl) event;
             TaskEntityImpl taskEntity = (TaskEntityImpl) ent.getEntity();
@@ -75,7 +74,7 @@ public class LeaveTaskCompleteListener implements FlowableEventListener {
                         if (variables.get("firstApprovalState").toString().equals("0")) {
                             result += "审核不通过：";
                         } else if (variables.get("firstApprovalState").toString().equals("2")){
-                            result += "审核通过，提交主管副总经理审核：";
+                            result += "审核通过，提交主管副总经理审核 ";
                         } else {
                             result += "审核通过，进入销假环节";
                         }
@@ -96,7 +95,7 @@ public class LeaveTaskCompleteListener implements FlowableEventListener {
                         if (variables.get("secondApprovalState").toString().equals("0")) {
                             result += "审核不通过：";
                         } else if (variables.get("secondApprovalState").toString().equals("2")){
-                            result += "审核通过，提交总经理审核：";
+                            result += "审核通过，提交总经理审核 ";
                         } else {
                             result += "审核通过，进入销假环节";
                         }
@@ -174,7 +173,7 @@ public class LeaveTaskCompleteListener implements FlowableEventListener {
             try {
                 this.leaveTaskLogService.save(leaveTaskLog);
                 logger.debug("保存流程记录【{}】", leaveTaskLog);
-                SpringContextUtils.getBean(MessageSender.class).sendMessage(SproutJsonUtils.writeToString(leaveTaskLog));
+                //SpringContextUtils.getBean(MessageSender.class).sendMessage(SproutJsonUtils.writeToString(leaveTaskLog));
             } catch (Exception e) {
                 logger.error("保存流程记录失败", e);
             }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
 <title>数据浏览</title>
 	<#include "../../common/head.ftl"/>
@@ -11,39 +11,37 @@
 			<ol class="breadcrumb">
 				<li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">数据管理</a></li>
+				<li><a href="${ctx}/data/dataSourceMeta/list">数据源管理</a></li>
 				<li class="active">数据源浏览</li>
 			</ol>
 		</section>
 		<section class="content">
 			<div class="row">
-				<div class="col-xs-3">
+				<div class="col-xs-2">
 					<div class="box box-solid">
 						<div class="box-header">
 							<h3 class="box-title">
-								<select class="form-control" id="dataSourceMeta">
-									<#list dataSourceMetaList as ds>
-										<option value="${ds.id}">${ds.name}</option>
-									</#list>
-								</select></h3>
+							   ${dsMeta.name!}
+							</h3>
 							<div class="box-tools pull-right">
 								<button type="button" class="btn btn-default btn-sm" data-bind="click: reloadTables"><i class="fa fa-refresh"></i></button>
 							</div>
 						</div>
 						<!-- /.box-header -->
 						<div class="box-body">
-
-							<ul id="dbTree" class="ztree" style="height:600px;overflow:auto"></ul>
+							<ul id="dbTree" class="ztree" style="height:800px;overflow:auto"></ul>
 						</div>
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
 				</div>
-				<div class="col-xs-9">
+				<div class="col-xs-10">
 					<div class="nav-tabs-custom">
-						<ul class="nav nav-tabs pull-right">
+						<ul class="nav nav-tabs">
 							<li class="active"><a href="#tab_1" data-toggle="tab">数据浏览</a></li>
 							<li><a href="#tab_2" data-toggle="tab">元数据</a></li>
-							<li class="pull-left header" data-bind="text:tableName"></li>
+							<li class="pull-right"><a href="#"><span class="label label-success" data-bind="text:tableName"></span></a>
+							</li>
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane active" id="tab_1">
@@ -106,9 +104,16 @@
 			dbTables: ko.observableArray([]),
 			dbDescArr: ko.observableArray([]),
 			tableName: ko.observable(),
-			initTable: function(metaId, tableName) {
+			initTable: function(columnArr,metaId, tableName) {
+				if (dataTables != null) {
+					dataTables.clear();
+					dataTables.destroy();
+					//$('#contentTable1').empty();
+					dataTables = null;
+				}
+				this.dbDescArr(columnArr);
 				let columns = [];
-				_.each(this.dbDescArr(), function(column) {
+				_.each(columnArr, function(column) {
 					columns.push({'data':column.columnName, 'orderable':false});
 				});
 				const options = {
@@ -119,7 +124,7 @@
 				createTable(options);
 			},
 			reloadTables: function() {
-				$.get('${ctx}/data/dataSourceNavigate/showDB', {"metaId": $("#dataSourceMeta").val()}, function(data) {
+				$.get('${ctx}/data/dataSourceNavigate/showDB', {"metaId": '${dsMeta.id!}'}, function(data) {
 					var setting = {data:{
 							simpleData:{
 								enable:true,
@@ -142,18 +147,19 @@
 					const param = {
 						tableName : treeNode.name,
 						schemaName : tree.getNodeByParam("id",treeNode.parentId).name,
-						metaId : $("#dataSourceMeta").val()
+						metaId : '${dsMeta.id!}'
 					}
 					viewModel.tableName(treeNode.name);
 					$.get('${ctx}/data/dataSourceNavigate/showTableDesc', param, function(data) {
 						//根据获取数据取得结果
-						viewModel.dbDescArr(data);
-						viewModel.initTable(param.metaId, param.tableName);
+						//viewModel.dbDescArr(data);
+						viewModel.initTable(data, param.metaId, param.tableName);
 					});
 				}
 			}
 		};
 		ko.applyBindings(viewModel);
+		viewModel.reloadTables();
 	});
 </script>
 </html>

@@ -45,7 +45,6 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
                 "       a.attname                                          AS columnname,\n" +
                 "       col_description(a.attrelid, a.attnum)              AS comment,\n" +
                 "       format_type(a.atttypid, a.atttypmod)               AS columnType,\n" +
-                "       --CASE WHEN a.attnotnull = 'f' THEN '否' ELSE '是' END AS isNull,\n" +
                 "       a.attnotnull                                       AS attIsNull,\n" +
                 "       a.attnum                                           As   num\n" +
                 "FROM pg_class AS c,\n" +
@@ -57,7 +56,6 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
         PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
         preparedStatement.setString(1, tableName);
         ResultSet resultSet = preparedStatement.executeQuery();
-        //int count = preparedStatement.getMetaData().getColumnCount();
         List<ColumnWrapper> list = new ArrayList<>();
         while (resultSet.next()) {
             ColumnWrapper columnWrapper = new ColumnWrapper();
@@ -82,12 +80,11 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
         int totalCount = getNamedParameterJdbcTemplate().queryForObject(countSQL, queryParams, Integer.class);
         if (totalCount > 0) {
             String pageSQL = "select * from " + tableName + " limit :pageSize offset :numStart";
-            System.out.println(pageSQL);
             int numStart = (p.getPageNumber()) * p.getPageSize();
             queryParams.put("numStart", numStart);
             queryParams.put("pageSize", p.getPageSize());
             List<Map<String, Object>> result = getNamedParameterJdbcTemplate().queryForList(pageSQL, queryParams);
-            return new PageImpl<>(result, p, 0);
+            return new PageImpl<>(result, p, totalCount);
         } else {
             return new PageImpl<>(new ArrayList<>(), p, 0);
         }

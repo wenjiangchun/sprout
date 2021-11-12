@@ -7,6 +7,9 @@ import com.sprout.datasource.provider.AbstractJdbcSproutDataSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImpalaSproutDataSource extends AbstractJdbcSproutDataSource {
@@ -19,7 +22,20 @@ public class ImpalaSproutDataSource extends AbstractJdbcSproutDataSource {
 
     @Override
     public List<TableWrapper> getTables() throws Exception {
-        return null;
+        PreparedStatement preparedStatement = getConnection().prepareStatement("show tables");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        int count = preparedStatement.getMetaData().getColumnCount();
+        List<TableWrapper> list = new ArrayList<>();
+        while (resultSet.next()) {
+            TableWrapper tableWrapper = new TableWrapper();
+            for (int i = 1; i <= count; i++) {
+                tableWrapper.setTableName(resultSet.getObject(i).toString());
+            }
+            list.add(tableWrapper);
+        }
+        resultSet.close();
+        preparedStatement.close();
+        return list;
     }
 
     @Override

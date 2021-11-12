@@ -32,7 +32,7 @@ public class LeaveStatisticController extends BaseCrudController<LeaveStatistic,
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("year", SproutDateUtils.getYear(new Date()));
         queryParams.put("applierId", userId);
-        return this.leaveStatisticService.findByJql("from LeaveStatistic where year=:year and applier.id=:applierId", queryParams);
+        return this.leaveStatisticService.findByJql("from LeaveStatistic where year=:year and applier.id=:applierId and leaveType.id=11", queryParams);
     }
 
     @GetMapping("/getLeaveStatisticList")

@@ -145,14 +145,14 @@ public class LeaveService extends AbstractBaseService<Leave, Long> {
         Leave leave = this.findById(leaveId);
         //计算本次请假天数 排除节假日
         float days = getLeaveDays(leave);
-        if (days > 3) {
+        if (days >= 3) {
             return 3;
         } else {
             //判断当月累计请假量
             int year = SproutDateUtils.getYear(leave.getPlanStartTime());
             int month = SproutDateUtils.getMonth(leave.getPlanStartTime());
             float leavedDays = SpringContextUtils.getBean(LeaveStatisticService.class).getTotalDays(leave.getApplier().getId(), year, month);
-            if (leavedDays > 3 || (leavedDays + days)  > 3) {
+            if (leavedDays >= 3 || (leavedDays + days)  >= 3) {
                 return 3;
             } else {
                 if (days <=1) {

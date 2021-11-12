@@ -29,10 +29,10 @@
 											<label for="name_like">数据源名称</label>
 											<input type="text" name="name_like" class="datatable_query form-control">
 										</div>
-										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
-											<i class="fa fa-search"></i> 查询
+										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query'>
+											<i class="fa fa-search"></i>查询
 										</button>
-										<button type="button" class="btn btn-sm btn-danger" data-bind='click: reset' style="margin-left:10px;">清空</button>
+										<button type="button" class="btn btn-sm btn-default" data-bind='click: reset' >清空</button>
 									</div>
 								</form>
 						</div>
@@ -83,20 +83,23 @@
 					},{
 						'data':'ip'
 					},{
-						'data':'userName'
+						'data':'userName',
+						'sortable': false
 					},{
-						'data':'password'
+						'data':'password',
+						'sortable': false
 					},{
-						'data':'url'
+						'data':'url',
+						'sortable': false
 					},{
 						'data':function(row, type, val, meta) {
 							let html = "";
-							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-							if (row.configType === 'B') {
-								html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + row.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";
-							}
+							html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + row.id + ")' title='编辑' class='btn btn-default btn-xs'> <i class='fa fa-edit fa-lg'></i> </a> ";
+							html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + row.id + ")' title='删除' class='btn btn-xs btn-default'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
+							html += "<a href='javascript:void(0)' onclick='viewModel.navigateDB(" + row.id + ")' title='浏览' class='btn btn-xs btn-default'> <i class='fa fa-database fa-lg'></i> </a>";
 							return html;
-						}
+						},
+						'sortable': false
 					}]
 				};
 				createTable(options);
@@ -114,6 +117,9 @@
 			edit: function(id) {
 				let url = "${ctx}/system/config/edit/" + id;
 				showMyModel(url,'编辑配置', '900px', '50%', callBackAction);
+			},
+			navigateDB: function(id) {
+				window.location.href = "${ctx}/data/dataSourceNavigate/view/" + id;
 			},
 			delete: function(id) {
 				if (id == null || id === "") {

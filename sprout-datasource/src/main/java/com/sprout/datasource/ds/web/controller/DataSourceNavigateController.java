@@ -32,11 +32,11 @@ public class DataSourceNavigateController extends BaseController {
 		this.dataSourceMetaService = dataSourceMetaService;
 	}
 
-	@GetMapping("view")
-	public String view(Model model) {
+	@GetMapping("view/{id}")
+	public String view(Model model, @PathVariable Long id) {
 		/*Map<String, SproutDataSource> ds = dataSourceMetaService.getSourceMetaMap();
 		model.addAttribute("ds", ds);*/
-
+		model.addAttribute("dsMeta", dataSourceMetaService.findById(id));
 		List<DataSourceMeta> dataSourceMetaList = dataSourceMetaService.findAll();
 		model.addAttribute("dataSourceMetaList", dataSourceMetaList);
 		return "data/dataSourceNavigate/view";

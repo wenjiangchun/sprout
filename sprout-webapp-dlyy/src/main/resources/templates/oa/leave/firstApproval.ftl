@@ -178,6 +178,7 @@
     if (approvalLevel !== '1') {
         approvalLevel = '2';
     }
+    alert(approvalLevel)
     viewModel = {
         firstApprovalId: ko.observable(),
         showNextApproval: ko.observable(true),
