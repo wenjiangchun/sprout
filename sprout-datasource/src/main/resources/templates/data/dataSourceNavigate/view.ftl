@@ -47,8 +47,8 @@
 							<div class="tab-pane active" id="tab_1">
 								<table id="contentTable1" class="table table-bordered table-striped table-hover">
 									<thead>
-									   <tr data-bind="foreach: dbDescArr">
-										   <td data-bind="text: columnName"></td>
+									   <tr data-bind="foreach: dbColumnDts">
+										   <th data-bind="text: $data[0]"></th>
 									   </tr>
 									</thead>
 									<tbody>
@@ -59,40 +59,21 @@
 							<div class="tab-pane" id="tab_2">
 								<table id="contentTable" class="table table-bordered table-striped table-hover">
 									<thead>
-									<tr>
-										<th>字段名称</th>
-										<th>字段类型</th>
-										<th>注释</th>
-										<th>是否主键</th>
-										<th>是否可以为空</th>
-										<th>默认值</th>
-										<th>编码</th>
-										<th>压缩方式</th>
+									<tr data-bind="foreach: dbColumnLabels">
+										<th data-bind="text: $data"></th>
 									</tr>
 									</thead>
-									<tbody data-bind="foreach: dbDescArr">
-										<tr>
-											<td data-bind="text: columnName"></td>
-											<td data-bind="text: columnType"></td>
-											<td data-bind="text: comment"></td>
-											<td></td>
-											<td data-bind="text: notNull"></td>
-											<td></td>
-											<td></td>
-											<td></td>
+									<tbody data-bind="foreach: dbColumnDts">
+										<tr data-bind="foreach: $data">
+											<td data-bind="text: $data"></td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
-							<!-- /.tab-pane -->
-							<!-- /.tab-pane -->
 						</div>
-						<!-- /.tab-content -->
 					</div>
 				</div>
-				<!-- /.col -->
 			</div>
-			<!-- /.row -->
 		</section>
 </body>
 <script src="${ctx}/res/lib/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -102,19 +83,31 @@
 	$(document).ready(function() {
 		viewModel = {
 			dbTables: ko.observableArray([]),
-			dbDescArr: ko.observableArray([]),
+			dbColumnLabels: ko.observableArray([]),
+			dbColumnDts: ko.observableArray([]),
 			tableName: ko.observable(),
 			initTable: function(columnArr,metaId, tableName) {
 				if (dataTables != null) {
 					dataTables.clear();
 					dataTables.destroy();
-					//$('#contentTable1').empty();
 					dataTables = null;
 				}
-				this.dbDescArr(columnArr);
+				viewModel.dbColumnLabels([]);
+				viewModel.dbColumnDts([]);
+				_.each(columnArr, function(dt, idx) {
+					let columnDt = [];
+					_.map(columnArr[idx], function(value, key) {
+						if (idx === 0) {
+							viewModel.dbColumnLabels.push(key);
+						}
+						columnDt.push(value);
+					});
+					viewModel.dbColumnDts.push(columnDt);
+				});
+
 				let columns = [];
-				_.each(columnArr, function(column) {
-					columns.push({'data':column.columnName, 'orderable':false});
+				_.each(viewModel.dbColumnDts(), function(column) {
+					columns.push({'data':column[0], 'orderable':false});
 				});
 				const options = {
 					divId : "contentTable1",
@@ -124,6 +117,9 @@
 				createTable(options);
 			},
 			reloadTables: function() {
+				/*viewModel.dbColumnDts([]);
+				viewModel.dbColumnLabels([]);
+				viewModel.tableName('');*/
 				$.get('${ctx}/data/dataSourceNavigate/showDB', {"metaId": '${dsMeta.id!}'}, function(data) {
 					var setting = {data:{
 							simpleData:{
@@ -152,7 +148,6 @@
 					viewModel.tableName(treeNode.name);
 					$.get('${ctx}/data/dataSourceNavigate/showTableDesc', param, function(data) {
 						//根据获取数据取得结果
-						//viewModel.dbDescArr(data);
 						viewModel.initTable(data, param.metaId, param.tableName);
 					});
 				}

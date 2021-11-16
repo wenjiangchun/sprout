@@ -8,10 +8,19 @@ function createTable(options) {
 		layer.alert("未定义表格列");
 		return;
 	}
+	let orderable = false;
+	let searching = false;
+	if (options.orderable != undefined) {
+	    orderable = options.orderable;
+    }
+    if (options.searching != undefined) {
+        searching = options.searching;
+    }
 	var grid =  $('#'+tableId).DataTable({
 		"processing": true,
 	    "serverSide": true,
-        "searching": false,
+        "orderable": orderable,
+        "searching": searching,
         "columns":columns,
         "language": {
             "lengthMenu": "每页显示 _MENU_条记录",

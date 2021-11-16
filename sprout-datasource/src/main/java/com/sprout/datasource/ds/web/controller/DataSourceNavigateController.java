@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -90,10 +91,10 @@ public class DataSourceNavigateController extends BaseController {
 
 	@GetMapping("showTableDesc")
 	@ResponseBody
-	public List<ColumnWrapper> showTableDesc(@RequestParam String tableName, @RequestParam String schemaName, @RequestParam Long metaId) {
+	public List<Map<String, Object>> showTableDesc(@RequestParam String tableName, @RequestParam String schemaName, @RequestParam Long metaId) {
 		SproutDataSource sproutDataSource = this.dataSourceMetaService.getSproutDataSource(metaId);
 		try {
-			return sproutDataSource.getColumnList(tableName);
+			return sproutDataSource.getColumns(tableName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

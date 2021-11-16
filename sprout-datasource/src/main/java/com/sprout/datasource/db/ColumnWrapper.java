@@ -14,6 +14,16 @@ public class ColumnWrapper {
 
     private int num;
 
+    private boolean primaryKey;
+
+    private String defaultValue;
+
+    private String encoding;
+
+    private String compression;
+
+    private int blockSize;
+
     public String getColumnName() {
         return columnName;
     }
@@ -60,6 +70,46 @@ public class ColumnWrapper {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    public String getCompression() {
+        return compression;
+    }
+
+    public void setCompression(String compression) {
+        this.compression = compression;
+    }
+
+    public int getBlockSize() {
+        return blockSize;
+    }
+
+    public void setBlockSize(int blockSize) {
+        this.blockSize = blockSize;
     }
 
     @Override

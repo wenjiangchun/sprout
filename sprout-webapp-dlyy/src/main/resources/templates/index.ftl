@@ -189,7 +189,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="#" class="menuBtn" url="${ctx}/data/dataSourceMeta/list"><i class="fa fa-circle-o"></i> 数据源管理</a></li>
-            <li><a href="#" class="menuBtn" url="${ctx}/data/dataSourceNavigate/view"><i class="fa fa-circle-o"></i> 数据浏览</a></li>
+            <#--<li><a href="#" class="menuBtn" url="${ctx}/data/dataSourceNavigate/view"><i class="fa fa-circle-o"></i> 数据浏览</a></li>-->
           </ul>
         </li>
         <li class="treeview">

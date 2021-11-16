@@ -29,13 +29,19 @@ public interface SproutDataSource {
 
     List<TableWrapper> getTables() throws Exception;
 
-    List<ColumnWrapper> getColumnList(String tableName) throws Exception;
+    /**
+     * 获取表中字段信息
+     * @param tableName 表名
+     * @return 包含字段基础信息的列表
+     * @throws Exception SQL异常
+     */
+    List<Map<String, Object>> getColumns(String tableName) throws Exception;
 
     /**
      * 获取指定表中所有数据
      * @param p 分页参数
-     * @param tableName
-     * @return
+     * @param tableName 表名
+     * @return 表中分页数据
      */
     Page<?> getDataPage(PageRequest p, String tableName) throws Exception;
 }

@@ -1,17 +1,18 @@
 package com.sprout.datasource.provider;
 
 import com.sprout.datasource.ds.entity.DataSourceMeta;
+import com.sprout.datasource.ds.util.DataSourceMetaType;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class AbstractJdbcSproutDataSource implements SproutDataSource {
 
@@ -72,4 +73,26 @@ public abstract class AbstractJdbcSproutDataSource implements SproutDataSource {
         return this.namedParameterJdbcTemplate;
     }
 
+    @Override
+    public Page<?> getDataPage(PageRequest p, String tableName) throws Exception {
+        String countSQL = "select count(1) from " + tableName;
+        Map<String, Object> queryParams = new HashMap<>();
+        //queryParams.put("tableName", tableName);
+        int totalCount = getNamedParameterJdbcTemplate().queryForObject(countSQL, queryParams, Integer.class);
+        if (totalCount > 0) {
+            String pageSQL = "select * from " + tableName ;
+            if (this.dataSourceMeta.getDataSourceMetaType().equals(DataSourceMetaType.Impala)) {
+                Map<String, Object> firstColumn = this.getColumns(tableName).get(0);
+                pageSQL += " order by " + firstColumn.get("name");
+            }
+            pageSQL += " limit :pageSize offset :numStart";
+            int numStart = (p.getPageNumber()) * p.getPageSize();
+            queryParams.put("numStart", numStart);
+            queryParams.put("pageSize", p.getPageSize());
+            List<Map<String, Object>> result = getNamedParameterJdbcTemplate().queryForList(pageSQL, queryParams);
+            return new PageImpl<>(result, p, totalCount);
+        } else {
+            return new PageImpl<>(new ArrayList<>(), p, 0);
+        }
+    }
 }

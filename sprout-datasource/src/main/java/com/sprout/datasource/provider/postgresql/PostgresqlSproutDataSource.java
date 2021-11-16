@@ -38,7 +38,7 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
         return list;
     }
 
-    @Override
+    /*@Override
     public List<ColumnWrapper> getColumnList(String tableName) throws Exception {
         String sql = "SELECT " +
                 "       c.relname                                          AS tablename,\n" +
@@ -50,7 +50,7 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
                 "FROM pg_class AS c,\n" +
                 "     pg_attribute AS a\n" +
                 "WHERE c.relname =?\n" +
-                "  and a.attrelid = C.oid\n" +
+                "  AND a.attrelid = C.oid\n" +
                 "  AND a.attnum > 0\n" +
                 "ORDER BY c.relname, a.attnum";
         PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
@@ -70,24 +70,25 @@ public class PostgresqlSproutDataSource extends AbstractJdbcSproutDataSource {
         preparedStatement.close();
         return list;
         //return null;
-    }
+    }*/
 
     @Override
-    public Page<?> getDataPage(PageRequest p, String tableName) throws Exception {
-        String countSQL = "select count(1) from " + tableName;
+    public List<Map<String, Object>> getColumns(String tableName) throws Exception {
+        String sql = "SELECT " +
+                "       a.attname                                          AS name,\n" +
+                "       col_description(a.attrelid, a.attnum)              AS comment,\n" +
+                "       format_type(a.atttypid, a.atttypmod)               AS type,\n" +
+                "       a.attnotnull                                       AS notNull,\n" +
+                "       a.attnum                                           As num\n" +
+                "FROM pg_class AS c,\n" +
+                "     pg_attribute AS a\n" +
+                "WHERE c.relname =:tableName\n" +
+                "  AND a.attrelid = C.oid\n" +
+                "  AND a.attnum > 0\n" +
+                "ORDER BY c.relname, a.attnum";
         Map<String, Object> queryParams = new HashMap<>();
-        //queryParams.put("tableName", tableName);
-        int totalCount = getNamedParameterJdbcTemplate().queryForObject(countSQL, queryParams, Integer.class);
-        if (totalCount > 0) {
-            String pageSQL = "select * from " + tableName + " limit :pageSize offset :numStart";
-            int numStart = (p.getPageNumber()) * p.getPageSize();
-            queryParams.put("numStart", numStart);
-            queryParams.put("pageSize", p.getPageSize());
-            List<Map<String, Object>> result = getNamedParameterJdbcTemplate().queryForList(pageSQL, queryParams);
-            return new PageImpl<>(result, p, totalCount);
-        } else {
-            return new PageImpl<>(new ArrayList<>(), p, 0);
-        }
+        queryParams.put("tableName", tableName);
+        return this.query(sql, queryParams);
     }
 
 }
