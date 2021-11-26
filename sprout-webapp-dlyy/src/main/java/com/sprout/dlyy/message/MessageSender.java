@@ -26,7 +26,7 @@ public class MessageSender {
 
     public void sendMessage(Object message) {
         ExecutorService threadPool = Executors.newFixedThreadPool(20);
-        for (int i = 0; i < 200000; i++) {
+        /*for (int i = 0; i < 200000; i++) {
             String msg = message.toString() + i;
             threadPool.submit(() -> amqpTemplate.convertAndSend("dlyy", null, msg));
         }
@@ -53,7 +53,7 @@ public class MessageSender {
         for (int i = 0; i < 200000; i++) {
             String msg = message.toString() + i;
             threadPool.submit(() -> amqpTemplate.convertAndSend("dlyy", null, msg));
-        }
+        }*/
         for (int i = 0; i < 200000; i++) {
             String msg = message.toString() + i;
             threadPool.submit(() -> amqpTemplate.convertAndSend("dlyy", null, msg));

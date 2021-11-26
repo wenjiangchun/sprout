@@ -27,7 +27,7 @@ public class DockerMonitorController extends BaseCrudController<DockerHost, Long
     private RestTemplate restTemplate;
 
     public DockerMonitorController(DockerHostService dockerHostService, RestTemplate restTemplate) {
-        super("devops", "dockerHost", "Docker", dockerHostService);
+        super("devops", "docker", "Docker", dockerHostService);
         this.dockerHostService = dockerHostService;
         this.restTemplate = restTemplate;
     }
