@@ -3,7 +3,9 @@ package com.sprout.common.os;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +69,28 @@ public final class SystemUtils {
         Process p =  Runtime.getRuntime().exec(command);
         logger.debug("系统命令【{}】执行完毕！", command);
         return p;
+    }
+
+    /**
+     * 根据命令参数执行底层操作系统命令
+     *
+     * @param command 命令参数
+     * @throws IOException 执行失败抛出该异常
+     */
+    public static String execCommand(String command) throws IOException {
+        Objects.requireNonNull(command, "命令不能为空");
+        logger.debug("准备执行系统命令【{}】", command);
+        Process p =  Runtime.getRuntime().exec(command);
+        BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        StringBuilder result = new StringBuilder();
+        String sLine;
+        while ((sLine = out.readLine()) != null) {
+            result.append(sLine);
+            result.append("\n");
+        }
+        out.close();
+        logger.debug("系统命令【{}】执行完毕！", command);
+        return result.toString();
     }
 
     /**

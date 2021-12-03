@@ -280,6 +280,7 @@
             <li><a href="#" class="menuBtn" url="${ctx}/devops/k8s/view"><i class="fa fa-cloud"></i> K8s集群监控</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/dlyy/demo/message"><i class="fa fa-send"></i> 消息发送测试</a></li>
             <li><a href="#" class="menuBtn" url="${ctx}/devops/serverHost/view"><i class="fa fa-server"></i> 主机管理</a></li>
+            <li><a href="#" class="menuBtn" url="${ctx}/devops/serverLog/view"><i class="fa fa-battery-empty"></i> UPS日志</a></li>
           </ul>
         </li>
       </ul>

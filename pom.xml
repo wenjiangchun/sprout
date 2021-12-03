@@ -11,7 +11,9 @@
 		<module>sprout-webapp-dlyy</module>
         <module>sprout-datasource</module>
 		<module>sprout-flowable</module>
-	</modules>
+        <module>sprout-webapp-ups</module>
+        <module>sprout-devops</module>
+    </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -24,6 +26,8 @@
 	<name>sprout</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.version>0.0.1-SNAPSHOT</project.version>
 		<java.version>1.8</java.version>
 		<spring-boot.version>2.6.0</spring-boot.version>
@@ -123,7 +127,7 @@
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.200</version>
+				<version>2.0.202</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

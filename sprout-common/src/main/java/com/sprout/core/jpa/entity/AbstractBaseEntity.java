@@ -23,9 +23,8 @@ public abstract class AbstractBaseEntity<PK extends Serializable> implements Bas
      */
     protected PK id;
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public PK getId() {
         return id;
     }

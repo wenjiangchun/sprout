@@ -78,8 +78,9 @@
             dataType : 'json',
             success : function(data) {
                 if (data.flag) {
-                    layer.alert("操作成功", function() {
+                    layer.alert("操作成功", function(index) {
                         top.hideMyModal();
+                        layer.close(index);
                     });
                 } else {
                     layer.alert("操作失败【"+data.content+"】");
