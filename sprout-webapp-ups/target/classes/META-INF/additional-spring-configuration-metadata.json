@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "alarm.config.destination",
+      "type": "java.lang.String",
+      "description": "Description for alarm.config.destination."
+    },
+    {
+      "name": "dlyy.env.minBatteryPower",
+      "type": "java.lang.String",
+      "description": "Description for dlyy.env.minBatteryPower."
+    }
+  ] }
